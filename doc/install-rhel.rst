@@ -32,13 +32,13 @@ Installing The Hypervisor
 
 **Mandatory** on all nodes.
 
-.. admonition:: KVM on RHEL/CentOS/Scientific Linux
+- KVM on RHEL/CentOS/Scientific Linux
 
 ::
 
   yum install kvm kvm-qemu-img python-virtinst
 
-.. admonition:: Xen on RHEL/CentOS/Scientific Linux
+- Xen on RHEL/CentOS/Scientific Linux
 
 ::
 
@@ -47,7 +47,7 @@ Installing The Hypervisor
 KVM settings
 ~~~~~~~~~~~~
 
-.. admonition:: KVM on RHEL/CentOS/Scientific Linux
+- KVM on RHEL/CentOS/Scientific Linux
 
 **Mandatory** on all nodes.
 
@@ -100,7 +100,7 @@ Apply firewall rules.::
 Xen settings
 ~~~~~~~~~~~~
 
-.. admonition:: Xen on RHEL/CentOS/Scientific Linux
+- Xen on RHEL/CentOS/Scientific Linux
 
 **Mandatory** on all nodes.
 
@@ -146,7 +146,7 @@ Installing DRBD
 
 **Mandatory** on all nodes.
 
-.. admonition:: RHEL/CentOS/Scientific Linux
+- RHEL/CentOS/Scientific Linux
 
 Install ELRepo repository to install the drbd package.
 
@@ -160,7 +160,7 @@ Install DRBD package::
 
   yum --enablerepo=elrepo install drbd83-utils kmod-drbd83
 
-.. admonition:: DRBD 8.3.0 or later
+- DRBD 8.3.0 or later
 
 Create ``/etc/default/drbd``::
 
@@ -301,14 +301,14 @@ Example::
 
   gnt-cluster init --vg-name <VOLUMEGROUP> --master-netdev <MASTERINTERFACE> --nic-parameters link=<BRIDGEINTERFACE> <CLUSTERNAME>
 
-.. admonition:: KVM
+- KVM
 
 Example for KVM::
 
   gnt-cluster init --vg-name vmvg --master-netdev <MASTERINTERFACE> --enabled-hypervisors kvm --nic-parameters link=<BRIDGEINTERFACE> gcluster
   ex) gnt-cluster init --vg-name vmvg --master-netdev eth0 --enabled-hypervisors kvm --nic-parameters link=br0 gcluster
 
-.. admonition:: Xen
+- Xen
 
 Example for Xen::
 
@@ -323,13 +323,13 @@ Set default metavg parameter for DRBD disk
 
 Enable use_bootloader for using VM's boot loader.
 
-.. admonition:: KVM
+- KVM
 
 ::
 
   gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
 
-.. admonition:: Xen
+- Xen
 
 ::
 
@@ -350,6 +350,8 @@ node::
 
 Setting up and managing virtual instances
 +++++++++++++++++++++++++++++++++++++++++
+
+**Mandatory** on master node.
 
 Setting up virtual instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
