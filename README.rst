@@ -6,14 +6,14 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
 Build the package
 -----------------
 
-::
+Build::
 
   ./package.sh
 
 Installation
 ------------
 
-* `doc <doc/>`_
+* `Documentation <https://github.com/jfut/ganeti-rpm/tree/master/doc>`_
 
 Binary RPM files
 ----------------
