@@ -1,0 +1,52 @@
+From f58d0fcc760ab4b7ef480a71168ab7a827db314f Mon Sep 17 00:00:00 2001
+From: Jun Futagawa <jfut@integ.jp>
+Date: Sun, 27 Sep 2009 17:18:22 +0900
+Subject: [PATCH] customize for rhel
+
+
+Signed-off-by: Jun Futagawa <jfut@integ.jp>
+---
+ create   |   13 ++++++++++++-
+ defaults |    2 +-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/create b/create
+index da25b0e..fbfd725 100755
+--- a/create
++++ b/create
+@@ -29,7 +29,18 @@ if [ "$GENERATE_CACHE" = "yes" -a ! -d "$CACHE_DIR" ]; then
+   mkdir -p "$CACHE_DIR"
+ fi
+ 
+-DPKG_ARCH=${ARCH:-`dpkg --print-architecture`}
++if [ -z ${ARCH} ]; then
++  if [ -f /usr/bin/dpkg ]; then
++    # for Debian/Ubuntu
++    DPKG_ARCH=`dpkg --print-architecture`}
++  else
++    # for RHEL
++    DPKG_ARCH=`uname -i`
++    if [ $DPKG_ARCH = "x86_64" ]; then
++      DPKG_ARCH="amd64"
++    fi
++  fi
++fi
+ CACHE_FILE="$CACHE_DIR/cache-${SUITE}-${DPKG_ARCH}.tar"
+ 
+ # If the target device is not a real block device we'll first losetup it.
+diff --git a/defaults b/defaults
+index 467e46e..11bc416 100644
+--- a/defaults
++++ b/defaults
+@@ -30,7 +30,7 @@
+ # Xen, for etch/lenny i386:
+ # EXTRA_PKGS="linux-image-xen-686,libc6-xen"
+ # Xen, for etch/lenny amd64:
+-# EXTRA_PKGS="linux-image-xen-amd64"
++EXTRA_PKGS="linux-image-xen-amd64"
+ # KVM, for lenny i386:
+ # EXTRA_PKGS="acpi-support-base,console-tools,udev,linux-image-686"
+ # KVM, for lenny amd64:
+-- 
+1.5.5.6
+

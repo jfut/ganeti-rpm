@@ -1,0 +1,139 @@
+#!/bin/sh
+#
+# ganeti       ganeti node daemon starter script
+#
+# chkconfig: 345 97 03
+# description: Ganeti Cluster Manager
+# processname: ganeti-noded
+# processname: ganeti-masterd
+# processname: ganeti-rapi
+# processname: ganeti-confd
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ $NETWORKING = "no" ] && exit 0
+
+# Check for and source configuration file otherwise set defaults
+[ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
+
+# Configurations to the ganeti
+[ -z "$DAEMON_UTIL" ] && DAEMON_UTIL="/usr/lib/ganeti/daemon-util"
+
+test -f ${DAEMON_UTIL} || exit 0
+
+RETVAL=0
+
+check_exitcode() {
+    RC=$1
+    case $RC in
+        0)
+            success && return 0
+            ;;
+        11)
+            success $"not master" && return 0
+            ;;
+        *)
+            failure $"exit code $RC" && return 1
+            ;;
+    esac
+}
+
+start_action() {
+    # called as start_action daemon-name
+    local daemon="$1";
+    echo -n $"Starting ${daemon}: "
+    ${DAEMON_UTIL} start "$@"
+    check_exitcode $?
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+stop_action() {
+    # called as stop_action daemon-name
+    local daemon="$1"
+    echo -n $"Stopping ${daemon}: "
+    ${DAEMON_UTIL} stop "$@"
+    check_exitcode $?
+    echo
+    return $RETVAL
+}
+
+status_action() {
+    # called as status_action daemon-name
+    local daemon="$1"
+    ${DAEMON_UTIL} check "${@}"
+    return $?
+}
+
+maybe_do() {
+    requested="$1"; shift
+    action="$1"; shift
+    target="$1"
+    if [ -z "$requested" -o "$requested" = "$target" ]; then
+        $action "$@"
+    fi
+}
+
+start_all() {
+    if ! ${DAEMON_UTIL} check-config; then
+        action "Incomplete configuration, will not run." false
+        exit 0
+    fi
+
+    for i in $(${DAEMON_UTIL} list-start-daemons); do
+        maybe_do "$1" start_action $i
+    done
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/ganeti
+    return $RETVAL
+}
+
+stop_all() {
+    for i in $(${DAEMON_UTIL} list-stop-daemons); do
+        maybe_do "$1" stop_action $i
+    done
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/ganeti
+    return $RETVAL
+}
+
+status_all() {
+    for i in $(${DAEMON_UTIL} list-start-daemons); do
+        maybe_do "$1" status_action $i
+    done
+    RETVAL=$?
+    return $RETVAL
+}
+
+if [ -n "$2" ] && ! errmsg=$(${DAEMON_UTIL} is-daemon-name "$2" 2>&1); then
+    action "${errmsg}" false
+    exit 1
+fi
+
+case "$1" in
+    start)
+        start_all "$2"
+        ;;
+    stop)
+        stop_all "$2"
+        ;;
+    restart|force-reload)
+        stop_all "$2"
+        start_all "$2"
+        ;;
+    status)
+        status_all "$2"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|force-reload|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0

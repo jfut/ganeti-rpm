@@ -1,0 +1,5 @@
+# Path to daemon-util
+# DAEMON_UTIL="/usr/lib/ganeti/daemon-util"
+
+# Options to Ganeti daemons
+# see /etc/default/ganeti
