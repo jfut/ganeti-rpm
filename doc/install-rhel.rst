@@ -244,17 +244,17 @@ Installing Ganeti
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.1-1.el6.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.2-1.el6.noarch.rpm
   wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
-  rpm -ivh ganeti-2.6.1-1.el6.noarch.rpm ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
+  rpm -ivh ganeti-2.6.2-1.el6.noarch.rpm ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
 
 - RHEL/CentOS/Scientific Linux 5.x
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.1-1.el5.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.2-1.el5.noarch.rpm
   wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
-  rpm -ivh ganeti-2.6.1-1.el5.noarch.rpm ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
+  rpm -ivh ganeti-2.6.2-1.el5.noarch.rpm ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
 
 Upgrade notes
 +++++++++++++
