@@ -12,7 +12,7 @@
 
 Summary: Cluster-based virtualization management software
 Name: ganeti
-Version: 2.6.1
+Version: 2.6.2
 Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
@@ -117,6 +117,9 @@ exit 0
 %dir /var/log/%{name}
 
 %changelog
+* Sun Dec 22 2012 Jun Futagawa <jfut@integ.jp>
+- Updated to 2.6.2
+
 * Sun Oct 14 2012 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.6.1
 
