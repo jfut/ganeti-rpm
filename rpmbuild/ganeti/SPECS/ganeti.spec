@@ -65,6 +65,7 @@ shutdown, failover between physical systems. It has been designed to
 facilitate cluster management of virtual servers and to provide fast
 and simple recovery after physical failures using commodity hardware.
 
+%if %{os_ver} >= 6
 %package htools
 Group: System Environment/Daemons
 Summary: Cluster allocation and placement tools for Ganeti
@@ -87,6 +88,7 @@ Requires: ghc-parallel
 %description htools
 Provides a suite of tools designed to help with allocation/movement of
 instances and balancing of Ganeti clusters.
+%endif
 
 %prep
 %setup -q
@@ -106,8 +108,11 @@ instances and balancing of Ganeti clusters.
   --with-file-storage-dir=%{_localstatedir}/lib/%{name}/file-storage \
   --with-shared-file-storage-dir=%{_localstatedir}/lib/%{name}/shared-file-storage \
   --with-kvm-path=/usr/libexec/qemu-kvm \
+%if %{os_ver} >= 6
   --enable-htools \
-  --enable-htools-rapi
+  --enable-htools-rapi \
+%endif
+  $@
 make
 
 %install
@@ -150,17 +155,19 @@ exit 0
 %dir /var/lib/%{name}
 %dir /var/log/%{name}
 
+%if %{os_ver} >= 6
 %files htools
 %defattr(-,root,root)
 %{_bindir}/h*
-%{_mandir}/man*/h*
 %{_libdir}/%{name}/iallocators*
+%endif
+%{_mandir}/man*/h*
 
 %changelog
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
 - Added BuildRequires: qemu-img
 - Removed BuildArchitectures to support htools
-- Added subpackage: htools
+- Added subpackage: htools (el6 or later only)
 
 * Sun Dec 22 2012 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.6.2
