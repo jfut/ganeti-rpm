@@ -9,7 +9,7 @@
 %global common_description A %{pkg_name} library for Haskell.
 
 Name:           ghc-%{pkg_name}
-Version:        1.3.7
+Version:        1.3.8
 Release:        1%{?dist}
 Summary:        %{common_summary}
 
@@ -55,6 +55,9 @@ Requires:       libcurl
 
 
 %changelog
+* Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 1.3.8-1
+- Updated to 1.3.8
+
 * Sun Oct 28 2012 Jun Futagawa <jfut@integ.jp> - 1.3.7-1
 - Removed ExclusiveArch
 - Added BuildRequires: libcurl-devel
