@@ -22,7 +22,8 @@
 [ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
 
 # Configurations to the ganeti
-[ -z "$DAEMON_UTIL" ] && DAEMON_UTIL="/usr/lib/ganeti/daemon-util"
+[ -z "$DAEMON_UTIL" ] && DAEMON_UTIL="/usr/lib64/ganeti/daemon-util"
+test -f ${DAEMON_UTIL} || DAEMON_UTIL="/usr/lib/ganeti/daemon-util"
 
 test -f ${DAEMON_UTIL} || exit 0
 

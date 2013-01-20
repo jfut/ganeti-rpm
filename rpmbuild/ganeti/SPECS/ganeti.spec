@@ -1,14 +1,16 @@
-%{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;A=`rpm -q --qf '%{V}' $Z`; echo ${A:0:1})}
 
-%define _libdir /usr/lib
-%define _lib64dir /usr/lib64
-%define _local_libdir /usr/local/lib
-%define _local_lib64dir /usr/local/lib64
+# search path
+%define _search_sharedir /usr/share
+%define _search_libdir /usr/lib
+%define _search_lib64dir /usr/lib64
+%define _search_local_libdir /usr/local/lib
+%define _search_local_lib64dir /usr/local/lib64
 
-%define os_search_path /usr/share/%{name}/os,%{_libdir}/%{name}/os,%{_lib64dir}/%{name}/os,%{_local_libdir}/%{name}/os,%{_local_lib64dir}/%{name}/os,/srv/%{name}/os
-%define iallocator_search_path %{_libdir}/%{name}/iallocators,%{_lib64dir}/%{name}/iallocators,%{_local_libdir}/%{name}/iallocators,%{_local_lib64dir}/%{name}/iallocators
+%define os_search_path %{_search_sharedir}/%{name}/os,%{_search_libdir}/%{name}/os,%{_search_lib64dir}/%{name}/os,%{_search_local_libdir}/%{name}/os,%{_search_local_lib64dir}/%{name}/os,/srv/%{name}/os
+%define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 
 Name: ganeti
 Version: 2.6.2
@@ -21,6 +23,8 @@ URL: http://code.google.com/p/ganeti/
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.sysconfig
+
+Patch1: ganeti-2.6.2-multilib.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -73,6 +77,7 @@ BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: libcurl-devel
 
+Requires: ganeti
 Requires: ghc
 Requires: ghc-curl
 Requires: ghc-network
@@ -85,6 +90,8 @@ instances and balancing of Ganeti clusters.
 
 %prep
 %setup -q
+
+%patch1 -p1
 
 %build
 %configure \
@@ -119,9 +126,6 @@ install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
 rm -rf ${RPM_BUILD_ROOT}
 
 %post
-if [ -f /etc/rc3.d/S??ganeti ] || [ -f /etc/rc5.d/S??ganeti ]; then
-    /sbin/chkconfig --del ganeti
-fi
 /sbin/chkconfig --add ganeti
 
 %preun
@@ -141,7 +145,7 @@ exit 0
 %{_libdir}/%{name}/[a-e]*
 %{_libdir}/%{name}/import-export
 %{_libdir}/%{name}/[k-z]*
-%{python_sitelib}/%{name}
+%{python_sitearch}/%{name}
 %{_mandir}/man*/g*
 %dir /var/lib/%{name}
 %dir /var/log/%{name}
