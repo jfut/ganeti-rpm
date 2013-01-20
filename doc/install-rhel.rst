@@ -375,9 +375,7 @@ Setting up virtual instances
 
 - Setting up RHEL/CentOS/Scientific Linux
 
-I recommend to use Ganeti Instance Image.
-
-- `Ganeti Instance Image <http://code.osuosl.org/projects/ganeti-image/>`_
+I recommend to use `Ganeti Instance Image <http://code.osuosl.org/projects/ganeti-image/>`_
 
 - Setting up Debian
 
