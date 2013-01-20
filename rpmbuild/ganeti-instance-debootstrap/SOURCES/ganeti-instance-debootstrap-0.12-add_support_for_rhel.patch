@@ -1,0 +1,23 @@
+diff -urN ganeti-instance-debootstrap-0.12.default/create ganeti-instance-debootstrap-0.12/create
+--- ganeti-instance-debootstrap-0.12.default/create	2012-10-30 20:59:50.000000000 +0900
++++ ganeti-instance-debootstrap-0.12/create	2013-01-20 20:13:50.528561183 +0900
+@@ -29,7 +29,18 @@
+   mkdir -p "$CACHE_DIR"
+ fi
+ 
+-DPKG_ARCH=${ARCH:-`dpkg --print-architecture`}
++if [ -z ${ARCH} ]; then
++  if [ -f /usr/bin/dpkg ]; then
++    # for Debian/Ubuntu
++    DPKG_ARCH=`dpkg --print-architecture`}
++  else
++    # for RHEL
++    DPKG_ARCH=`uname -i`
++    if [ $DPKG_ARCH = "x86_64" ]; then
++      DPKG_ARCH="amd64"
++    fi
++  fi
++fi
+ CACHE_FILE="$CACHE_DIR/cache-${SUITE}-${DPKG_ARCH}.tar"
+ 
+ # If the target device is not a real block device we'll first losetup it.
