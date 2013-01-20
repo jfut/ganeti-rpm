@@ -1,0 +1,12 @@
+diff -urN ganeti-2.6.2.default/configure ganeti-2.6.2/configure
+--- ganeti-2.6.2.default/configure	2012-12-21 23:38:56.000000000 +0900
++++ ganeti-2.6.2/configure	2013-01-20 16:32:28.875768142 +0900
+@@ -3933,7 +3933,7 @@
+      else
+        am_py_prefix=$prefix
+      fi
+-     am_cv_python_pythondir=`$PYTHON -c "import sys; from distutils import sysconfig; sys.stdout.write(sysconfig.get_python_lib(0,0,prefix='$am_py_prefix'))" 2>/dev/null ||
++     am_cv_python_pythondir=`$PYTHON -c "import sys; from distutils import sysconfig; sys.stdout.write(sysconfig.get_python_lib(1,0,prefix='$am_py_prefix'))" 2>/dev/null ||
+      echo "$PYTHON_PREFIX/lib/python$PYTHON_VERSION/site-packages"`
+      case $am_cv_python_pythondir in
+      $am_py_prefix*)
