@@ -255,8 +255,8 @@ Installing Ganeti
 ::
 
   wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el6.x86_64.rpm
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
-  rpm -ivh ganeti-2.6.2-2.el6.x86_64.rpm ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.12-1.el6.noarch.rpm
+  rpm -ivh ganeti-2.6.2-2.el6.x86_64.rpm ganeti-instance-debootstrap-0.12-1.el6.noarch.rpm
 
 Optional: Install to support htools.
 
@@ -270,8 +270,8 @@ Optional: Install to support htools.
 ::
 
   wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el5.x86_64.rpm
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
-  rpm -ivh ganeti-2.6.2-2.el5.x86_64.rpm ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.12-1.el5.noarch.rpm
+  rpm -ivh ganeti-2.6.2-2.el5.x86_64.rpm ganeti-instance-debootstrap-0.12-1.el5.noarch.rpm
 
 Upgrade notes
 +++++++++++++
@@ -373,14 +373,17 @@ Setting up and managing virtual instances
 Setting up virtual instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Setting up Debian
-
-::
-
-  gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
-
 - Setting up RHEL/CentOS/Scientific Linux
 
 I recommend to use Ganeti Instance Image.
 
 - `Ganeti Instance Image <http://code.osuosl.org/projects/ganeti-image/>`_
+
+- Setting up Debian
+
+Installation will be successful, but gnt-instance console doesn't work.
+
+::
+
+  gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
+
