@@ -184,6 +184,16 @@ Install other required software for KVM::
 
   yum --enablerepo=epel socat
 
+Install to support htools. See: `HTOOLS(1) Ganeti <http://docs.ganeti.org/ganeti/2.6/man/htools.html>`_.
+
+- **RHEL/CentOS/Scientific Linux 6.x or later only**
+
+::
+
+  yum --enablerepo=epel ghc ghc-curl ghc-json ghc-network ghc-parallel
+  wget http://jfut.integ.jp/linux/ganeti/x86_64/ghc-curl-1.3.8-1.el6.x86_64.rpm
+  rpm -ivh ghc-curl-1.3.8-1.el6.x86_64.rpm
+
 Install to support CPU Pinning for KVM. See: `Ganeti CPU Pinning <http://docs.ganeti.org/ganeti/2.6/html/design-cpu-pinning.html>`_.
 
 - KVM on RHEL/CentOS/Scientific Linux 6.x
@@ -244,17 +254,24 @@ Installing Ganeti
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.2-1.el6.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el6.x86_64.rpm
   wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
-  rpm -ivh ganeti-2.6.2-1.el6.noarch.rpm ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
+  rpm -ivh ganeti-2.6.2-2.el6.x86_64.rpm ganeti-instance-debootstrap-0.7-2.el6.noarch.rpm
+
+Install to support htools.
+
+::
+
+  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-htools-2.6.2-2.el6.x86_64.rpm
+  rpm -ivh ganeti-htools-2.6.2-2.el6.x86_64.rpm
 
 - RHEL/CentOS/Scientific Linux 5.x
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-2.6.2-1.el5.noarch.rpm
+  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el5.x86_64.rpm
   wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
-  rpm -ivh ganeti-2.6.2-1.el5.noarch.rpm ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
+  rpm -ivh ganeti-2.6.2-2.el5.x86_64.rpm ganeti-instance-debootstrap-0.7-2.el5.noarch.rpm
 
 Upgrade notes
 +++++++++++++
