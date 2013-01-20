@@ -74,7 +74,7 @@ exit 0
 %{with_os_dir}/debootstrap/*
 
 %changelog
-* Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 0.12-1
+* Mon Jan 21 2013 Jun Futagawa <jfut@integ.jp> - 0.12-1
 - Updated to 0.12
 
 * Sat Aug 06 2011 Jun Futagawa <jfut@integ.jp>
