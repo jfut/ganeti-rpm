@@ -23,7 +23,10 @@ BuildRequires:  ghc-Cabal-devel
 BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 # END cabal2spec
 
+BuildRequires:  ghc-compiler
 BuildRequires:  libcurl-devel
+
+Requires:       ghc
 Requires:       libcurl
 
 %description
@@ -57,6 +60,8 @@ Requires:       libcurl
 %changelog
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 1.3.8-1
 - Updated to 1.3.8
+- Added BuildRequires: ghc-compiler
+- Added Requires: ghc
 
 * Sun Oct 28 2012 Jun Futagawa <jfut@integ.jp> - 1.3.7-1
 - Removed ExclusiveArch
