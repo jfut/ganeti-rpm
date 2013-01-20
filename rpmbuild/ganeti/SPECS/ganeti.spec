@@ -10,17 +10,18 @@
 %define os_search_path /usr/share/%{name}/os,%{_libdir}/%{name}/os,%{_lib64dir}/%{name}/os,%{_local_libdir}/%{name}/os,%{_local_lib64dir}/%{name}/os,/srv/%{name}/os
 %define iallocator_search_path %{_libdir}/%{name}/iallocators,%{_lib64dir}/%{name}/iallocators,%{_local_libdir}/%{name}/iallocators,%{_local_lib64dir}/%{name}/iallocators
 
-Summary: Cluster-based virtualization management software
 Name: ganeti
 Version: 2.6.2
-Release: 1%{?dist}
-License: GPLv2
+Release: 2%{?dist}
 Group: System Environment/Daemons
+Summary: Cluster virtual server management software
+License: GPLv2
 URL: http://code.google.com/p/ganeti/
+
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.sysconfig
-BuildArchitectures: noarch
+
 BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
@@ -31,8 +32,10 @@ BuildRequires: python-ctypes
 %endif
 BuildRequires: python-pycurl
 BuildRequires: python-paramiko
+BuildRequires: qemu-img
 BuildRequires: socat
 BuildRoot: %{_tmppath}/%{name}-root
+
 Requires: python
 Requires: pyOpenSSL
 Requires: pyparsing
@@ -45,17 +48,40 @@ Requires: python-pycurl
 Requires: python-paramiko
 
 %description
-Ganeti is a virtualization cluster management software. You are expected
-to be a system administrator familiar with your Linux distribution and
-the Xen or KVM virtualization environments before using it.
+Ganeti is a cluster virtual server management software tool built on
+top of existing virtualization technologies such as Xen or KVM and
+other Open Source software.
 
-The various components of Ganeti all have man pages and interactive
-help. This manual though will help you getting familiar with the system
-by explaining the most common operations, grouped by related use.
+Ganeti requires pre-installed virtualization software on your servers
+in order to function. Once installed, the tool will take over the
+management part of the virtual instances (Xen DomU), e.g. disk
+creation management, operating system installation for these instances
+(in co-operation with OS-specific install scripts), and startup,
+shutdown, failover between physical systems. It has been designed to
+facilitate cluster management of virtual servers and to provide fast
+and simple recovery after physical failures using commodity hardware.
 
-After a terminology glossary and a section on the prerequisites needed
-to use this manual, the rest of this document is divided in sections
-for the different targets that a command affects: instance, nodes, etc.
+%package htools
+Group: System Environment/Daemons
+Summary: Cluster allocation and placement tools for Ganeti
+
+BuildRequires: ghc
+BuildRequires: ghc-curl-devel
+BuildRequires: ghc-network-devel
+BuildRequires: ghc-json-devel
+BuildRequires: ghc-parallel-devel
+BuildRequires: ghc-QuickCheck-devel
+BuildRequires: libcurl-devel
+
+Requires: ghc
+Requires: ghc-curl
+Requires: ghc-network
+Requires: ghc-json
+Requires: ghc-parallel
+
+%description htools
+Provides a suite of tools designed to help with allocation/movement of
+instances and balancing of Ganeti clusters.
 
 %prep
 %setup -q
@@ -72,7 +98,9 @@ for the different targets that a command affects: instance, nodes, etc.
   --with-xen-bootloader=/usr/bin/pygrub \
   --with-file-storage-dir=%{_localstatedir}/lib/%{name}/file-storage \
   --with-shared-file-storage-dir=%{_localstatedir}/lib/%{name}/shared-file-storage \
-  --with-kvm-path=/usr/libexec/qemu-kvm
+  --with-kvm-path=/usr/libexec/qemu-kvm \
+  --enable-htools \
+  --enable-htools-rapi
 make
 
 %install
@@ -108,15 +136,28 @@ exit 0
 %attr(755,root,root) %config %{_initrddir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
-# %{_docdir}/%{name}
+%doc COPYING INSTALL NEWS README UPGRADE doc/
 %{_sbindir}/*
-%{_libdir}/%{name}
+%{_libdir}/%{name}/[a-e]*
+%{_libdir}/%{name}/import-export
+%{_libdir}/%{name}/[k-z]*
 %{python_sitelib}/%{name}
-%{_mandir}/man*/*
+%{_mandir}/man*/g*
 %dir /var/lib/%{name}
 %dir /var/log/%{name}
 
+%files htools
+%defattr(-,root,root)
+%{_bindir}/h*
+%{_mandir}/man*/h*
+%{_libdir}/%{name}/iallocators*
+
 %changelog
+* Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
+- Added BuildRequires: qemu-img
+- Removed BuildArchitectures to support htools
+- Added subpackage: htools
+
 * Sun Dec 22 2012 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.6.2
 
