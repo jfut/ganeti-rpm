@@ -6,9 +6,13 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
 Build the package
 -----------------
 
-Build::
+* Build all packages::
 
-  ./package.sh
+  ./package.sh -a
+
+* Build the specified package(s) only::
+
+  ./package.sh -p [PACAKGE]
 
 Installation
 ------------

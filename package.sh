@@ -16,6 +16,21 @@ PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 
 RPM_DIST=$(cat /etc/rpm/macros.dist | egrep "^%dist" | awk '{ print $2 }')
 
+# Usage
+usage() {
+    cat << _EOF_
+
+Usage:
+    ${PACKAGER} [-a|-p package...]]
+
+    Options:
+        -a Build all packages
+        -p Build the specified package(s) only. Available packages are:
+            ${PACKAGES}
+
+_EOF_
+}
+
 # Check old package
 check_oldpackage() {
     PACKAGE="${1}"
@@ -64,7 +79,31 @@ build_package() {
 
 # Main
 main() {
-    build_package ${PACKAGES}
+	[ $# -lt 1 ] && ( usage; exit 1 );
+
+    # See how we're called.
+    BUILD_ALL="no"
+    BUILD_PKGS="no"
+    while getopts ap OPT; do
+        case "${OPT}" in
+            "a" )
+                BUILD_ALL="yes" ;;
+            "p" )
+                BUILD_PKGS="yes" ;;
+            * )
+                usage
+                exit 1
+                ;;
+        esac
+    done
+    shift $((${OPTIND} - 1))
+
+	# Build task
+    if [ "${BUILD_ALL}" = "yes" ]; then
+        build_package ${PACKAGES}
+    elif [ "${BUILD_PKGS}" = "yes" ]; then
+        build_package ${@}
+    fi
 }
 
 [ ${#BASH_SOURCE[@]} = 1 ] && main "$@"
