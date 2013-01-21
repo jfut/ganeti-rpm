@@ -162,14 +162,14 @@ ex) Scientific Linux::
 
 Install Integ Ganeti repository:
 
-- RHEL/CentOS/Scientific Linux 6.x
+- RHEL/CentOS/Scientific Linux **6.x**
 
 ::
 
   wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/6/integ-ganeti.repo
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
 
-- RHEL/CentOS/Scientific Linux 5.x
+- RHEL/CentOS/Scientific Linux **5.x**
 
 ::
 
@@ -231,7 +231,7 @@ Installing Ganeti
 
 **Mandatory** on all nodes.
 
-- Install Ganeti and Ganeti Instance Debootstrap
+- Install Ganeti:
 
 ::
 
@@ -243,13 +243,13 @@ Installing Ganeti
 
   yum --enablerepo=epel socat
 
-- Optional: Install Ganeti Instance Debootstrap
+- Optional: Install Ganeti Instance Debootstrap:
 
 ::
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
-- Optional: Install htools
+- Optional: Install htools:
 
 **RHEL/CentOS/Scientific Linux 6.x or later only**
 
