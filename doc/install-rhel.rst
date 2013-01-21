@@ -93,7 +93,7 @@ Edit ``/etc/sysconfig/iptables``::
   -A FORWARD -m physdev --physdev-is-bridged -j ACCEPT
   COMMIT
 
-Apply firewall rules.::
+Apply firewall rules::
 
   iptables-restore < /etc/sysconfig/iptables
 
@@ -237,7 +237,7 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti
 
-- Optional: Install other required software for **KVM**
+- Optional: Install other required software for **KVM**:
 
 ::
 
