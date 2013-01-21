@@ -141,20 +141,41 @@ Setup a kernel for an instance::
   cd /boot
   ln -s vmlinuz-`uname -r` vmlinuz-2.6-xenU
 
+Setting up yum repositories
++++++++++++++++++++++++++++
+
+**Mandatory** on all nodes.
+
+Install ELRepo repository
+
+ex) Scientific Linux::
+
+  yum install yum-conf-elrepo
+  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/elrepo.repo
+
+Install EPEL repository
+
+ex) Scientific Linux::
+
+  yum install yum-conf-epel
+  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/epel.repo
+
+Install Integ Ganeti repository
+
+- RHEL/CentOS/Scientific Linux 6.x
+
+  wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/6/integ-ganeti.repo
+  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
+
+- RHEL/CentOS/Scientific Linux 5.x
+
+  wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/5/integ-ganeti.repo
+  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
+
 Installing DRBD
 +++++++++++++++
 
 **Mandatory** on all nodes.
-
-- RHEL/CentOS/Scientific Linux
-
-Install ELRepo repository to install the drbd package.
-
-::
-
-  rpm --import http://elrepo.org/RPM-GPG-KEY-elrepo.org
-  rpm -Uvh http://elrepo.org/elrepo-release-6-3.el6.elrepo.noarch.rpm
-  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/elrepo.repo
 
 Install DRBD package::
 
@@ -165,50 +186,6 @@ Install DRBD package::
 Create ``/etc/default/drbd``::
 
   ADD_MOD_PARAM="usermode_helper=/bin/true"
-
-Installing other required software
-++++++++++++++++++++++++++++++++++
-
-Install EPEL Rrepository.
-
-ex) Scientific Linux::
-
-  yum install yum-conf-epel
-  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/epel.repo
-
-Install other required software::
-
- yum --enablerepo=epel install pyOpenSSL python-simplejson pyparsing python-inotify python-ctypes python-pycurl python-paramiko debootstrap
-
-Install other required software for KVM::
-
-  yum --enablerepo=epel socat
-
-Optional: Install to support htools. See: `HTOOLS(1) Ganeti <http://docs.ganeti.org/ganeti/2.6/man/htools.html>`_.
-
-- **RHEL/CentOS/Scientific Linux 6.x or later only**
-
-::
-
-  yum --enablerepo=epel ghc ghc-curl ghc-json ghc-network ghc-parallel
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/ghc-curl-1.3.8-1.el6.x86_64.rpm
-  rpm -ivh ghc-curl-1.3.8-1.el6.x86_64.rpm
-
-Optional: Install to support CPU Pinning for KVM. See: `Ganeti CPU Pinning <http://docs.ganeti.org/ganeti/2.6/html/design-cpu-pinning.html>`_.
-
-- KVM on RHEL/CentOS/Scientific Linux 6.x
-
-::
-
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/python-affinity-0.1.0-1.el6.x86_64.rpm
-  rpm -ivh python-affinity-0.1.0-1.el6.x86_64.rpm
-
-- KVM on RHEL/CentOS/Scientific Linux 5.x
-
-::
-
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/python-affinity-0.1.0-1.el5.x86_64.rpm
-  rpm -ivh python-affinity-0.1.0-1.el5.x86_64.rpm
 
 Configuring LVM
 +++++++++++++++
@@ -250,28 +227,31 @@ Installing Ganeti
 
 **Mandatory** on all nodes.
 
-- RHEL/CentOS/Scientific Linux 6.x
+- Install Ganeti and Ganeti Instance Debootstrap
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el6.x86_64.rpm
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.12-1.el6.noarch.rpm
-  rpm -ivh ganeti-2.6.2-2.el6.x86_64.rpm ganeti-instance-debootstrap-0.12-1.el6.noarch.rpm
+  yum --enablerepo=epel,integ-ganeti install ganeti
 
-Optional: Install to support htools.
+- Optional: Install other required software for **KVM**
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-htools-2.6.2-2.el6.x86_64.rpm
-  rpm -ivh ganeti-htools-2.6.2-2.el6.x86_64.rpm
+  yum --enablerepo=epel socat
 
-- RHEL/CentOS/Scientific Linux 5.x
+- Optional: Install Ganeti Instance Debootstrap
 
 ::
 
-  wget http://jfut.integ.jp/linux/ganeti/x86_64/ganeti-2.6.2-2.el5.x86_64.rpm
-  wget http://jfut.integ.jp/linux/ganeti/noarch/ganeti-instance-debootstrap-0.12-1.el5.noarch.rpm
-  rpm -ivh ganeti-2.6.2-2.el5.x86_64.rpm ganeti-instance-debootstrap-0.12-1.el5.noarch.rpm
+  yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
+
+- Optional: Install htools
+
+**RHEL/CentOS/Scientific Linux 6.x or later only**
+
+::
+
+  yum --enablerepo=epel,integ-ganeti install ganeti-htools
 
 Upgrade notes
 +++++++++++++
@@ -377,7 +357,7 @@ Setting up virtual instances
 
 I recommend to use `Ganeti Instance Image <http://code.osuosl.org/projects/ganeti-image/>`_
 
-- Setting up Debian
+- Setting up Debian (require ganeti-instance-debootstrap)
 
 Installation will be successful, but gnt-instance console doesn't work.
 
