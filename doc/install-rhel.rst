@@ -146,28 +146,32 @@ Setting up yum repositories
 
 **Mandatory** on all nodes.
 
-Install ELRepo repository
+Install ELRepo repository:
 
 ex) Scientific Linux::
 
   yum install yum-conf-elrepo
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/elrepo.repo
 
-Install EPEL repository
+Install EPEL repository:
 
 ex) Scientific Linux::
 
   yum install yum-conf-epel
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/epel.repo
 
-Install Integ Ganeti repository
+Install Integ Ganeti repository:
 
 - RHEL/CentOS/Scientific Linux 6.x
+
+::
 
   wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/6/integ-ganeti.repo
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
 
 - RHEL/CentOS/Scientific Linux 5.x
+
+::
 
   wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/5/integ-ganeti.repo
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
