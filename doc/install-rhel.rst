@@ -250,6 +250,7 @@ Installing Ganeti
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
 - Optional: Install htools:
+-- `HTOOLS(1) Ganeti <http://docs.ganeti.org/ganeti/2.6/man/htools.html>`_.
 
 **RHEL/CentOS/Scientific Linux 6.x or later only**
 
