@@ -27,12 +27,15 @@ Source2: ganeti.sysconfig
 BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.6.2-multilib.patch
+Patch2: ganeti-2.7.0.beta1-remove_import_showJSON.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
-BuildRequires: python-affinity
+BuildRequires: python-affinity 
+BuildRequires: python-bitarray
 BuildRequires: python-inotify
+BuildRequires: python-ipaddr
 BuildRequires: python-simplejson
 %if %{os_ver} == 5
 BuildRequires: python-ctypes
@@ -50,7 +53,9 @@ Requires: openssh
 Requires: python
 Requires: pyOpenSSL
 Requires: pyparsing
+Requires: python-bitarray
 Requires: python-inotify
+Requires: python-ipaddr
 Requires: python-simplejson
 %if %{os_ver} == 5
 Requires: python-ctypes
@@ -79,11 +84,15 @@ Group: System Environment/Daemons
 Summary: Cluster allocation and placement tools for Ganeti
 
 BuildRequires: ghc
+BuildRequires: ghc-attoparsec-devel
+BuildRequires: ghc-Crypto-devel
 BuildRequires: ghc-curl-devel
 BuildRequires: ghc-network-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
+BuildRequires: ghc-text-devel
+BuildRequires: ghc-utf8-string-devel
 BuildRequires: libcurl-devel
 
 Requires: ganeti
@@ -97,6 +106,7 @@ instances and balancing of Ganeti clusters.
 %setup -q
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -112,7 +122,6 @@ instances and balancing of Ganeti clusters.
   --with-shared-file-storage-dir=%{_localstatedir}/lib/%{name}/shared-file-storage \
   --with-kvm-path=/usr/libexec/qemu-kvm \
 %if %{os_ver} >= 6
-  --enable-htools \
   --enable-htools-rapi \
 %endif
   $@
@@ -155,6 +164,7 @@ exit 0
 %{_libdir}/%{name}/[k-z]*
 %{python_sitearch}/%{name}
 %{_mandir}/man*/g*
+%{_mandir}/man*/mon-collector*
 %attr(750,root,root) %dir /var/lib/%{name}
 %attr(750,root,root) %dir /var/log/%{name}
 
@@ -168,8 +178,16 @@ exit 0
 %{_mandir}/man*/h*
 
 %changelog
-* xxx xxx xx 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
+* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
 - Updated to 2.7.0.beta1
+- Added BuildRequires: python-bitarray
+- Added BuildRequires: python-ipaddr
+- Added Requires: python-bitarray
+- Added Requires: python-ipaddr
+- Added BuildRequires: ghc-attoparsec-devel
+- Added BuildRequires: ghc-Crypto-devel
+- Added BuildRequires: ghc-text-devel
+- Added BuildRequires: ghc-utf8-string-devel
 
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
 - Removed Requires: ghc and ghc-*
