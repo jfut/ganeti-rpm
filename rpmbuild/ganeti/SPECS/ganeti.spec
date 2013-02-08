@@ -41,6 +41,11 @@ BuildRequires: python-paramiko
 BuildRequires: qemu-img
 BuildRequires: socat
 
+Requires: bridge-utils
+Requires: iproute
+Requires: iputils
+Requires: lvm2
+Requires: openssh
 Requires: python
 Requires: pyOpenSSL
 Requires: pyparsing
@@ -51,6 +56,7 @@ Requires: python-ctypes
 %endif
 Requires: python-pycurl
 Requires: python-paramiko
+Requires: socat
 
 %description
 Ganeti is a cluster virtual server management software tool built on
@@ -162,6 +168,11 @@ exit 0
 %changelog
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
 - Removed Requires: ghc and ghc-*
+- Added Requires: bridge-utils
+- Added Requires: iproute
+- Added Requires: iputils
+- Added Requires: lvm2
+- Added Requires: socat
 
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
 - Added BuildRequires: qemu-img
