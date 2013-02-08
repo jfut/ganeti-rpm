@@ -237,12 +237,6 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti
 
-- Optional: Install other required software for **KVM**:
-
-::
-
-  yum --enablerepo=epel socat
-
 - Optional: Install Ganeti Instance Debootstrap:
 
 ::
