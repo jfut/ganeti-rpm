@@ -13,8 +13,8 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 
 Name: ganeti
-Version: 2.6.2
-Release: 3%{?dist}
+Version: 2.7.0.beta1
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -168,6 +168,9 @@ exit 0
 %{_mandir}/man*/h*
 
 %changelog
+* xxx xxx xx 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
+- Updated to 2.7.0.beta1
+
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
 - Removed Requires: ghc and ghc-*
 - Added Requires: bridge-utils
