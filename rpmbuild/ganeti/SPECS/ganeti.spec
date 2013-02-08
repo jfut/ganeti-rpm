@@ -31,6 +31,7 @@ Patch1: ganeti-2.6.2-multilib.patch
 BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
+BuildRequires: python-affinity
 BuildRequires: python-inotify
 BuildRequires: python-simplejson
 %if %{os_ver} == 5
@@ -174,6 +175,7 @@ exit 0
 - Added Requires: iputils
 - Added Requires: lvm2
 - Added Requires: socat
+- Added BuildRequires: python-affinity
 
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
 - Added BuildRequires: qemu-img
