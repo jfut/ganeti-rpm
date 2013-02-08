@@ -162,8 +162,9 @@ exit 0
 %defattr(-,root,root)
 %{_bindir}/h*
 %{_libdir}/%{name}/iallocators*
-%{_mandir}/man*/h*
 %endif
+# el5 require this man files
+%{_mandir}/man*/h*
 
 %changelog
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
