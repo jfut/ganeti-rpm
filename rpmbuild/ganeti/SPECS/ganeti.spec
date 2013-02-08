@@ -162,8 +162,8 @@ exit 0
 %defattr(-,root,root)
 %{_bindir}/h*
 %{_libdir}/%{name}/iallocators*
-%endif
 %{_mandir}/man*/h*
+%endif
 
 %changelog
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
