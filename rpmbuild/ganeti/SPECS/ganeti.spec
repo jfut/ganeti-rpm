@@ -188,15 +188,6 @@ exit 0
 - Added BuildRequires: ghc-Crypto-devel
 - Added BuildRequires: ghc-text-devel
 - Added BuildRequires: ghc-utf8-string-devel
-<<<<<<< HEAD
-=======
-- Removed Requires: ghc and ghc-*
-- Added Requires: bridge-utils
-- Added Requires: iproute
-- Added Requires: iputils
-- Added Requires: lvm2
-- Added Requires: socat
->>>>>>> 6c6ddd5... Add Requires: bridge-utils, iproute, iputils, lvm2, and socat
 
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
 - Removed Requires: ghc and ghc-*
