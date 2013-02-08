@@ -79,11 +79,6 @@ BuildRequires: ghc-QuickCheck-devel
 BuildRequires: libcurl-devel
 
 Requires: ganeti
-Requires: ghc
-Requires: ghc-curl
-Requires: ghc-network
-Requires: ghc-json
-Requires: ghc-parallel
 
 %description htools
 Provides a suite of tools designed to help with allocation/movement of
@@ -164,6 +159,22 @@ exit 0
 %{_mandir}/man*/h*
 
 %changelog
+<<<<<<< HEAD
+=======
+* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
+- Updated to 2.7.0.beta1
+- Added BuildRequires: python-affinity
+- Added BuildRequires: python-bitarray
+- Added BuildRequires: python-ipaddr
+- Added Requires: python-bitarray
+- Added Requires: python-ipaddr
+- Added BuildRequires: ghc-attoparsec-devel
+- Added BuildRequires: ghc-Crypto-devel
+- Added BuildRequires: ghc-text-devel
+- Added BuildRequires: ghc-utf8-string-devel
+- Removed Requires: ghc and ghc-*
+
+>>>>>>> 47e5129... Remove Requires: ghc and ghc-* packages
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
 - Added BuildRequires: qemu-img
 - Removed BuildArchitectures to support htools
