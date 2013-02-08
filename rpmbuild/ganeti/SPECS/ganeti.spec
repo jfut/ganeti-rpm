@@ -14,7 +14,7 @@
 
 Name: ganeti
 Version: 2.6.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -23,6 +23,8 @@ URL: http://code.google.com/p/ganeti/
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.sysconfig
+
+BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.6.2-multilib.patch
 
@@ -38,7 +40,6 @@ BuildRequires: python-pycurl
 BuildRequires: python-paramiko
 BuildRequires: qemu-img
 BuildRequires: socat
-BuildRoot: %{_tmppath}/%{name}-root
 
 Requires: python
 Requires: pyOpenSSL
@@ -159,22 +160,9 @@ exit 0
 %{_mandir}/man*/h*
 
 %changelog
-<<<<<<< HEAD
-=======
-* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
-- Updated to 2.7.0.beta1
-- Added BuildRequires: python-affinity
-- Added BuildRequires: python-bitarray
-- Added BuildRequires: python-ipaddr
-- Added Requires: python-bitarray
-- Added Requires: python-ipaddr
-- Added BuildRequires: ghc-attoparsec-devel
-- Added BuildRequires: ghc-Crypto-devel
-- Added BuildRequires: ghc-text-devel
-- Added BuildRequires: ghc-utf8-string-devel
+* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-3
 - Removed Requires: ghc and ghc-*
 
->>>>>>> 47e5129... Remove Requires: ghc and ghc-* packages
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 2.6.2-2
 - Added BuildRequires: qemu-img
 - Removed BuildArchitectures to support htools
