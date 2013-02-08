@@ -3,7 +3,8 @@
 # Build RPMs for Ganeti & Tools
 
 # Packages to be built
-PACKAGES="ghc-curl ganeti ganeti-instance-debootstrap python-affinity"
+PACKAGES="ganeti ganeti-instance-debootstrap ghc-curl python-affinity \
+python-bitarray"
 
 # Directories
 PACKAGER="$(basename "${0}")"
