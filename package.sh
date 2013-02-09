@@ -79,7 +79,7 @@ build_package() {
 
 # Main
 main() {
-	[ $# -lt 1 ] && ( usage; exit 1 );
+    [ $# -lt 1 ] && ( usage; exit 1 );
 
     # See how we're called.
     BUILD_ALL="no"
@@ -98,7 +98,7 @@ main() {
     done
     shift $((${OPTIND} - 1))
 
-	# Build task
+    # Build task
     if [ "${BUILD_ALL}" = "yes" ]; then
         build_package ${PACKAGES}
     elif [ "${BUILD_PKGS}" = "yes" ]; then
