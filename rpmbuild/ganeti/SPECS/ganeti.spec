@@ -155,8 +155,8 @@ exit 0
 %{_libdir}/%{name}/[k-z]*
 %{python_sitearch}/%{name}
 %{_mandir}/man*/g*
-%dir /var/lib/%{name}
-%dir /var/log/%{name}
+%attr(750,root,root) %dir /var/lib/%{name}
+%attr(750,root,root) %dir /var/log/%{name}
 
 %if %{os_ver} >= 6
 %files htools
