@@ -243,14 +243,6 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
-- Optional: Install htools (See: `HTOOLS(1) Ganeti <http://docs.ganeti.org/ganeti/2.6/man/htools.html>`_):
-
-**RHEL/CentOS/Scientific Linux 6.x or later only**
-
-::
-
-  yum --enablerepo=epel,integ-ganeti install ganeti-htools
-
 Upgrade notes
 +++++++++++++
 
@@ -278,6 +270,14 @@ Update the configuration file.
   gnt-cluster redist-conf
   /etc/init.d/ganeti restart
   gnt-cluster verify
+
+- Update from Ganeti RPM 2.6 to 2.7
+
+Remove ganeti-htools subpackage::
+
+  rpm -e ganeti-htools
+
+htools package was integrated in the ganeti package.
 
 - Update from Ganeti 2.5 to 2.6
 
