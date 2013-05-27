@@ -13,7 +13,7 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 
 Name: ganeti
-Version: 2.7.0.beta1
+Version: 2.7.0.rc2
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -26,8 +26,7 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.6.2-multilib.patch
-Patch2: ganeti-2.7.0.beta1-remove_import_showJSON.patch
+Patch1: ganeti-2.7.0.rc2-multilib.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -96,7 +95,6 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure \
@@ -167,7 +165,7 @@ exit 0
 
 %changelog
 * Mon May 27 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
-- Updated to 2.7.0.beta1
+- Updated to 2.7.0.rc2
 - Removed htools subpackage (integrated in a ganeti package)
 - Added BuildRequires: python-bitarray
 - Added BuildRequires: python-ipaddr
