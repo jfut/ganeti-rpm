@@ -44,6 +44,20 @@ BuildRequires: python-pycurl
 BuildRequires: python-paramiko
 BuildRequires: qemu-img
 BuildRequires: socat
+# htools support: el6 or later only
+%if %{os_ver} >= 6
+BuildRequires: ghc
+BuildRequires: ghc-attoparsec-devel
+BuildRequires: ghc-Crypto-devel
+BuildRequires: ghc-curl-devel
+BuildRequires: ghc-network-devel
+BuildRequires: ghc-json-devel
+BuildRequires: ghc-parallel-devel
+BuildRequires: ghc-QuickCheck-devel
+BuildRequires: ghc-text-devel
+BuildRequires: ghc-utf8-string-devel
+BuildRequires: libcurl-devel
+%endif
 
 Requires: bridge-utils
 Requires: iproute
@@ -77,30 +91,6 @@ creation management, operating system installation for these instances
 shutdown, failover between physical systems. It has been designed to
 facilitate cluster management of virtual servers and to provide fast
 and simple recovery after physical failures using commodity hardware.
-
-%if %{os_ver} >= 6
-%package htools
-Group: System Environment/Daemons
-Summary: Cluster allocation and placement tools for Ganeti
-
-BuildRequires: ghc
-BuildRequires: ghc-attoparsec-devel
-BuildRequires: ghc-Crypto-devel
-BuildRequires: ghc-curl-devel
-BuildRequires: ghc-network-devel
-BuildRequires: ghc-json-devel
-BuildRequires: ghc-parallel-devel
-BuildRequires: ghc-QuickCheck-devel
-BuildRequires: ghc-text-devel
-BuildRequires: ghc-utf8-string-devel
-BuildRequires: libcurl-devel
-
-Requires: ganeti
-
-%description htools
-Provides a suite of tools designed to help with allocation/movement of
-instances and balancing of Ganeti clusters.
-%endif
 
 %prep
 %setup -q
@@ -158,28 +148,27 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %doc COPYING INSTALL NEWS README UPGRADE doc/
+%if %{os_ver} >= 6
+%{_bindir}/h*
+%endif
 %{_sbindir}/*
 %{_libdir}/%{name}/[a-e]*
+%if %{os_ver} >= 6
+%{_libdir}/%{name}/iallocators*
+%endif
 %{_libdir}/%{name}/import-export
 %{_libdir}/%{name}/[k-z]*
 %{python_sitearch}/%{name}
 %{_mandir}/man*/g*
+%{_mandir}/man*/h*
 %{_mandir}/man*/mon-collector*
 %attr(750,root,root) %dir /var/lib/%{name}
 %attr(750,root,root) %dir /var/log/%{name}
 
-%if %{os_ver} >= 6
-%files htools
-%defattr(-,root,root)
-%{_bindir}/h*
-%{_libdir}/%{name}/iallocators*
-%endif
-# el5 require this man files
-%{_mandir}/man*/h*
-
 %changelog
-* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
+* Mon May 27 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
 - Updated to 2.7.0.beta1
+- Removed htools subpackage (integrated in a ganeti package)
 - Added BuildRequires: python-bitarray
 - Added BuildRequires: python-ipaddr
 - Added Requires: python-bitarray
