@@ -31,8 +31,8 @@ Update ganeti package
 
   yum --enablerepo=epel,integ-ganeti update ganeti
 
-Update the configuration file
-+++++++++++++++++++++++++++++
+Update configuration files
+++++++++++++++++++++++++++
 
 **Mandatory** on master node.
 
@@ -53,4 +53,5 @@ ex)::
   gnt-cluster copyfile /var/lib/ganeti/config.data
   gnt-cluster copyfile /etc/ganeti/file-storage-paths
   touch /var/lib/ganeti/ssconf_networks
+  gnt-cluster copyfile /var/lib/ganeti/ssconf_networks
 
