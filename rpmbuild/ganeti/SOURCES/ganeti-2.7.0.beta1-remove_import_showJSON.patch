@@ -1,0 +1,12 @@
+diff -urN ganeti-2.7.0~beta1.default/src/Ganeti/OpCodes.hs ganeti-2.7.0~beta1/src/Ganeti/OpCodes.hs
+--- ganeti-2.7.0~beta1.default/src/Ganeti/OpCodes.hs	2013-02-06 19:50:37.000000000 +0900
++++ ganeti-2.7.0~beta1/src/Ganeti/OpCodes.hs	2013-02-08 15:42:21.611564081 +0900
+@@ -47,7 +47,7 @@
+   ) where
+ 
+ import Data.Maybe (fromMaybe)
+-import Text.JSON (readJSON, showJSON, JSON, JSValue, makeObj)
++import Text.JSON (readJSON, JSON, JSValue, makeObj)
+ import qualified Text.JSON
+ 
+ import Ganeti.THH
