@@ -18,7 +18,7 @@ Remove ganeti-htools subpackage
 
 **Mandatory** on all nodes.
 
-The htools package was integrated in the ganeti package.
+The htools package was integrated in the ganeti package.::
 
   rpm -e ganeti-htools
 
