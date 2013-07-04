@@ -7,6 +7,9 @@ Official full version:
 
 * `Ganeti's documentation <http://docs.ganeti.org/ganeti/current/html/>`_ >> `Ganeti installation tutorial <http://docs.ganeti.org/ganeti/current/html/install.html>`_
 
+New versions and upgrading:
+
+* `Upgrade guides <https://github.com/jfut/ganeti-rpm/tree/master/doc/update-rhel-2.6-to-2.7.rst>`_
 
 Installing the base system
 ++++++++++++++++++++++++++
@@ -242,48 +245,6 @@ Installing Ganeti
 ::
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
-
-Upgrade notes
-+++++++++++++
-
-**Mandatory** on all nodes.
-
-Stop ganeti service and backup the configuration file.
-
-::
-
-  /etc/init.d/ganeti stop
-  tar czf /var/lib/ganeti-$(date +%FT%T).tar.gz -C /var/lib ganeti
-
-Install new Ganeti version on all nodes.
-
-**Mandatory** on master node.
-
-Update the configuration file.
-
-::
-
-  /usr/lib/ganeti/tools/cfgupgrade --verbose --dry-run
-  /usr/lib/ganeti/tools/cfgupgrade --verbose
-      This script upgrade the configuration files(/var/lib/ganeti).
-  /etc/init.d/ganeti start
-  gnt-cluster redist-conf
-  /etc/init.d/ganeti restart
-  gnt-cluster verify
-
-- Update from Ganeti RPM 2.6 to 2.7
-
-Remove ganeti-htools subpackage::
-
-  rpm -e ganeti-htools
-
-htools package was integrated in the ganeti package.
-
-- Update from Ganeti 2.5 to 2.6
-
-Set default metavg parameter for DRBD disk::
-
-  gnt-cluster modify -D drbd:metavg=vmvg
 
 Initializing the cluster
 ++++++++++++++++++++++++
