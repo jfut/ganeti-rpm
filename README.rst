@@ -3,6 +3,12 @@ Ganeti RPM Packaging
 
 Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
 
+Packaging status
+----------------
+
+* Ganeti 2.7.x: RHEL/CentOS/Scientific Linux 6.x
+* Ganeti 2.6.x: RHEL/CentOS/Scientific Linux 5.x and 6.x
+
 Build the package
 -----------------
 
