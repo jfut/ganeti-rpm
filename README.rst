@@ -7,7 +7,7 @@ Packaging status
 ----------------
 
 * Ganeti 2.7.x RPM: RHEL/CentOS/Scientific Linux 6.x
-* Ganeti 2.6.x RPM: RHEL/CentOS/Scientific Linux 5.x and 6.x
+* Ganeti 2.6.x RPM: RHEL/CentOS/Scientific Linux 6.x and 5.x
 
 Build the package
 -----------------
