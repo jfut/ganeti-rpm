@@ -13,7 +13,7 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 
 Name: ganeti
-Version: 2.7.0.rc2
+Version: 2.7.0.rc3
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -164,8 +164,8 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Mon May 27 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.beta1-1
-- Updated to 2.7.0.rc2
+* Thu Jul 04 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0.rc3
+- Updated to 2.7.0.rc3
 - Removed htools subpackage (integrated in a ganeti package)
 - Added BuildRequires: python-bitarray
 - Added BuildRequires: python-ipaddr
