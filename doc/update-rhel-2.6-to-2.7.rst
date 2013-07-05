@@ -1,5 +1,7 @@
-From 2.6 to 2.7
-===============
+Update Ganeti RPM package from 2.6 to 2.7
+=========================================
+
+Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
 
 Backup
 ++++++
@@ -31,6 +33,15 @@ Update ganeti package
 
   yum --enablerepo=epel,integ-ganeti update ganeti
 
+Start ganeti node
++++++++++++++++++
+
+**Mandatory** on mamber nodes.
+
+::
+
+  /etc/init.d/ganeti start
+
 Update configuration files
 ++++++++++++++++++++++++++
 
@@ -38,8 +49,8 @@ Update configuration files
 
 ::
 
-  /usr/lib/ganeti/tools/cfgupgrade --verbose --dry-run
-  /usr/lib/ganeti/tools/cfgupgrade --verbose
+  /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
+  /usr/lib64/ganeti/tools/cfgupgrade --verbose
       This script upgrade the configuration files(/var/lib/ganeti).
   /etc/init.d/ganeti start
   gnt-cluster redist-conf
@@ -50,7 +61,6 @@ Fix problems.
 
 ex)::
 
-  gnt-cluster copyfile /var/lib/ganeti/config.data
   gnt-cluster copyfile /etc/ganeti/file-storage-paths
   touch /var/lib/ganeti/ssconf_networks
   gnt-cluster copyfile /var/lib/ganeti/ssconf_networks
