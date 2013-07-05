@@ -11,10 +11,11 @@
 
 %define os_search_path %{_search_sharedir}/%{name}/os,%{_search_libdir}/%{name}/os,%{_search_lib64dir}/%{name}/os,%{_search_local_libdir}/%{name}/os,%{_search_local_lib64dir}/%{name}/os,/srv/%{name}/os
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
+%define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
 Version: 2.7.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -104,6 +105,7 @@ and simple recovery after physical failures using commodity hardware.
   --with-ssh-initscript=%{_initrddir}/sshd \
   --with-export-dir=%{_localstatedir}/lib/%{name}/export \
   --with-os-search-path=%{os_search_path} \
+  --with-extstorage-search-path=%{extstorage_search_path} \
   --with-iallocator-search-path=%{iallocator_search_path} \
   --with-xen-bootloader=/usr/bin/pygrub \
   --with-file-storage-dir=%{_localstatedir}/lib/%{name}/file-storage \
@@ -164,7 +166,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Thu Jul  4 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0
+* Fri Jul  5 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0-2
+- Added extstorage search path
+
+* Thu Jul  4 2013 Jun Futagawa <jfut@integ.jp> - 2.7.0-1
 - Updated to 2.7.0
 - Removed htools subpackage (integrated in a ganeti package)
 - Added BuildRequires: python-bitarray
