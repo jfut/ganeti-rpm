@@ -36,7 +36,7 @@ Update ganeti package
 Start ganeti node
 +++++++++++++++++
 
-**Mandatory** on mamber nodes.
+**Mandatory** on member nodes.
 
 ::
 
