@@ -6,8 +6,8 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
 Packaging status
 ----------------
 
-* Ganeti 2.7.x: RHEL/CentOS/Scientific Linux 6.x
-* Ganeti 2.6.x: RHEL/CentOS/Scientific Linux 6.x and 5.x
+* Ganeti 2.7.1-1: RHEL/CentOS/Scientific Linux 6.x
+* Ganeti 2.6.2-3: RHEL/CentOS/Scientific Linux 6.x and 5.x
 
 Build the package
 -----------------
