@@ -198,7 +198,7 @@ exit 0
 - Removed BuildArchitectures to support htools
 - Added subpackage: htools (el6 or later only)
 
-* Sun Dec 22 2012 Jun Futagawa <jfut@integ.jp>
+* Sat Dec 22 2012 Jun Futagawa <jfut@integ.jp> - 2.6.2-1
 - Updated to 2.6.2
 
 * Sun Oct 14 2012 Jun Futagawa <jfut@integ.jp>
@@ -227,7 +227,7 @@ exit 0
 * Mon Oct 31 2011 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.4.5
 
-* Wed Aug  5 2011 Jun Futagawa <jfut@integ.jp>
+* Wed Aug 24 2011 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.4.4
 
 * Fri Aug  5 2011 Jun Futagawa <jfut@integ.jp>
@@ -238,7 +238,7 @@ exit 0
 - Added BuildRequires and Requires: python-inotify
 - Change service startup order
 
-* Tue Mar  9 2011 Jun Futagawa <jfut@integ.jp>
+* Wed Mar  9 2011 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.4.1
 
 * Tue Mar  8 2011 Jun Futagawa <jfut@integ.jp>
@@ -256,7 +256,7 @@ exit 0
 * Wed Oct 20 2010 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.2.1
 
-* Tue Oct 10 2010 Jun Futagawa <jfut@integ.jp>
+* Sun Oct 10 2010 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.2.0.1
 
 * Tue Oct  5 2010 Jun Futagawa <jfut@integ.jp>
@@ -287,14 +287,14 @@ exit 0
 * Sun May 16 2010 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.0.6
 
-* Tue Dec 18 2009 Jun Futagawa <jfut@integ.jp>
+* Fri Dec 18 2009 Jun Futagawa <jfut@integ.jp>
 - Updated to 2.0.5
 
-* Tue Nov  7 2009 Jun Futagawa <jfut@integ.jp>
+* Sat Nov  7 2009 Jun Futagawa <jfut@integ.jp>
 - Backported the ``use_localtime`` option for the xen-hvm and kvm
   from the development branch
 
-* Tue Nov  5 2009 Jun Futagawa <jfut@integ.jp>
+* Thu Nov  5 2009 Jun Futagawa <jfut@integ.jp>
 - Changed export-dir to /var/lib/ganeti/export
 - Changed file-storage-dir to /var/lib/ganeti/file-storage
 
