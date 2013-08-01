@@ -1,6 +1,6 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
-%{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;A=`rpm -q --qf '%{V}' $Z`; echo ${A:0:1})}
+%{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;rpm -q --qf '%{V}' $Z | sed 's/\\.[0-9]*//')}
 
 # search path
 %define _search_sharedir /usr/share
@@ -28,6 +28,7 @@ Source2: ganeti.sysconfig
 BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.7.0-multilib.patch
+Patch2: ganeti-2.7.1-fedora.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -96,6 +97,7 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
