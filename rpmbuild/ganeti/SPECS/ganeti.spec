@@ -14,7 +14,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 2.7.2
+Version: 2.8.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -27,8 +27,8 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.7.0-multilib.patch
-Patch2: ganeti-2.7.1-fedora.patch
+Patch1: ganeti-2.8.0-multilib.patch
+Patch2: ganeti-2.8.0-fedora.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -52,6 +52,7 @@ BuildRequires: ghc-attoparsec-devel
 BuildRequires: ghc-Crypto-devel
 BuildRequires: ghc-curl-devel
 BuildRequires: ghc-network-devel
+BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
@@ -113,9 +114,6 @@ and simple recovery after physical failures using commodity hardware.
   --with-file-storage-dir=%{_localstatedir}/lib/%{name}/file-storage \
   --with-shared-file-storage-dir=%{_localstatedir}/lib/%{name}/shared-file-storage \
   --with-kvm-path=/usr/libexec/qemu-kvm \
-%if %{os_ver} >= 6
-  --enable-htools-rapi \
-%endif
   $@
 make
 
@@ -168,6 +166,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Tue Oct  8 2013 Jun Futagawa <jfut@integ.jp> - 2.8.0-1
+- Updated to 2.8.0
+- Added BuildRequires: ghc-hslogger-devel
+
 * Fri Sep 27 2013 Jun Futagawa <jfut@integ.jp> - 2.7.2-1
 - Updated to 2.7.2
 
