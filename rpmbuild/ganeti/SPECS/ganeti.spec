@@ -14,7 +14,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 2.8.1
+Version: 2.8.2
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -166,6 +166,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Fri Nov  8 2013 Jun Futagawa <jfut@integ.jp> - 2.8.2-1
+- Updated to 2.8.2
+
 * Thu Oct 17 2013 Jun Futagawa <jfut@integ.jp> - 2.8.1-1
 - Updated to 2.8.1
 
