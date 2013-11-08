@@ -9,7 +9,7 @@ Official full version:
 
 New versions and upgrading:
 
-* `Upgrade guides <https://github.com/jfut/ganeti-rpm/tree/master/doc/update-rhel-2.7-to-2.8.rst>`_
+* `Upgrade guides <https://github.com/jfut/ganeti-rpm/tree/master/doc/update-rhel-2.8-to-2.9.rst>`_
 
 Installing the base system
 ++++++++++++++++++++++++++

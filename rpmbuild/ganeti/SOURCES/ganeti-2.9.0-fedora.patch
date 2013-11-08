@@ -1,0 +1,16 @@
+diff -urN ganeti-2.9.0.default/daemons/daemon-util.in ganeti-2.9.0/daemons/daemon-util.in
+--- ganeti-2.9.0.default/daemons/daemon-util.in	2013-10-22 23:45:41.000000000 +0900
++++ ganeti-2.9.0/daemons/daemon-util.in	2013-11-08 10:18:39.362351450 +0900
+@@ -356,7 +356,11 @@
+ 
+ # Reloads the SSH keys
+ reload_ssh_keys() {
+-  @RPL_SSH_INITD_SCRIPT@ restart
++  if [[ -f /etc/fedora-release ]]; then
++    systemctl restart sshd.service
++  else
++    @RPL_SSH_INITD_SCRIPT@ restart
++  fi
+ }
+ 
+ # Read @SYSCONFDIR@/rc.d/init.d/functions if start-stop-daemon not available

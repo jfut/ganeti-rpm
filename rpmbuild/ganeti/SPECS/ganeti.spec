@@ -14,7 +14,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 2.8.2
+Version: 2.9.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -27,8 +27,8 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.8.0-multilib.patch
-Patch2: ganeti-2.8.0-fedora.patch
+Patch1: ganeti-2.9.0-multilib.patch
+Patch2: ganeti-2.9.0-fedora.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -111,8 +111,6 @@ and simple recovery after physical failures using commodity hardware.
   --with-extstorage-search-path=%{extstorage_search_path} \
   --with-iallocator-search-path=%{iallocator_search_path} \
   --with-xen-bootloader=/usr/bin/pygrub \
-  --with-file-storage-dir=%{_localstatedir}/lib/%{name}/file-storage \
-  --with-shared-file-storage-dir=%{_localstatedir}/lib/%{name}/shared-file-storage \
   --with-kvm-path=/usr/libexec/qemu-kvm \
   $@
 make
@@ -166,6 +164,11 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Fri Nov  8 2013 Jun Futagawa <jfut@integ.jp> - 2.9.0-1
+- Updated to 2.9.0
+- Removed option: --with-file-storage-dir
+- Removed option: --with-shared-file-storage-dir
+
 * Fri Nov  8 2013 Jun Futagawa <jfut@integ.jp> - 2.8.2-1
 - Updated to 2.8.2
 
