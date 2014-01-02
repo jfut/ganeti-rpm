@@ -186,7 +186,7 @@ Installing DRBD
 
 Install DRBD package::
 
-  yum --enablerepo=elrepo install drbd83-utils kmod-drbd83
+  yum --enablerepo=elrepo install drbd84-utils kmod-drbd84
 
 - DRBD 8.3.0 or later
 
