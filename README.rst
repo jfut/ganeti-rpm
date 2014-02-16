@@ -1,7 +1,7 @@
 Ganeti RPM Packaging
 ====================
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
+Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
 Packaging status
 ----------------
