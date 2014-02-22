@@ -33,7 +33,6 @@ Update ganeti package
 
 ::
 
-  yum --enablerepo=epel,integ-ganeti clean all
   yum --enablerepo=epel,integ-ganeti update ganeti
 
 Start ganeti node
