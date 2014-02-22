@@ -1,5 +1,3 @@
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-
 %{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;rpm -q --qf '%{V}' $Z | sed 's/\\.[0-9]*//')}
 
 # search path
@@ -14,7 +12,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 2.9.4
+Version: 2.10.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -27,8 +25,7 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.9.0-multilib.patch
-Patch2: ganeti-2.9.0-fedora.patch
+Patch1: ganeti-2.10.0-fedora.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -98,7 +95,6 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure \
@@ -145,18 +141,12 @@ exit 0
 %attr(755,root,root) %config %{_initrddir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
+%config(noreplace) %{_sysconfdir}/%{name}
 %doc COPYING INSTALL NEWS README UPGRADE doc/
-%if %{os_ver} >= 6
 %{_bindir}/h*
-%endif
-%{_sbindir}/*
-%{_libdir}/%{name}/[a-e]*
-%if %{os_ver} >= 6
-%{_libdir}/%{name}/iallocators*
-%endif
-%{_libdir}/%{name}/import-export
-%{_libdir}/%{name}/[k-z]*
-%{python_sitearch}/%{name}
+%{_sbindir}/g*
+%{_libdir}/%{name}
+%{_datadir}/%{name}
 %{_mandir}/man*/g*
 %{_mandir}/man*/h*
 %{_mandir}/man*/mon-collector*
@@ -164,6 +154,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Sat Feb 22 2014 Jun Futagawa <jfut@integ.jp> - 2.10.0-1
+- Updated to 2.10.0
+- Removed multilib patch
+
 * Tue Feb 11 2014 Jun Futagawa <jfut@integ.jp> - 2.9.4-1
 - Updated to 2.9.4
 
