@@ -1,7 +1,7 @@
 Update Ganeti RPM package from 2.9 to 2.10
 ==========================================
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
+Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
 Update from a version earlier than 2.8
 ++++++++++++++++++++++++++++++++++++++

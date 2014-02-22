@@ -1,7 +1,7 @@
 Ganeti installation tutorial for RHEL/CentOS/Scientific Linux
 =============================================================
 
-This documentation is the short version for RHEL/CentOS/Scientific Linux.
+This documentation is the short version for RHEL/CentOS/Scientific Linux and Fedora.
 
 Official full version:
 
