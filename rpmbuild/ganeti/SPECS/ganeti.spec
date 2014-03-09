@@ -12,7 +12,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 2.10.0
+Version: 2.10.1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -154,6 +154,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Mon Mar 10 2014 Jun Futagawa <jfut@integ.jp> - 2.10.1-1
+- Updated to 2.10.1
+
 * Sat Feb 22 2014 Jun Futagawa <jfut@integ.jp> - 2.10.0-1
 - Updated to 2.10.0
 - Removed multilib patch
