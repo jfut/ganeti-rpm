@@ -11,9 +11,12 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
+# man version
+%define _man_version 2.10
+
 Name: ganeti
 Version: 2.10.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -26,7 +29,6 @@ Source2: ganeti.sysconfig
 BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.10.0-fedora.patch
-Patch2: ganeti-2.10.3-fix-symbolic-links-for-man-files.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -102,7 +104,6 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure \
@@ -130,6 +131,12 @@ mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
 install -m 755 %{SOURCE1} ${RPM_BUILD_ROOT}/%{_initrddir}/%{name}
 install -m 644 doc/examples/ganeti.default ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/%{name}
 install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
+
+# compressed man files
+TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
+RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
+/usr/lib/rpm/redhat/brp-compress
+RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -162,6 +169,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
+- Fixed symbolic links for compressed man files
+
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-2
 - Added the ganeti-mond, ganeti-luxid and ganeti-confd daemon for Fedora 19 and above
 - Added BuildRequires: ghc-regex-pcre-devel
