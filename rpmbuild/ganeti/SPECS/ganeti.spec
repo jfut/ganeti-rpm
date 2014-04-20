@@ -13,7 +13,7 @@
 
 Name: ganeti
 Version: 2.10.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -56,6 +56,12 @@ BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: libcurl-devel
+%endif
+%if %{os_ver} >= 19
+BuildRequires: ghc-regex-pcre-devel
+BuildRequires: ghc-hinotify-devel
+BuildRequires: ghc-vector-devel
+BuildRequires: ghc-snap-server-devel
 %endif
 
 Requires: bridge-utils
@@ -154,6 +160,13 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-2
+- Added the ganeti-mond, ganeti-luxid and ganeti-confd daemon for Fedora 19 and above
+- Added BuildRequires: ghc-regex-pcre-devel
+- Added BuildRequires: ghc-hinotify-devel
+- Added BuildRequires: ghc-vector-devel
+- Added BuildRequires: ghc-snap-server-devel
+
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-1
 - Updated to 2.10.3
 
