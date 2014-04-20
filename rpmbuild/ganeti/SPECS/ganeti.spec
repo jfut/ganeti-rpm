@@ -26,6 +26,7 @@ Source2: ganeti.sysconfig
 BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.10.0-fedora.patch
+Patch2: ganeti-2.10.3-fix-symbolic-links-for-man-files.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -101,6 +102,7 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -166,6 +168,7 @@ exit 0
 - Added BuildRequires: ghc-hinotify-devel
 - Added BuildRequires: ghc-vector-devel
 - Added BuildRequires: ghc-snap-server-devel
+- Fixed symbolic links for compressed man files
 
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-1
 - Updated to 2.10.3
