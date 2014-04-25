@@ -79,7 +79,7 @@ This package provides the Haskell %{pkg_name} library development files.
 
 %changelog
 * Sat Apr 26 2014 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-3
-- Removed %ghc_devel_package for Fedora 20
+- Removed ghc_devel_package for Fedora 20
 
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-1
 - Added BuildRequires: ghc-compiler
