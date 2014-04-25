@@ -7,10 +7,9 @@ Packaging status
 ----------------
 
 * RHEL/CentOS/Scientific Linux 6.x: 2.10.3-3
+* RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
 * Fedora 20: 2.10.3-3
 * Fedora 19: 2.10.3-3
-
-* RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
 
 Build the package
 -----------------
