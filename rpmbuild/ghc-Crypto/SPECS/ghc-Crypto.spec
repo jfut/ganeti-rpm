@@ -67,7 +67,7 @@ Requires:       ghc
 
 
 %changelog
-* Thu Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-1
+* Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-1
 - Added BuildRequires: ghc-compiler
 - Added BuildRequires: ghc-HUnit-devel
 - Added Requires: ghc
