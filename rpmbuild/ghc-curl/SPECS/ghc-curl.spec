@@ -10,7 +10,7 @@
 
 Name:           ghc-%{pkg_name}
 Version:        1.3.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        %{common_summary}
 
 Group:          System Environment/Libraries
@@ -26,11 +26,21 @@ BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 BuildRequires:  ghc-compiler
 BuildRequires:  libcurl-devel
 
-Requires:       ghc
 Requires:       libcurl
 
 %description
 %{common_description}
+
+
+%package devel
+Summary:        %{common_summary} development files
+Requires:       ghc-compiler = %{ghc_version}
+Requires(post): ghc-compiler = %{ghc_version}
+Requires(postun): ghc-compiler = %{ghc_version}
+Requires:       %{name} = %{version}-%{release}
+
+%description devel
+This package provides the Haskell %{pkg_name} library development files.
 
 
 %prep
@@ -45,19 +55,25 @@ Requires:       libcurl
 %ghc_lib_install
 
 
-# devel subpackage
-%ghc_devel_package
-
-%ghc_devel_description
+%post devel
+%ghc_pkg_recache
 
 
-%ghc_devel_post_postun
+%postun devel
+%ghc_pkg_recache
 
 
-%ghc_files LICENSE
+%files -f %{name}.files
+%doc LICENSE
+
+
+%files devel -f %{name}-devel.files
 
 
 %changelog
+* Sat Apr 26 2014 Jun Futagawa <jfut@integ.jp> - 1.3.8-2
+- Removed %ghc_devel_package for Fedora 20
+
 * Sun Jan 20 2013 Jun Futagawa <jfut@integ.jp> - 1.3.8-1
 - Updated to 1.3.8
 - Added BuildRequires: ghc-compiler

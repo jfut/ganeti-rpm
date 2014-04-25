@@ -10,7 +10,7 @@
 
 Name:           ghc-%{pkg_name}
 Version:        4.2.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        %{common_summary}
 
 Group:          System Environment/Libraries
@@ -19,7 +19,6 @@ License:        BSD and GPL
 # BEGIN cabal2spec
 URL:            http://hackage.haskell.org/package/%{pkg_name}
 Source0:        http://hackage.haskell.org/packages/archive/%{pkg_name}/%{version}/%{pkg_name}-%{version}.tar.gz
-#ExclusiveArch:  %{ghc_arches}
 BuildRequires:  ghc-Cabal-devel
 BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 # END cabal2spec
@@ -27,10 +26,19 @@ BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 BuildRequires:  ghc-compiler
 BuildRequires:  ghc-HUnit-devel
 
-Requires:       ghc
-
 %description
 %{common_description}
+
+
+%package devel
+Summary:        %{common_summary} development files
+Requires:       ghc-compiler = %{ghc_version}
+Requires(post): ghc-compiler = %{ghc_version}
+Requires(postun): ghc-compiler = %{ghc_version}
+Requires:       %{name} = %{version}-%{release}
+
+%description devel
+This package provides the Haskell %{pkg_name} library development files.
 
 
 %prep
@@ -54,19 +62,25 @@ Requires:       ghc
 %{__rm} -f %{buildroot}/usr/share/%{pkg_name}-%{version}/CryptoHomePage.html
 
 
-# devel subpackage
-%ghc_devel_package
-
-%ghc_devel_description
+%post devel
+%ghc_pkg_recache
 
 
-%ghc_devel_post_postun
+%postun devel
+%ghc_pkg_recache
 
 
-%ghc_files ReadMe.tex
+%files -f %{name}.files
+%doc ReadMe.tex
+
+
+%files devel -f %{name}-devel.files
 
 
 %changelog
+* Sat Apr 26 2014 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-3
+- Removed %ghc_devel_package for Fedora 20
+
 * Fri Feb  8 2013 Jun Futagawa <jfut@integ.jp> - 4.2.5.1-1
 - Added BuildRequires: ghc-compiler
 - Added BuildRequires: ghc-HUnit-devel
