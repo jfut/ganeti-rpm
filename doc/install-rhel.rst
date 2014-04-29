@@ -39,7 +39,7 @@ Installing The Hypervisor
 
 ::
 
-  yum install kvm kvm-qemu-img python-virtinst
+  yum install kvm libvirt python-virtinst
 
 - Xen on RHEL/CentOS/Scientific Linux
 
