@@ -12,11 +12,11 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 # man version
-%define _man_version 2.10
+%define _man_version 2.11
 
 Name: ganeti
-Version: 2.10.3
-Release: 3%{?dist}
+Version: 2.11.0
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -49,6 +49,7 @@ BuildRequires: socat
 %if %{os_ver} >= 6
 BuildRequires: ghc
 BuildRequires: ghc-attoparsec-devel
+BuildRequires: ghc-base64-bytestring-devel
 BuildRequires: ghc-Crypto-devel
 BuildRequires: ghc-curl-devel
 BuildRequires: ghc-network-devel
@@ -169,6 +170,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Wed Apr 30 2014 Jun Futagawa <jfut@integ.jp> - 2.11.0-1
+- Updated to 2.11.0
+- Added BuildRequires: ghc-base64-bytestring-devel
+
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
 - Fixed symbolic links for compressed man files
 
