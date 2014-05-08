@@ -58,13 +58,12 @@ BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
+BuildRequires: ghc-regex-pcre-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: libcurl-devel
 %endif
 %if %{os_ver} >= 19
-BuildRequires: ghc-regex-pcre-devel
-BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-vector-devel
 BuildRequires: ghc-snap-server-devel
 %endif
@@ -175,6 +174,7 @@ exit 0
 - Updated to 2.11.0
 - Added BuildRequires: ghc-base64-bytestring-devel
 - Added BuildRequires: ghc-hinotify-devel
+- Added BuildRequires: ghc-regex-pcre-devel
 
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
 - Fixed symbolic links for compressed man files
