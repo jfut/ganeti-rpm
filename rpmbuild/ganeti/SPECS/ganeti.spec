@@ -113,6 +113,7 @@ and simple recovery after physical failures using commodity hardware.
   --prefix=%{_prefix} \
   --sysconfdir=%{_sysconfdir} \
   --libdir=%{_libdir} \
+  --enable-symlinks \
   --with-ssh-initscript=%{_initrddir}/sshd \
   --with-export-dir=%{_localstatedir}/lib/%{name}/export \
   --with-os-search-path=%{os_search_path} \
@@ -179,6 +180,7 @@ exit 0
 - Added BuildRequires: ghc-regex-pcre-devel
 - Added BuildRequires: ghc-zlib-devel
 - Added BuildRequires: ghc-vector-devel
+- Added option: --enable-symlinks
 
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
 - Fixed symbolic links for compressed man files
