@@ -53,6 +53,7 @@ BuildRequires: ghc-base64-bytestring-devel
 BuildRequires: ghc-Crypto-devel
 BuildRequires: ghc-curl-devel
 BuildRequires: ghc-network-devel
+BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-parallel-devel
@@ -170,9 +171,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Wed Apr 30 2014 Jun Futagawa <jfut@integ.jp> - 2.11.0-1
+* Thu May  8 2014 Jun Futagawa <jfut@integ.jp> - 2.11.0-1
 - Updated to 2.11.0
 - Added BuildRequires: ghc-base64-bytestring-devel
+- Added BuildRequires: ghc-hinotify-devel
 
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
 - Fixed symbolic links for compressed man files
