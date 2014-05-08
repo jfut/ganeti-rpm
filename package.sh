@@ -4,7 +4,7 @@
 
 # Packages to be built
 PACKAGES="ganeti ganeti-instance-debootstrap \
-ghc-Crypto ghc-curl \
+ghc-Crypto ghc-base64-bytestring ghc-curl ghc-hinotify ghc-regex-pcre \
 python-affinity python-bitarray"
 
 # Directories
