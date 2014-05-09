@@ -28,7 +28,7 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.10.0-fedora.patch
+Patch1: ganeti-2.11.0-fedora.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
