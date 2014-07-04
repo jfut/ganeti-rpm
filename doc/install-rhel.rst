@@ -61,6 +61,7 @@ Service configuration::
   chkconfig libvirt-guests off
   
 Install brctl::
+
   yum install bridge-utils
 
 Create bridge interface
