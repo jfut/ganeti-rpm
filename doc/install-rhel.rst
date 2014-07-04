@@ -39,7 +39,7 @@ Installing The Hypervisor
 
 ::
 
-  yum install kvm libvirt python-virtinst
+  yum install kvm libvirt python-virtinst bridge-utils
 
 - Xen on RHEL/CentOS/Scientific Linux
 
@@ -59,10 +59,6 @@ Service configuration::
   chkconfig messagebus on
   chkconfig libvirtd on
   chkconfig libvirt-guests off
-  
-Install brctl::
-
-  yum install bridge-utils
 
 Create bridge interface
 
