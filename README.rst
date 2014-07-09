@@ -6,13 +6,13 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 6.x: 2.11.2-1
+* RHEL/CentOS/Scientific Linux 6.x: 2.11.3-1
 * RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
-* Fedora 20: 2.11.2-1
-* Fedora 19: 2.11.2-1
+* Fedora 20: 2.11.3-1
+* Fedora 19: 2.11.3-1
 
-Version 2.11.2: Warning from upstream
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 2.11.2 or later: Warning from upstream
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   - Improvements to KVM wrt to the kvmd and instance shutdown behavior.
   WARNING: In contrast to our standard policy, this bug fix update

@@ -15,7 +15,7 @@
 %define _man_version 2.11
 
 Name: ganeti
-Version: 2.11.2
+Version: 2.11.3
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -173,6 +173,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Wed Jul  9 2014 Jun Futagawa <jfut@integ.jp> - 2.11.3-1
+- Updated to 2.11.3
+
 * Mon Jun 16 2014 Jun Futagawa <jfut@integ.jp> - 2.11.2-1
 - Updated to 2.11.2
 
