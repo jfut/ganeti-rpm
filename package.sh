@@ -4,8 +4,8 @@
 
 # Packages to be built
 PACKAGES="ganeti ganeti-instance-debootstrap \
-ghc-Crypto ghc-base64-bytestring ghc-curl ghc-hinotify ghc-regex-pcre \
-python-affinity python-bitarray"
+            ghc-Crypto ghc-base64-bytestring ghc-curl ghc-hinotify ghc-regex-pcre \
+            python-affinity python-bitarray"
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -16,7 +16,7 @@ PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 #. ${PACKAGER_DIR}/package-config
 #. ${PACKAGER_DIR}/package-prebuild
 
-RPM_DIST=$(cat /etc/rpm/macros.dist | egrep "^%dist" | awk '{ print $2 }')
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | sed -E 's|^%dist (.el[0-9]*)\..*|\1|')
 
 # Usage
 usage() {
@@ -72,7 +72,10 @@ build_package() {
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage ${PACKAGE}
         if [ ${is_overwrite} = "y" ]; then
-            rpmbuild --define "%_topdir "${PACKAGER_RPM_DIR}"/"${PACKAGE}"" -ba SPECS/${PACKAGE}.spec
+            rpmbuild \
+                --define "%_topdir "${PACKAGER_RPM_DIR}"/"${PACKAGE}"" \
+                --define "%dist ${RPM_DIST}" \
+                -ba SPECS/${PACKAGE}.spec
         fi
         echo
         popd

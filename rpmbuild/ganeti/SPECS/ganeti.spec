@@ -12,10 +12,10 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 # man version
-%define _man_version 2.11
+%define _man_version 2.12
 
 Name: ganeti
-Version: 2.11.4
+Version: 2.12.0.beta1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -33,7 +33,6 @@ Patch1: ganeti-2.11.0-fedora.patch
 BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
-BuildRequires: python-affinity 
 BuildRequires: python-bitarray
 BuildRequires: python-inotify
 BuildRequires: python-ipaddr
@@ -173,6 +172,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Mon Aug  4 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.beta1-1
+- Updated to 2.12.0.beta1
+- Removed BuildRequires: python-affinity
+
 * Sun Aug  3 2014 Jun Futagawa <jfut@integ.jp> - 2.11.4-1
 - Updated to 2.11.4
 
