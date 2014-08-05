@@ -9,7 +9,7 @@
 %global common_description A %{pkg_name} library for Haskell.
 
 Name:           ghc-%{pkg_name}
-Version:        0.2.2
+Version:        0.3.2
 Release:        1%{?dist}
 Summary:        %{common_summary}
 
@@ -18,6 +18,7 @@ License:        BSD
 # BEGIN cabal2spec
 URL:            http://hackage.haskell.org/package/%{pkg_name}
 Source0:        http://hackage.haskell.org/packages/archive/%{pkg_name}/%{version}/%{pkg_name}-%{version}.tar.gz
+Patch1:         update-transformers-compat.patch
 #ExclusiveArch:  %{ghc_arches}
 BuildRequires:  ghc-Cabal-devel
 BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
@@ -46,6 +47,8 @@ This package provides the Haskell %{pkg_name} library development files.
 
 %prep
 %setup -q -n %{pkg_name}-%{version}
+
+%patch1 -p1
 
 
 %build
