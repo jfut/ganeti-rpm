@@ -55,6 +55,8 @@ BuildRequires: ghc-network-devel
 BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-json-devel
+BuildRequires: ghc-lens-devel
+BuildRequires: ghc-lifted-base-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
@@ -172,9 +174,11 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Mon Aug  4 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.beta1-1
+* Thu Aug  5 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.beta1-1
 - Updated to 2.12.0.beta1
 - Removed BuildRequires: python-affinity
+- Added BuildRequires: ghc-lens-devel
+- Added BuildRequires: ghc-lifted-base-devel
 
 * Sun Aug  3 2014 Jun Futagawa <jfut@integ.jp> - 2.11.4-1
 - Updated to 2.11.4
