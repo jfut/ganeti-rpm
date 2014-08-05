@@ -5,7 +5,7 @@
 # Packages to be built
 PACKAGES="ganeti ganeti-instance-debootstrap
             ghc-Crypto ghc-base64-bytestring ghc-comonad ghc-contravariant ghc-curl ghc-distributive
-            ghc-hinotify ghc-regex-pcre ghc-transformers-compat python-affinity python-bitarray"
+            ghc-hinotify ghc-regex-pcre ghc-semigroupoids ghc-transformers-compat python-affinity python-bitarray"
 
 # Directories
 PACKAGER="$(basename "${0}")"
