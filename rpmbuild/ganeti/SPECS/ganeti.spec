@@ -194,7 +194,6 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}
 %config %{_unitdir}/*.service
@@ -213,6 +212,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %files sysvinit
 %defattr(-,root,root)
 %attr(755,root,root) %config %{_initrddir}/%{name}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
 * Sat Aug  9 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.beta1-1
