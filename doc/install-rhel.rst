@@ -301,9 +301,7 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
-**Mandatory** on all nodes.
-
-Service configuration::
+Service configuration:
 
 - RHEL/CentOS/Scientific Linux **7.x and later**
 
@@ -315,7 +313,6 @@ Service configuration::
   systemctl enable ganeti-wconfd.service
   systemctl enable ganeti-rapi.service
   systemctl enable ganeti-luxid.service
-
 
 - KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
 
