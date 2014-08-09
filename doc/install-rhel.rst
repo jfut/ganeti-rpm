@@ -301,6 +301,28 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
+**Mandatory** on all nodes.
+
+Service configuration::
+
+- RHEL/CentOS/Scientific Linux **7.x and later**
+
+::
+
+  systemctl enable ganeti.target
+  systemctl enable ganeti-confd.service
+  systemctl enable ganeti-noded.service
+  systemctl enable ganeti-wconfd.service
+  systemctl enable ganeti-rapi.service
+  systemctl enable ganeti-luxid.service
+
+
+- KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
+
+::
+
+  chkconfig ganeti on
+
 Initializing the cluster
 ++++++++++++++++++++++++
 
@@ -346,11 +368,19 @@ Enable use_bootloader for using VM's boot loader.
 
   gnt-cluster modify --hypervisor-parameters xen-pvm:use_bootloader=True
 
+Verifying the cluster
++++++++++++++++++++++
+
+**Mandatory** on master node.
+
+::
+
+  gnt-cluster verify
 
 Joining the nodes to the cluster
 ++++++++++++++++++++++++++++++++
 
-**Mandatory** for all the other nodes.
+**Mandatory** on master node.
 
 After you have initialized your cluster you need to join the other nodes
 to it. You can do so by executing the following command on the master
