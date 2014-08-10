@@ -203,7 +203,7 @@ Install Integ Ganeti repository:
 
 ::
 
-  wget -O /etc/yum.repos.d/integ-ganeti.repo http://jfut.integ.jp/linux/ganeti/7/integ-ganeti.repo
+  rpm -Uvh http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7.0-1.el7.noarch.rpm
   sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
 
 - RHEL/CentOS/Scientific Linux **6.x**
