@@ -15,8 +15,8 @@
 %define _man_version 2.10
 
 Name: ganeti
-Version: 2.10.3
-Release: 3%{?dist}
+Version: 2.10.7
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: GPLv2
@@ -169,6 +169,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Tue Aug 12 2014 Jun Futagawa <jfut@integ.jp> - 2.10.7-1
+- Updated to 2.10.7
+- Fixed oCERT-2014-006 Ganeti insecure archive permission
+
 * Sun Apr 20 2014 Jun Futagawa <jfut@integ.jp> - 2.10.3-3
 - Fixed symbolic links for compressed man files
 
