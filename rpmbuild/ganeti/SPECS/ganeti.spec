@@ -15,7 +15,7 @@
 %define _man_version 2.12
 
 Name: ganeti
-Version: 2.12.0.beta1
+Version: 2.12.0.rc1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -42,8 +42,9 @@ BuildRequires: python-bitarray
 BuildRequires: python-inotify
 BuildRequires: python-ipaddr
 BuildRequires: python-simplejson
-BuildRequires: python-pycurl
 BuildRequires: python-paramiko
+BuildRequires: python-psutil
+BuildRequires: python-pycurl
 BuildRequires: qemu-img
 BuildRequires: socat
 BuildRequires: ghc
@@ -78,8 +79,9 @@ Requires: python-bitarray
 Requires: python-inotify
 Requires: python-ipaddr
 Requires: python-simplejson
-Requires: python-pycurl
 Requires: python-paramiko
+Requires: python-psutil
+Requires: python-pycurl
 Requires: socat
 
 Requires(post):   systemd-units
@@ -215,12 +217,14 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Sat Aug  9 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.beta1-1
+* Fri Aug 22 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.rc1-1
 - Initial package for el7
-- Updated to 2.12.0.beta1
+- Updated to 2.12.0.rc1
 - Removed BuildRequires: python-affinity
 - Added BuildRequires: ghc-lens-devel
 - Added BuildRequires: ghc-lifted-base-devel
+- Added BuildRequires: python-psutil
+- Added Requires: python-psutil
 - Added subpackage: sysvinit
 
 * Sun Aug  3 2014 Jun Futagawa <jfut@integ.jp> - 2.11.4-1
