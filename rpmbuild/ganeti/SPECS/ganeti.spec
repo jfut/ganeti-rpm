@@ -15,11 +15,11 @@
 %define _man_version 2.11
 
 Name: ganeti
-Version: 2.11.5
+Version: 2.11.6
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
-License: GPLv2
+License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
@@ -173,6 +173,10 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Tue Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-1
+- Updated to 2.11.6
+- Ganeti is now distributed under the 2-clause BSD license
+
 * Tue Aug 12 2014 Jun Futagawa <jfut@integ.jp> - 2.11.5-1
 - Updated to 2.11.5
 - Fixed oCERT-2014-006 Ganeti insecure archive permission
