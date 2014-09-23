@@ -15,20 +15,21 @@
 %define _man_version 2.12
 
 Name: ganeti
-Version: 2.12.0.rc1
+Version: 2.12.0.rc2
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
-License: GPLv2
+License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
-Source2: ganeti.sysconfig
-Source3: ganeti-master.target
-Source4: ganeti-node.target
-Source5: ganeti.service
-Source6: ganeti.target
+Source2: ganeti.logrotate
+Source3: ganeti.sysconfig
+Source4: ganeti-master.target
+Source5: ganeti-node.target
+Source6: ganeti.service
+Source7: ganeti.target
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -71,6 +72,7 @@ Requires: bridge-utils
 Requires: iproute
 Requires: iputils
 Requires: lvm2
+Requires: logrotate
 Requires: openssh
 Requires: python
 Requires: pyOpenSSL
@@ -144,12 +146,16 @@ rm -rf ${RPM_BUILD_ROOT}
 make DESTDIR=${RPM_BUILD_ROOT} install
 
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_initrddir}
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
 
 install -m 755 %{SOURCE1} ${RPM_BUILD_ROOT}/%{_initrddir}/%{name}
+install -m 644 doc/examples/ganeti.cron ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/%{name}
 install -m 644 doc/examples/ganeti.default ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/%{name}
-install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
+install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d/%{name}
+install -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_unitdir}
 install -m 644 doc/examples/systemd/ganeti-common.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-common.service
@@ -162,10 +168,10 @@ install -m 644 doc/examples/systemd/ganeti-noded.service  ${RPM_BUILD_ROOT}/%{_u
 install -m 644 doc/examples/systemd/ganeti-rapi.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-rapi.service
 install -m 644 doc/examples/systemd/ganeti-wconfd.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-wconfd.service
 
-install -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-master.target
-install -m 644 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
-install -m 644 %{SOURCE5} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
-install -m 644 %{SOURCE6} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
+install -m 644 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-master.target
+install -m 644 %{SOURCE5} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
+install -m 644 %{SOURCE6} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
+install -m 644 %{SOURCE7} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
@@ -196,8 +202,10 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config %{_unitdir}/*.service
 %config %{_unitdir}/*.target
 %doc COPYING INSTALL NEWS README UPGRADE doc/
@@ -217,13 +225,15 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Fri Aug 22 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.rc1-1
+* Thu Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.rc2-1
 - Initial package for el7
-- Updated to 2.12.0.rc1
+- Updated to 2.12.0.rc2
+- Ganeti is now distributed under the 2-clause BSD license
 - Removed BuildRequires: python-affinity
 - Added BuildRequires: ghc-lens-devel
 - Added BuildRequires: ghc-lifted-base-devel
 - Added BuildRequires: python-psutil
+- Added Requires: logrotate
 - Added Requires: python-psutil
 - Added subpackage: sysvinit
 

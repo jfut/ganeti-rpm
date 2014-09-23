@@ -6,7 +6,7 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux 7.
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 7.x: 2.12.0.beta1
+* RHEL/CentOS/Scientific Linux 7.x: 2.12.0.rc2
 
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
