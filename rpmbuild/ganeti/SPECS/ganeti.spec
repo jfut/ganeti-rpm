@@ -15,7 +15,7 @@
 %define _man_version 2.12
 
 Name: ganeti
-Version: 2.12.0.rc2
+Version: 2.12.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -225,9 +225,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Thu Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0.rc2-1
+* Thu Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0-1
 - Initial package for el7
-- Updated to 2.12.0.rc2
+- Updated to 2.12.0
 - Ganeti is now distributed under the 2-clause BSD license
 - Removed BuildRequires: python-affinity
 - Added BuildRequires: ghc-lens-devel
