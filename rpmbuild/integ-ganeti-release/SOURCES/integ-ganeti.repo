@@ -1,6 +1,6 @@
 [integ-ganeti]
 name=Integ Ganeti Packages $releasever - $basearch
-baseurl=http://jfut.integ.jp/linux/ganeti/7/$basearch
+baseurl=http://jfut.integ.jp/linux/ganeti/fedora/19/$basearch
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
@@ -9,7 +9,7 @@ protect=0
 
 [integ-ganeti-testing]
 name=Integ Ganeti Packages $releasever - Testing
-baseurl=http://jfut.integ.jp/linux/ganeti/7/testing
+baseurl=http://jfut.integ.jp/linux/ganeti/fedora/19/testing
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
@@ -18,7 +18,7 @@ protect=0
 
 [integ-ganeti-source]
 name=Integ Ganeti Packages $releasever - Source
-baseurl=http://jfut.integ.jp/linux/ganeti/7/SRPMS
+baseurl=http://jfut.integ.jp/linux/ganeti/fedora/19/SRPMS
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
