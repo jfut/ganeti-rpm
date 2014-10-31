@@ -75,10 +75,10 @@ This package provides the Haskell %{pkg_name} library development files.
 
 
 %changelog
-* Thu Aug  8 2014 Jun Futagawa <jfut@integ.jp> - 0.3.2-1
+* Fri Aug  8 2014 Jun Futagawa <jfut@integ.jp> - 0.3.2-1
 - Updated to 0.3.2
 
-* Thu Aug  8 2014 Jun Futagawa <jfut@integ.jp> - 0.2.2-1
+* Fri Aug  8 2014 Jun Futagawa <jfut@integ.jp> - 0.2.2-1
 - Removed ExclusiveArch
 - Removed ghc_devel_package
 
