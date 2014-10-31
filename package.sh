@@ -3,9 +3,10 @@
 # Build RPMs for Ganeti & Tools
 
 # Packages to be built
-PACKAGES="ganeti ganeti-instance-debootstrap \
-ghc-Crypto ghc-base64-bytestring ghc-curl ghc-hinotify ghc-regex-pcre \
-python-affinity python-bitarray"
+PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
+            ghc-Crypto ghc-bifunctors ghc-comonad ghc-contravariant ghc-curl
+            ghc-distributive ghc-generic-deriving ghc-lens ghc-profunctors
+            ghc-regex-pcre ghc-semigroupoids ghc-transformers-compat python-affinity"
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -16,7 +17,7 @@ PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 #. ${PACKAGER_DIR}/package-config
 #. ${PACKAGER_DIR}/package-prebuild
 
-RPM_DIST=$(cat /etc/rpm/macros.dist | egrep "^%dist" | awk '{ print $2 }')
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | sed -E 's|^%dist (.el[0-9]*)\..*|\1|')
 
 # Usage
 usage() {
@@ -42,7 +43,7 @@ check_oldpackage() {
     SPEC_FILE="SPECS/${PACKAGE}.spec"
     RPM_VERSION=$(egrep -i "^Version:" ${SPEC_FILE} | awk '{ print $2 }')
     RPM_RELEASE=$(egrep -i "^Release:" ${SPEC_FILE} | awk '{ print $2 }' | cut -d'%' -f 1)
-    RPM_ARCHITECTURE=$(egrep -i "^BuildArchitectures:" ${SPEC_FILE} | awk '{ print $2 }')
+    RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" ${SPEC_FILE} | awk '{ print $2 }' | tail -1)
 
     if [ -z ${RPM_ARCHITECTURE} ]; then
         RPM_ARCHITECTURE=$(uname -i)
@@ -72,7 +73,10 @@ build_package() {
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage ${PACKAGE}
         if [ ${is_overwrite} = "y" ]; then
-            rpmbuild --define "%_topdir "${PACKAGER_RPM_DIR}"/"${PACKAGE}"" -ba SPECS/${PACKAGE}.spec
+            rpmbuild \
+                --define "%_topdir "${PACKAGER_RPM_DIR}"/"${PACKAGE}"" \
+                --define "%dist ${RPM_DIST}" \
+                -ba SPECS/${PACKAGE}.spec
         fi
         echo
         popd

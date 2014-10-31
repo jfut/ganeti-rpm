@@ -1,0 +1,9 @@
+/var/log/ganeti/*.log {
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /usr/lib64/ganeti/daemon-util rotate-all-logs
+    endscript
+}

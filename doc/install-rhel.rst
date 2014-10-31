@@ -35,13 +35,19 @@ Installing The Hypervisor
 
 **Mandatory** on all nodes.
 
-- KVM on RHEL/CentOS/Scientific Linux
+- KVM on RHEL/CentOS/Scientific Linux **6.x and later**
+
+::
+
+  yum install qemu-kvm libvirt python-virtinst bridge-utils
+
+- KVM on RHEL/CentOS/Scientific Linux **5.x**
 
 ::
 
   yum install kvm libvirt python-virtinst bridge-utils
 
-- Xen on RHEL/CentOS/Scientific Linux
+- Xen on RHEL/CentOS/Scientific Linux 5.x
 
 ::
 
@@ -56,13 +62,39 @@ KVM settings
 
 Service configuration::
 
+- RHEL/CentOS/Scientific Linux **7.x and later**
+
+::
+
+  systemctl enable libvirtd.service
+  systemctl disable libvirt-guests.service
+
+- KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
+
+::
+
   chkconfig messagebus on
   chkconfig libvirtd on
   chkconfig libvirt-guests off
 
 Create bridge interface
 
-- ex) br0 (eth0)
+br0 is an example of bridge interface.
+
+- Using NetworkManager
+
+::
+
+  nmcli connection add type bridge ifname br0 con-name br0
+  nmcli connection modify br0 bridge.stp no
+  nmcli connection add type bridge-slave ifname eth0 master br0
+  nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24 192.168.1.254" ipv4.dns "192.168.1.254"
+  nmcli connection modify eth0 connection.autoconnect no
+  nmcli connection up br0
+  nmcli connection down eth0
+  nmcli connection up bridge-slave-eth0
+
+- Using manual configuration
 
 Edit ``/etc/sysconfig/network-scripts/ifcfg-eth0``::
 
@@ -87,6 +119,8 @@ Apply network configurations.::
 
 Allow to bridge interface access.
 
+- Using iptables
+
 Edit ``/etc/sysconfig/iptables``::
 
   *filter
@@ -103,7 +137,7 @@ Apply firewall rules::
 Xen settings
 ~~~~~~~~~~~~
 
-- Xen on RHEL/CentOS/Scientific Linux
+- Xen on RHEL/CentOS/Scientific Linux 5.x
 
 **Mandatory** on all nodes.
 
@@ -165,6 +199,13 @@ ex) Scientific Linux::
 
 Install Integ Ganeti repository:
 
+- RHEL/CentOS/Scientific Linux **7.x**
+
+::
+
+  rpm -Uvh http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7.0-1.el7.noarch.rpm
+  sed -i "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/integ-ganeti.repo
+
 - RHEL/CentOS/Scientific Linux **6.x**
 
 ::
@@ -188,11 +229,25 @@ Install DRBD package::
 
   yum --enablerepo=elrepo install drbd84-utils kmod-drbd84
 
-- DRBD 8.3.0 or later
+- RHEL/CentOS/Scientific Linux **7.x and later**
+
+Create ``/etc/modules-load.d/drbd.conf``::
+
+  drbd
+
+Create ``/etc/modprobe.d/drbd.conf``::
+
+  options drbd minor_count=128 usermode_helper=/bin/true
+
+Load DRBD kernel module::
+
+  systemctl start systemd-modules-load
+
+- RHEL/CentOS/Scientific Linux **5.x and 6.x**
 
 Create ``/etc/default/drbd``::
 
-  ADD_MOD_PARAM="usermode_helper=/bin/true"
+  ADD_MOD_PARAM="minor_count=128 usermode_helper=/bin/true"
 
 Configuring LVM
 +++++++++++++++
@@ -246,6 +301,25 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 
+Service configuration:
+
+- RHEL/CentOS/Scientific Linux **7.x and later**
+
+::
+
+  systemctl enable ganeti.target
+  systemctl enable ganeti-confd.service
+  systemctl enable ganeti-noded.service
+  systemctl enable ganeti-wconfd.service
+  systemctl enable ganeti-rapi.service
+  systemctl enable ganeti-luxid.service
+
+- KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
+
+::
+
+  chkconfig ganeti on
+
 Initializing the cluster
 ++++++++++++++++++++++++
 
@@ -291,11 +365,19 @@ Enable use_bootloader for using VM's boot loader.
 
   gnt-cluster modify --hypervisor-parameters xen-pvm:use_bootloader=True
 
+Verifying the cluster
++++++++++++++++++++++
+
+**Mandatory** on master node.
+
+::
+
+  gnt-cluster verify
 
 Joining the nodes to the cluster
 ++++++++++++++++++++++++++++++++
 
-**Mandatory** for all the other nodes.
+**Mandatory** on master node.
 
 After you have initialized your cluster you need to join the other nodes
 to it. You can do so by executing the following command on the master

@@ -1,11 +1,12 @@
-Ganeti RPM Packaging
-====================
+Ganeti RPM Packaging for el7
+============================
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
+Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux 7.
 
 Packaging status
 ----------------
 
+* RHEL/CentOS/Scientific Linux 7.x: 2.12.0-1
 * RHEL/CentOS/Scientific Linux 6.x: 2.11.6-1
 * RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
 * Fedora 20: 2.11.6-1
@@ -44,8 +45,6 @@ Documentation
 Binary RPM files
 ----------------
 
-RHEL/CentOS/Scientific Linux 6.x, 5.x, and Fedora 19:
-
 - http://jfut.integ.jp/linux/ganeti/
 
 Other Ganeti resources
@@ -53,3 +52,12 @@ Other Ganeti resources
 
 * `The project site <http://code.google.com/p/ganeti/>`_
 * `Ganeti's documentation <http://docs.ganeti.org/ganeti/current/html/>`_
+
+Contributing
+------------
+
+1. Fork it
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -am 'Add some feature')
+4. Push to the branch (git push origin my-new-feature)
+5. Create new Pull Request

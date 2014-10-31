@@ -1,0 +1,12 @@
+diff -urN distributive-0.3.2.default/distributive.cabal distributive-0.3.2/distributive.cabal
+--- distributive-0.3.2.default/distributive.cabal	2013-10-14 09:20:20.000000000 +0900
++++ distributive-0.3.2/distributive.cabal	2014-08-05 15:16:58.490192134 +0900
+@@ -34,7 +34,7 @@
+   build-depends:
+     base                >= 4   && < 5,
+     transformers        >= 0.2 && < 0.4,
+-    transformers-compat >= 0.1 && < 0.2
++    transformers-compat >= 0.1 && < 1
+ 
+   hs-source-dirs:  src
+   exposed-modules: Data.Distributive

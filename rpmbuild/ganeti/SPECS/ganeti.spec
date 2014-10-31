@@ -12,10 +12,10 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 # man version
-%define _man_version 2.11
+%define _man_version 2.12
 
 Name: ganeti
-Version: 2.11.6
+Version: 2.12.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -24,29 +24,30 @@ URL: http://code.google.com/p/ganeti/
 
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
-Source2: ganeti.sysconfig
+Source2: ganeti.logrotate
+Source3: ganeti.sysconfig
+Source4: ganeti-master.target
+Source5: ganeti-node.target
+Source6: ganeti.service
+Source7: ganeti.target
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.11.0-fedora.patch
+Patch1: ganeti-2.12.0-systemd-sshd.patch
+Patch2: ganeti-2.12.0-avoid-systemd-request-repeated.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
-BuildRequires: python-affinity 
 BuildRequires: python-bitarray
 BuildRequires: python-inotify
 BuildRequires: python-ipaddr
 BuildRequires: python-simplejson
-%if %{os_ver} == 5
-BuildRequires: python-ctypes
-%endif
-BuildRequires: python-pycurl
 BuildRequires: python-paramiko
+BuildRequires: python-psutil
+BuildRequires: python-pycurl
 BuildRequires: qemu-img
 BuildRequires: socat
-# htools support: el6 or later only
-%if %{os_ver} >= 6
 BuildRequires: ghc
 BuildRequires: ghc-attoparsec-devel
 BuildRequires: ghc-base64-bytestring-devel
@@ -56,6 +57,8 @@ BuildRequires: ghc-network-devel
 BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-json-devel
+BuildRequires: ghc-lens-devel
+BuildRequires: ghc-lifted-base-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
@@ -64,16 +67,12 @@ BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
 BuildRequires: ghc-zlib-devel
 BuildRequires: libcurl-devel
-%endif
-%if %{os_ver} >= 19
-BuildRequires: ghc-vector-devel
-BuildRequires: ghc-snap-server-devel
-%endif
 
 Requires: bridge-utils
 Requires: iproute
 Requires: iputils
 Requires: lvm2
+Requires: logrotate
 Requires: openssh
 Requires: python
 Requires: pyOpenSSL
@@ -82,12 +81,19 @@ Requires: python-bitarray
 Requires: python-inotify
 Requires: python-ipaddr
 Requires: python-simplejson
-%if %{os_ver} == 5
-Requires: python-ctypes
-%endif
-Requires: python-pycurl
 Requires: python-paramiko
+Requires: python-psutil
+Requires: python-pycurl
 Requires: socat
+
+Requires(post):   systemd-units
+Requires(preun):  systemd-units
+Requires(postun): systemd-units
+
+%package sysvinit
+Summary: The SysV initscript to manage the Ganeti.
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description
 Ganeti is a cluster virtual server management software tool built on
@@ -103,10 +109,21 @@ shutdown, failover between physical systems. It has been designed to
 facilitate cluster management of virtual servers and to provide fast
 and simple recovery after physical failures using commodity hardware.
 
+%description sysvinit
+Ganeti is a cluster virtual server management software tool built on
+top of existing virtualization technologies such as Xen or KVM and
+other Open Source software.
+
+This package contains the SysV init script to manage the DRBD when
+running a legacy SysV-compatible init system.
+
+It is not required when the init system used is systemd.
+
 %prep
 %setup -q
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -128,13 +145,33 @@ make
 rm -rf ${RPM_BUILD_ROOT}
 make DESTDIR=${RPM_BUILD_ROOT} install
 
-mkdir -p ${RPM_BUILD_ROOT}/%{_initrddir}
-mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
-mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_initrddir}
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
 
 install -m 755 %{SOURCE1} ${RPM_BUILD_ROOT}/%{_initrddir}/%{name}
+install -m 644 doc/examples/ganeti.cron ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/%{name}
 install -m 644 doc/examples/ganeti.default ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/%{name}
-install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
+install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d/%{name}
+install -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
+
+install -d -m 755 $RPM_BUILD_ROOT%{_unitdir}
+install -m 644 doc/examples/systemd/ganeti-common.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-common.service
+install -m 644 doc/examples/systemd/ganeti-confd.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-confd.service
+install -m 644 doc/examples/systemd/ganeti-kvmd.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-kvmd.service
+install -m 644 doc/examples/systemd/ganeti-luxid.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-luxid.service
+#install -m 644 doc/examples/systemd/ganeti-metad.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-metad.service
+#install -m 644 doc/examples/systemd/ganeti-mond.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-mond.service
+install -m 644 doc/examples/systemd/ganeti-noded.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-noded.service
+install -m 644 doc/examples/systemd/ganeti-rapi.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-rapi.service
+install -m 644 doc/examples/systemd/ganeti-wconfd.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-wconfd.service
+
+install -m 644 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-master.target
+install -m 644 %{SOURCE5} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
+install -m 644 %{SOURCE6} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
+install -m 644 %{SOURCE7} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
@@ -146,21 +183,31 @@ RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_ROOT}
 
 %post
-/sbin/chkconfig --add ganeti
+%systemd_post ganeti.target ganeti-master.target ganeti-node.target
+%systemd_post ganeti-confd.service ganeti-noded.service
+%systemd_post ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
+#%systemd_post ganeti-ganeti-metad.service ganeti-mond.service
 
 %preun
-if [ $1 = 0 ] ; then
-    /sbin/chkconfig --del ganeti
-    /sbin/service ganeti stop >/dev/null 2>&1
-fi
-exit 0
+%systemd_preun ganeti.target ganeti-master.target ganeti-node.target
+%systemd_preun ganeti-confd.service ganeti-noded.service
+%systemd_preun ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
+#%systemd_preun ganeti-ganeti-metad.service ganeti-mond.service
+
+%postun
+%systemd_postun_with_restart ganeti.target ganeti-master.target ganeti-node.target
+%systemd_postun_with_restart ganeti-confd.service ganeti-noded.service
+%systemd_postun_with_restart ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
+#%systemd_postun_with_restart ganeti-ganeti-metad.service ganeti-mond.service
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %config %{_initrddir}/%{name}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%config %{_unitdir}/*.service
+%config %{_unitdir}/*.target
 %doc COPYING INSTALL NEWS README UPGRADE doc/
 %{_bindir}/h*
 %{_sbindir}/g*
@@ -172,7 +219,24 @@ exit 0
 %attr(750,root,root) %dir /var/lib/%{name}
 %attr(750,root,root) %dir /var/log/%{name}
 
+%files sysvinit
+%defattr(-,root,root)
+%attr(755,root,root) %config %{_initrddir}/%{name}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+
 %changelog
+* Thu Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0-1
+- Initial package for el7
+- Updated to 2.12.0
+- Ganeti is now distributed under the 2-clause BSD license
+- Removed BuildRequires: python-affinity
+- Added BuildRequires: ghc-lens-devel
+- Added BuildRequires: ghc-lifted-base-devel
+- Added BuildRequires: python-psutil
+- Added Requires: logrotate
+- Added Requires: python-psutil
+- Added subpackage: sysvinit
+
 * Tue Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-1
 - Updated to 2.11.6
 - Ganeti is now distributed under the 2-clause BSD license

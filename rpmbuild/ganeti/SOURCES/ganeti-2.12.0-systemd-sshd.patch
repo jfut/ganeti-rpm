@@ -1,0 +1,16 @@
+diff -urN ganeti-2.12.0.default/daemons/daemon-util.in ganeti-2.12.0/daemons/daemon-util.in
+--- ganeti-2.12.0.default/daemons/daemon-util.in	2014-10-07 23:45:37.000000000 +0900
++++ ganeti-2.12.0/daemons/daemon-util.in	2014-10-12 15:37:31.886008715 +0900
+@@ -427,7 +427,11 @@
+ 
+ # Reloads the SSH keys
+ reload_ssh_keys() {
+-  @RPL_SSH_INITD_SCRIPT@ restart
++  if use_systemctl; then
++    systemctl restart sshd.service
++  else
++    @RPL_SSH_INITD_SCRIPT@ restart
++  fi
+ }
+ 
+ # Read @SYSCONFDIR@/rc.d/init.d/functions if start-stop-daemon not available
