@@ -7,8 +7,8 @@ PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
             ghc-Crypto ghc-MonadCatchIO-transformers ghc-bifunctors
             ghc-comonad ghc-contravariant ghc-curl ghc-distributive
             ghc-generic-deriving ghc-lens ghc-profunctors ghc-reflection
-            ghc-regex-pcre ghc-semigroups ghc-semigroupoids ghc-tagged
-            ghc-transformers-compat ghc-void python-affinity"
+            ghc-regex-pcre ghc-semigroups ghc-semigroupoids ghc-split
+            ghc-tagged ghc-transformers-compat ghc-void python-affinity"
 
 # Directories
 PACKAGER="$(basename "${0}")"
