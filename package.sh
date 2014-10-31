@@ -17,7 +17,7 @@ PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 #. ${PACKAGER_DIR}/package-config
 #. ${PACKAGER_DIR}/package-prebuild
 
-RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | sed -E 's|^%dist (.el[0-9]*)\..*|\1|')
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
 
 # Usage
 usage() {
