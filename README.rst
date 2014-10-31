@@ -1,16 +1,13 @@
-Ganeti RPM Packaging for el7
+Ganeti RPM Packaging for f19
 ============================
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux 7.
+Ganeti RPM Packaging for Fedora 19.
 
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 7.x: 2.12.0-1
-* RHEL/CentOS/Scientific Linux 6.x: 2.11.6-1
-* RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
-* Fedora 20: 2.11.6-1
-* Fedora 19: 2.11.6-1
+* Fedora 19: 2.12.0-1
+* `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.11.2 or later: Warning from upstream
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
