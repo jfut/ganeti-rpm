@@ -24,6 +24,8 @@ BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 # END cabal2spec
 
 BuildRequires: ghc-compiler
+BuildRequires: ghc-comonad-devel
+BuildRequires: ghc-distributive-devel
 BuildRequires: ghc-semigroups-devel
 BuildRequires: ghc-transformers-devel
 
