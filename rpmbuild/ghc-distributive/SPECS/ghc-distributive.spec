@@ -26,6 +26,7 @@ BuildRequires:  ghc-rpm-macros %{!?without_hscolour:hscolour}
 
 BuildRequires: ghc-compiler
 BuildRequires: ghc-base-devel
+BuildRequires: ghc-transformers-compat-devel
 BuildRequires: ghc-transformers-devel
 
 Requires: ghc
