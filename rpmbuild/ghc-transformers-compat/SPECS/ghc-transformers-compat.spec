@@ -9,7 +9,7 @@
 %global common_description A %{pkg_name} library for Haskell.
 
 Name:           ghc-%{pkg_name}
-Version:        0.3.3.3
+Version:        0.3.3.2
 Release:        1%{?dist}
 Summary:        %{common_summary}
 
@@ -72,7 +72,7 @@ This package provides the Haskell %{pkg_name} library development files.
 
 
 %changelog
-* Tue Aug  5 2014 Jun Futagawa <jfut@integ.jp> - 0.3.3.3-1
+* Fri Oct 31 2014 Jun Futagawa <jfut@integ.jp> - 0.3.3.2-1
 - Removed ExclusiveArch
 - Removed ghc_devel_package
 
