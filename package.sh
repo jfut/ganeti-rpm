@@ -4,9 +4,10 @@
 
 # Packages to be built
 PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
-            ghc-Crypto ghc-bifunctors ghc-comonad ghc-contravariant ghc-curl
-            ghc-distributive ghc-generic-deriving ghc-lens ghc-profunctors
-            ghc-reflection ghc-regex-pcre ghc-semigroupoids ghc-tagged
+            ghc-Crypto ghc-MonadCatchIO-transformers ghc-bifunctors
+            ghc-comonad ghc-contravariant ghc-curl ghc-distributive
+            ghc-generic-deriving ghc-lens ghc-profunctors ghc-reflection
+            ghc-regex-pcre ghc-semigroupoids ghc-tagged
             ghc-transformers-compat python-affinity"
 
 # Directories
