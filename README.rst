@@ -1,7 +1,7 @@
-Ganeti RPM Packaging
-====================
+Ganeti RPM Packaging for el5
+============================
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
+Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux 5.
 
 Build the package
 -----------------
@@ -14,15 +14,13 @@ Build the package
 
   ./package.sh -p [PACAKGE]
 
-Installation
-------------
+Documentation
+-------------
 
-* `Documentation <https://github.com/jfut/ganeti-rpm/tree/master/doc>`_
+* `Installation and Upgrade guides <https://github.com/jfut/ganeti-rpm/tree/master/doc>`_
 
 Binary RPM files
 ----------------
-
-RHEL/CentOS/Scientific Linux 6.x and 5.x:
 
 - http://jfut.integ.jp/linux/ganeti/
 
@@ -31,3 +29,12 @@ Other Ganeti resources
 
 * `The project site <http://code.google.com/p/ganeti/>`_
 * `Ganeti's documentation <http://docs.ganeti.org/ganeti/current/html/>`_
+
+Contributing
+------------
+
+1. Fork it
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -am 'Add some feature')
+4. Push to the branch (git push origin my-new-feature)
+5. Create new Pull Request
