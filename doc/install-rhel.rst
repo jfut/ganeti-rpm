@@ -54,7 +54,7 @@ KVM settings
 
 **Mandatory** on all nodes.
 
-Service configuration::
+Service configuration:
 
   chkconfig messagebus on
   chkconfig libvirtd on
