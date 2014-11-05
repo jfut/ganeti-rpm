@@ -60,7 +60,7 @@ KVM settings
 
 **Mandatory** on all nodes.
 
-Service configuration::
+Service configuration:
 
 - RHEL/CentOS/Scientific Linux **7.x and later**
 
