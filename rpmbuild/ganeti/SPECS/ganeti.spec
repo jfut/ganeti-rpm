@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.11.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -28,7 +28,7 @@ Source2: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.11.0-fedora.patch
+Patch1: ganeti-2.11.6-sshd-service.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -173,6 +173,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Wed Nov  5 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-2
+- Improved the restart function of sshd service
+
 * Tue Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-1
 - Updated to 2.11.6
 - Ganeti is now distributed under the 2-clause BSD license
