@@ -24,7 +24,8 @@ URL: http://code.google.com/p/ganeti/
 
 Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
-Source2: ganeti.sysconfig
+Source2: ganeti.logrotate
+Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -128,13 +129,17 @@ make
 rm -rf ${RPM_BUILD_ROOT}
 make DESTDIR=${RPM_BUILD_ROOT} install
 
-mkdir -p ${RPM_BUILD_ROOT}/%{_initrddir}
-mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
-mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_initrddir}
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
 
 install -m 755 %{SOURCE1} ${RPM_BUILD_ROOT}/%{_initrddir}/%{name}
+install -m 644 doc/examples/ganeti.cron ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/%{name}
 install -m 644 doc/examples/ganeti.default ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/%{name}
-install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
+install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d/%{name}
+install -m 644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig/%{name}
 
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
@@ -158,9 +163,11 @@ exit 0
 %files
 %defattr(-,root,root)
 %attr(755,root,root) %config %{_initrddir}/%{name}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %doc COPYING INSTALL NEWS README UPGRADE doc/
 %{_bindir}/h*
 %{_sbindir}/g*
@@ -175,6 +182,8 @@ exit 0
 %changelog
 * Wed Nov  5 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-2
 - Improved the restart function of sshd service
+- Added ganeti.cron
+- Added ganeti.logrotate
 
 * Tue Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-1
 - Updated to 2.11.6
