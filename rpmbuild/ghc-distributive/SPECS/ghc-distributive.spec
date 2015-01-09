@@ -10,7 +10,7 @@
 
 Name:           ghc-%{pkg_name}
 Version:        0.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        %{common_summary}
 
 Group:          System Environment/Libraries
@@ -76,6 +76,9 @@ This package provides the Haskell %{pkg_name} library development files.
 
 
 %changelog
+* Fri Jan  9 2015 Jun Futagawa <jfut@integ.jp> - 0.3.2-2
+- Rebuild for ghc-transformers-compat update
+
 * Fri Aug  8 2014 Jun Futagawa <jfut@integ.jp> - 0.3.2-1
 - Updated to 0.3.2
 
