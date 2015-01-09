@@ -15,9 +15,6 @@
 # Source networking configuration.
 . /etc/sysconfig/network
 
-# Check that networking is up.
-[ $NETWORKING = "no" ] && exit 0
-
 # Check for and source configuration file otherwise set defaults
 [ -f /etc/sysconfig/ganeti ] && . /etc/sysconfig/ganeti
 
