@@ -235,7 +235,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Added bash_completion file
 - Fixed #1007 - gnt-cluster master-failover fails (Added ganeti-2.12.0-systemd-options.patch)
 
-* Thu Sep 23 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0-1
+* Sun Oct 12 2014 Jun Futagawa <jfut@integ.jp> - 2.12.0-1
 - Initial package for el7
 - Updated to 2.12.0
 - Ganeti is now distributed under the 2-clause BSD license
