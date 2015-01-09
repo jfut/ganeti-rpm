@@ -35,6 +35,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.12.0-systemd-sshd.patch
 Patch2: ganeti-2.12.0-avoid-systemd-request-repeated.patch
+Patch3: ganeti-2.12.0-systemd-options.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -124,6 +125,7 @@ It is not required when the init system used is systemd.
 
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure \
