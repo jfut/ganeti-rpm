@@ -130,12 +130,14 @@ rm -rf ${RPM_BUILD_ROOT}
 make DESTDIR=${RPM_BUILD_ROOT} install
 
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_initrddir}
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/bash_completion.d
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/default
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/sysconfig
 
 install -m 755 %{SOURCE1} ${RPM_BUILD_ROOT}/%{_initrddir}/%{name}
+install -m 644 doc/examples/bash_completion ${RPM_BUILD_ROOT}/%{_sysconfdir}/bash_completion.d/%{name}
 install -m 644 doc/examples/ganeti.cron ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/%{name}
 install -m 644 doc/examples/ganeti.default ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/%{name}
 install -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_sysconfdir}/logrotate.d/%{name}
@@ -163,6 +165,7 @@ exit 0
 %files
 %defattr(-,root,root)
 %attr(755,root,root) %config %{_initrddir}/%{name}
+%config(noreplace) %{_sysconfdir}/bash_completion.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
