@@ -10,7 +10,7 @@
 
 Name:           ghc-%{pkg_name}
 Version:        4.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        %{common_summary}
 
 Group:          System Environment/Libraries
@@ -75,6 +75,9 @@ This package provides the Haskell %{pkg_name} library development files.
 
 
 %changelog
+* Fri Jan  9 2015 Jun Futagawa <jfut@integ.jp> - 4.2.2-2
+- Rebuild for ghc-transformers-compat update
+
 * Tue Aug  5 2014 Jun Futagawa <jfut@integ.jp> - 4.2.2-1
 - Removed ExclusiveArch
 - Removed ghc_devel_package
