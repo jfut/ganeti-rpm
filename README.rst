@@ -6,10 +6,8 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 6.x: 2.11.6-1
-* RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3
-* Fedora 20: 2.11.6-1
-* Fedora 19: 2.11.6-1
+* RHEL/CentOS/Scientific Linux 7.x for 2.11.x: 2.11.6-3
+* `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.11.2 or later: Warning from upstream
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
