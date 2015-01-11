@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.11.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -180,6 +180,8 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Sun Jan 11 2015 Jun Futagawa <jfut@integ.jp> - 2.11.6-3
+
 * Wed Nov  5 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-2
 - Improved the restart function of sshd service
 - Added ganeti.cron
