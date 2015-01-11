@@ -184,6 +184,8 @@ exit 0
 
 %changelog
 * Sun Jan 11 2015 Jun Futagawa <jfut@integ.jp> - 2.11.6-3
+- Fixed network status test of sysvinit script fails
+- Added bash_completion file
 
 * Wed Nov  5 2014 Jun Futagawa <jfut@integ.jp> - 2.11.6-2
 - Improved the restart function of sshd service
