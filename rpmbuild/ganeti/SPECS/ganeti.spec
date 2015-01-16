@@ -26,10 +26,6 @@ Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
-Source4: ganeti-master.target
-Source5: ganeti-node.target
-Source6: ganeti.service
-Source7: ganeti.target
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -172,10 +168,10 @@ install -m 644 doc/examples/systemd/ganeti-noded.service  ${RPM_BUILD_ROOT}/%{_u
 install -m 644 doc/examples/systemd/ganeti-rapi.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-rapi.service
 install -m 644 doc/examples/systemd/ganeti-wconfd.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-wconfd.service
 
-install -m 644 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-master.target
-install -m 644 %{SOURCE5} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
-install -m 644 %{SOURCE6} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
-install -m 644 %{SOURCE7} ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
+install -m 644 doc/examples/systemd/ganeti-master.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-master.target
+install -m 644 doc/examples/systemd/ganeti-node.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
+install -m 644 doc/examples/systemd/ganeti.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
+install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
