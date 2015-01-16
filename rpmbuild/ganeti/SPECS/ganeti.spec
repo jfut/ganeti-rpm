@@ -227,6 +227,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Fri Jan 16 2015 Jun Futagawa <jfut@integ.jp> - 2.12.1-1
+- Updated to 2.12.1
 
 * Fri Jan  9 2015 Jun Futagawa <jfut@integ.jp> - 2.12.0-2
 - Fixed network status test of sysvinit script fails
