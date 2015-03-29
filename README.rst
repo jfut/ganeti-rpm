@@ -6,7 +6,7 @@ Ganeti RPM Packaging for Fedora 20.
 Packaging status
 ----------------
 
-* Fedora 20: 2.12.1-1
+* Fedora 20: 2.12.2-1
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.11.2 or later: Warning from upstream
