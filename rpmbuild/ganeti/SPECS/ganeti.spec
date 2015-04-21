@@ -15,8 +15,8 @@
 %define _man_version 2.11
 
 Name: ganeti
-Version: 2.11.6
-Release: 3%{?dist}
+Version: 2.11.7
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -183,6 +183,9 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Tue Apr 21 2015 Jun Futagawa <jfut@integ.jp> - 2.11.7-1
+- Updated to 2.11.7
+
 * Sun Jan 11 2015 Jun Futagawa <jfut@integ.jp> - 2.11.6-3
 - Fixed network status test of sysvinit script fails
 - Added bash_completion file
