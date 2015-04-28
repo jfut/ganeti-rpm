@@ -39,19 +39,25 @@ Installing The Hypervisor
 
 ::
 
-  yum install qemu-kvm libvirt python-virtinst bridge-utils
+  yum install qemu-kvm bridge-utils
 
 - KVM on RHEL/CentOS/Scientific Linux **5.x**
 
 ::
 
-  yum install kvm libvirt python-virtinst bridge-utils
+  yum install kvm bridge-utils
 
 - Xen on RHEL/CentOS/Scientific Linux 5.x
 
 ::
 
   yum install xen
+
+- (Optional) libvirt and python-virtinst
+
+::
+
+  yum install libvirt python-virtinst
 
 KVM settings
 ~~~~~~~~~~~~
@@ -60,7 +66,7 @@ KVM settings
 
 **Mandatory** on all nodes.
 
-Service configuration:
+(Optional) Service configuration for libvirt:
 
 - RHEL/CentOS/Scientific Linux **7.x and later**
 
@@ -77,7 +83,7 @@ Service configuration:
   chkconfig libvirtd on
   chkconfig libvirt-guests off
 
-Create bridge interface
+Create bridge interface:
 
 br0 is an example of bridge interface.
 
@@ -145,6 +151,7 @@ Service configuration::
 
   chkconfig xend on
   chkconfig xendomains on
+  # (Optional)
   chkconfig libvirtd off
 
 Edit ``/etc/xen/xend-config.sxp``::
@@ -276,7 +283,7 @@ command::
   pvcreate /dev/sdd1
   vgextend vmvg /dev/sdd1
 
-Optional: it is recommended to configure LVM not to scan the DRBD
+(Optional) it is recommended to configure LVM not to scan the DRBD
 devices for physical volumes. This can be accomplished by editing
 ``/etc/lvm/lvm.conf`` and adding the
 ``/dev/drbd[0-9]+`` regular expression to the
@@ -295,7 +302,7 @@ Installing Ganeti
 
   yum --enablerepo=epel,integ-ganeti install ganeti
 
-- Optional: Install Ganeti Instance Debootstrap:
+- (Optional) Install Ganeti Instance Debootstrap:
 
 ::
 
