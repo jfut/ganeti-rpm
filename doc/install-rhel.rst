@@ -393,6 +393,22 @@ node::
   gnt-node add <NODENAME>
   gnt-node add node2
 
+**Troubleshooting**
+
+- `gnt-node add node2` returns with the error:
+
+```
+Node daemon on node2.example.com didn't answer queries within 10.0 seconds
+```
+Make sure that you have port 1811 open (`lokkit -p 1811:tcp`)
+
+- `gnt-cluster verify` on master returns an error after `Verifying node status`:
+
+```
+ERROR: node node2.example.com: ssh communication with node 'node1.example.com': ssh problem: ssh_exchange_identification: read: Connection reset by peer\'r\n
+```
+Initiate a manual ssh connection from node2 to node1 and vice versa.
+
 Setting up and managing virtual instances
 +++++++++++++++++++++++++++++++++++++++++
 
