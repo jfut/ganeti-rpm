@@ -6,7 +6,7 @@ Ganeti RPM Packaging for Fedora 19.
 Packaging status
 ----------------
 
-* Fedora 19: 2.12.2-1
+* Fedora 19: 2.12.3-1
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.11.2 or later: Warning from upstream
