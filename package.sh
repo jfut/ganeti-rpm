@@ -10,7 +10,7 @@ PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
 
 # Directories
 PACKAGER="$(basename "${0}")"
-PACKAGER_DIR="$(cd $(dirname ${0}) && echo ${PWD})"
+PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 
 # Includes
@@ -41,16 +41,16 @@ check_oldpackage() {
     is_overwrite="-1"
 
     SPEC_FILE="SPECS/${PACKAGE}.spec"
-    RPM_VERSION=$(egrep -i "^Version:" ${SPEC_FILE} | awk '{ print $2 }')
-    RPM_RELEASE=$(egrep -i "^Release:" ${SPEC_FILE} | awk '{ print $2 }' | cut -d'%' -f 1)
-    RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" ${SPEC_FILE} | awk '{ print $2 }' | tail -1)
+    RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
+    RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+    RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
 
-    if [ -z ${RPM_ARCHITECTURE} ]; then
+    if [ -z "${RPM_ARCHITECTURE}" ]; then
         RPM_ARCHITECTURE=$(uname -i)
     fi
 
     RPM_FILE="RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm"
-    if [ -f ${RPM_FILE} ]; then
+    if [ -f "${RPM_FILE}" ]; then
         while [ ${is_overwrite} != "y" -a ${is_overwrite} != "n" ];
         do
             if [ ${is_first} -ne 0 ]; then
@@ -68,15 +68,15 @@ check_oldpackage() {
 
 # Build packages
 build_package() {
-    for PACKAGE in ${@}; do
+    for PACKAGE in "${@}"; do
         echo "Building package for ${PACKAGE}..."
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
-        check_oldpackage ${PACKAGE}
+        check_oldpackage "${PACKAGE}"
         if [ ${is_overwrite} = "y" ]; then
             rpmbuild \
-                --define "%_topdir "${PACKAGER_RPM_DIR}"/"${PACKAGE}"" \
+                --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
                 --define "%dist ${RPM_DIST}" \
-                -ba SPECS/${PACKAGE}.spec
+                -ba "SPECS/${PACKAGE}.spec"
         fi
         echo
         popd
@@ -102,14 +102,15 @@ main() {
                 ;;
         esac
     done
-    shift $((${OPTIND} - 1))
+    shift $((OPTIND - 1))
 
     # Build task
     if [ "${BUILD_ALL}" = "yes" ]; then
-        build_package ${PACKAGES}
+        build_package "${PACKAGES}"
     elif [ "${BUILD_PKGS}" = "yes" ]; then
-        build_package ${@}
+        build_package "${@}"
     fi
 }
 
 [ ${#BASH_SOURCE[@]} = 1 ] && main "$@"
+
