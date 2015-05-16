@@ -227,6 +227,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Sat May 16 2015 Jun Futagawa <jfut@integ.jp> - 2.12.4-1
+- Updated to 2.12.4
 
 * Mon May  4 2015 Jun Futagawa <jfut@integ.jp> - 2.12.3-1
 - Updated to 2.12.3
