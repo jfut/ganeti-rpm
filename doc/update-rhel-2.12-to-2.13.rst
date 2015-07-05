@@ -70,6 +70,7 @@ Update configuration files
 
 ::
 
+  systemctl stop ganeti.target
   /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
   /usr/lib64/ganeti/tools/cfgupgrade --verbose
       This script upgrade the configuration files(/var/lib/ganeti).
@@ -83,6 +84,7 @@ Update configuration files
 
 ::
 
+  /etc/init.d/ganeti stop
   /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
   /usr/lib64/ganeti/tools/cfgupgrade --verbose
       This script upgrade the configuration files(/var/lib/ganeti).
