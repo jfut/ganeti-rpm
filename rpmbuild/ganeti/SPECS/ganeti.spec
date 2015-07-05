@@ -59,6 +59,7 @@ BuildRequires: ghc-lifted-base-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
+BuildRequires: ghc-test-framework-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
@@ -230,6 +231,7 @@ rm -rf ${RPM_BUILD_ROOT}
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.14.0-1
 - Updated to 2.14.0
 - Add BuildRequires: cabal-install
+- Add BuildRequires: ghc-test-framework-devel
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
 - Updated to 2.13.1
