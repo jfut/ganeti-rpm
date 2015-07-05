@@ -15,7 +15,7 @@
 %define _man_version 2.13
 
 Name: ganeti
-Version: 2.13.0
+Version: 2.13.1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -226,6 +226,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
+
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.0-1
 - Updated to 2.13.0
 
