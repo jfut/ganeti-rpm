@@ -59,6 +59,7 @@ BuildRequires: ghc-lifted-base-devel
 BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
+BuildRequires: ghc-temporary-devel
 BuildRequires: ghc-test-framework-devel
 BuildRequires: ghc-test-framework-hunit-devel
 BuildRequires: ghc-test-framework-quickcheck2-devel
@@ -236,6 +237,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add BuildRequires: ghc-test-framework-devel
 - Add BuildRequires: ghc-test-framework-hunit-devel
 - Add BuildRequires: ghc-test-framework-quickcheck2-devel
+- Add BuildRequires: ghc-temporary-devel
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
 - Updated to 2.13.1
