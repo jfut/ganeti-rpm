@@ -61,6 +61,7 @@ BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
 BuildRequires: ghc-test-framework-devel
 BuildRequires: ghc-test-framework-hunit-devel
+BuildRequires: ghc-test-framework-quickcheck2-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
@@ -234,6 +235,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add BuildRequires: cabal-install
 - Add BuildRequires: ghc-test-framework-devel
 - Add BuildRequires: ghc-test-framework-hunit-devel
+- Add BuildRequires: ghc-test-framework-quickcheck2-devel
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
 - Updated to 2.13.1
