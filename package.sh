@@ -5,7 +5,7 @@
 # Packages to be built
 PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
             ghc-Crypto ghc-bifunctors ghc-comonad ghc-contravariant ghc-curl
-            ghc-distributive ghc-generic-deriving ghc-lens ghc-profunctors
+            ghc-distributive ghc-generic-deriving ghc-hostname ghc-lens ghc-profunctors
             ghc-regex-pcre ghc-semigroupoids ghc-transformers-compat python-affinity"
 
 # Directories
