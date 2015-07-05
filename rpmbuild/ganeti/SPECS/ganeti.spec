@@ -63,6 +63,7 @@ BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
 BuildRequires: ghc-zlib-devel
+BuildRequires: cabal-install
 BuildRequires: libcurl-devel
 
 Requires: bridge-utils
@@ -228,6 +229,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.14.0-1
 - Updated to 2.14.0
+- Add BuildRequires: cabal-install
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
 - Updated to 2.13.1
