@@ -12,20 +12,6 @@ Packaging status
 * `Fedora 20: 2.12.5-1 <https://github.com/jfut/ganeti-rpm/tree/f20>`_
 * `Fedora 19: 2.12.5-1 <https://github.com/jfut/ganeti-rpm/tree/f19>`_
 
-Version 2.11.2 or later: Warning from upstream
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  - Improvements to KVM wrt to the kvmd and instance shutdown behavior.
-  WARNING: In contrast to our standard policy, this bug fix update
-  introduces new parameters to the configuration. This means in
-  particular that after an upgrade from 2.11.0 or 2.11.1, 'cfgupgrade'
-  needs to be run, either manually or explicitly by running
-  'gnt-cluster upgrade --to 2.11.2' (which requires that they 
-  had configured the cluster with --enable-full-version).
-  This also means, that it is not easily possible to downgrade from 
-  2.11.2 to 2.11.1 or 2.11.0. The only way is to go back to 2.10 and
-  back.
-
 Build the package
 -----------------
 
