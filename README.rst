@@ -12,6 +12,14 @@ Packaging status
 * `Fedora 20: 2.12.5-1 <https://github.com/jfut/ganeti-rpm/tree/f20>`_
 * `Fedora 19: 2.12.5-1 <https://github.com/jfut/ganeti-rpm/tree/f19>`_
 
+Version 2.14.1, 2.13.2, and 2.12.5: Warning from upstream
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  - This release contains a fix for the problem that different encodings in
+  SSL certificates can break RPC communication (issue 1094). The fix makes
+  it necessary to rerun 'gnt-cluster renew-crypto --new-node-certificates'
+  after the cluster is fully upgraded to 2.14.1, 2.13.2, and 2.12.5.
+
 Build the package
 -----------------
 
