@@ -29,9 +29,9 @@ Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.14.0-systemd-sshd.patch
-Patch2: ganeti-2.14.0-avoid-systemd-request-repeated.patch
-Patch3: ganeti-2.14.0-systemd-options.patch
+Patch1: ganeti-2.15.0-systemd-sshd.patch
+Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
+Patch3: ganeti-2.15.0-systemd-options.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL

@@ -1,6 +1,6 @@
-diff -urN ganeti-2.14.0.default/daemons/daemon-util.in ganeti-2.14.0/daemons/daemon-util.in
---- ganeti-2.14.0.default/daemons/daemon-util.in	2015-06-01 20:30:36.000000000 +0900
-+++ ganeti-2.14.0/daemons/daemon-util.in	2015-07-05 17:23:41.862026667 +0900
+diff -urN ganeti-2.15.0.default/daemons/daemon-util.in ganeti-2.15.0/daemons/daemon-util.in
+--- ganeti-2.15.0.default/daemons/daemon-util.in	2015-07-29 16:50:04.000000000 +0900
++++ ganeti-2.15.0/daemons/daemon-util.in	2015-08-14 14:12:11.507000137 +0900
 @@ -414,7 +414,11 @@
  
  # Reloads the SSH keys
