@@ -234,18 +234,18 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Fri Aug 14 2015 Jun Futagawa <jfut@integ.jp> - 2.15.0-x
 - Updated to 2.15.0
-- Add BuildRequires: ghc-case-insensitive-devel
+- Added BuildRequires: ghc-case-insensitive-devel
 
 * Thu Jul 16 2015 Jun Futagawa <jfut@integ.jp> - 2.14.1-1
 - Updated to 2.14.1
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.14.0-1
 - Updated to 2.14.0
-- Add BuildRequires: cabal-install
-- Add BuildRequires: ghc-test-framework-devel
-- Add BuildRequires: ghc-test-framework-hunit-devel
-- Add BuildRequires: ghc-test-framework-quickcheck2-devel
-- Add BuildRequires: ghc-temporary-devel
+- Added BuildRequires: cabal-install
+- Added BuildRequires: ghc-test-framework-devel
+- Added BuildRequires: ghc-test-framework-hunit-devel
+- Added BuildRequires: ghc-test-framework-quickcheck2-devel
+- Added BuildRequires: ghc-temporary-devel
 
 * Sun Jul  5 2015 Jun Futagawa <jfut@integ.jp> - 2.13.1-1
 - Updated to 2.13.1
