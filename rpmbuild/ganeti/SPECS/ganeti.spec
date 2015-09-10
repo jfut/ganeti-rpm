@@ -232,6 +232,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Thu Sep 10 2015 Jun Futagawa <jfut@integ.jp> - 2.15.1-x
+- Updated to 2.15.1
+
 * Mon Aug 17 2015 Jun Futagawa <jfut@integ.jp> - 2.15.0-1
 - Updated to 2.15.0
 - Added BuildRequires: ghc-case-insensitive-devel
