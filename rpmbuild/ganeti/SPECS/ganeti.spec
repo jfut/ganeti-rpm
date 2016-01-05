@@ -183,7 +183,7 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-x
+* Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-1
 - Updated to 2.11.8
 
 * Tue Apr 21 2015 Jun Futagawa <jfut@integ.jp> - 2.11.7-1
