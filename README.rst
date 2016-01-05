@@ -12,6 +12,8 @@ Packaging status
 Version 2.13.3: Important changes and security notes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  Security release.
+  
   CVE-2015-7944
   
   Ganeti provides a RESTful control interface called the RAPI. Its HTTPS
