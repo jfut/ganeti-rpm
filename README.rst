@@ -8,12 +8,12 @@ Packaging status
 
 * RHEL/CentOS/Scientific Linux 7.x: 2.15.2-1, 2.14.2-1, 2.13.3-1, 2.12.6-1, and 2.11.8-1
 * `RHEL/CentOS/Scientific Linux 6.x: 2.11.8-1 <https://github.com/jfut/ganeti-rpm/tree/el6>`_
-* `RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3 <https://github.com/jfut/ganeti-rpm/tree/el5>`_
+* `RHEL/CentOS/Scientific Linux 5.x: 2.6.2-3 <https://github.com/jfut/ganeti-rpm/tree/el5>`_ (EOL)
 * `Fedora 20: 2.12.6-1 <https://github.com/jfut/ganeti-rpm/tree/f20>`_
 * `Fedora 19: 2.12.6-1 <https://github.com/jfut/ganeti-rpm/tree/f19>`_
 
-Version 2.15.2: Important changes and security notes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 2.15.2, 2.14.2, 2.13.3, 2.12.6, and 2.11.8: Important changes and security notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Security release.
   
