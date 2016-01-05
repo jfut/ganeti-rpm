@@ -6,8 +6,47 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 7.x for 2.13.x: 2.13.2-1
+* RHEL/CentOS/Scientific Linux 7.x for 2.13.x: 2.13.3-1
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
+
+Version 2.13.3: Important changes and security notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  CVE-2015-7944
+  
+  Ganeti provides a RESTful control interface called the RAPI. Its HTTPS
+  implementation is vulnerable to DoS attacks via client-initiated SSL
+  parameter renegotiation. While the interface is not meant to be exposed
+  publicly, due to the fact that it binds to all interfaces, we believe
+  some users might be exposing it unintentionally and are vulnerable. A
+  DoS attack can consume resources meant for Ganeti daemons and instances
+  running on the master node, making both perform badly.
+  
+  Fixes are not feasible due to the OpenSSL Python library not exposing
+  functionality needed to disable client-side renegotiation. Instead, we
+  offer instructions on how to control RAPI's exposure, along with info
+  on how RAPI can be setup alongside an HTTPS proxy in case users still
+  want or need to expose the RAPI interface. The instructions are
+  outlined in Ganeti's security document: doc/html/security.html
+  
+  CVE-2015-7945
+  
+  Ganeti leaks the DRBD secret through the RAPI interface. Examining job
+  results after an instance information job reveals the secret. With the
+  DRBD secret, access to the local cluster network, and ARP poisoning,
+  an attacker can impersonate a Ganeti node and clone the disks of a
+  DRBD-based instance. While an attacker with access to the cluster
+  network is already capable of accessing any data written as DRBD
+  traffic is unencrypted, having the secret expedites the process and
+  allows access to the entire disk.
+  
+  Fixes contained in this release prevent the secret from being exposed
+  via the RAPI. The DRBD secret can be changed by converting an instance
+  to plain and back to DRBD, generating a new secret, but redundancy will
+  be lost until the process completes.
+  Since attackers with node access are capable of accessing some and
+  potentially all data even without the secret, we do not recommend that
+  the secret be changed for existing instances.
 
 Version 2.11.2 or later: Warning from upstream
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
