@@ -26,6 +26,10 @@ Version 2.11.2 or later: Warning from upstream
 Build the package
 -----------------
 
+* Remove ghc-test-framework-quickcheck2 package::
+
+  yum remove ghc-test-framework-quickcheck2-devel
+
 * Build all packages::
 
   ./package.sh -a
@@ -33,6 +37,10 @@ Build the package
 * Build the specified package(s) only::
 
   ./package.sh -p [PACAKGE]
+
+* Re-install ghc-test-framework-quickcheck2 package::
+
+  yum --enablerepo=epel,integ-ganeti install ghc-test-framework-quickcheck2-devel
 
 Documentation
 --------------
