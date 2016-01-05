@@ -15,7 +15,7 @@
 %define _man_version 2.14
 
 Name: ganeti
-Version: 2.14.1
+Version: 2.14.2
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -231,6 +231,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.14.2-x
+- Updated to 2.14.2
+
 * Thu Jul 16 2015 Jun Futagawa <jfut@integ.jp> - 2.14.1-1
 - Updated to 2.14.1
 
