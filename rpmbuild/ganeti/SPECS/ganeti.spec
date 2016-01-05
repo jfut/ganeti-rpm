@@ -226,7 +226,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.13.3-x
+* Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.13.3-1
 - Updated to 2.13.3
 
 * Thu Jul 16 2015 Jun Futagawa <jfut@integ.jp> - 2.13.2-1
