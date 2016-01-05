@@ -10,7 +10,7 @@ Packaging status
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.12.6: Important changes and security notes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Security release.
   
