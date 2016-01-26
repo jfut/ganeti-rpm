@@ -32,6 +32,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 Patch1: ganeti-2.15.0-systemd-sshd.patch
 Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
 Patch3: ganeti-2.15.0-systemd-options.patch
+Patch4: ganeti-2.15.0-fix-parse-drbd-version.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -128,6 +129,7 @@ It is not required when the init system used is systemd.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %configure \
@@ -233,6 +235,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Wed Jan 27 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-x
+- Added DRBD release version patch
 
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-1
 - Updated to 2.15.2
