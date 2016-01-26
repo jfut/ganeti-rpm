@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.15.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -232,6 +232,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Wed Jan 27 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-x
+
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-1
 - Updated to 2.15.2
 
