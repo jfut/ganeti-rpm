@@ -234,7 +234,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Wed Jan 27 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-x
+* Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch
 
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-1
