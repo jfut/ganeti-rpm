@@ -185,7 +185,7 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
-* Sat Jan 30 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-x
+* Sat Jan 30 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-2
 - Added DRBD release version patch
 
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-1
