@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.11.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -183,6 +183,8 @@ exit 0
 %attr(750,root,root) %dir /var/log/%{name}
 
 %changelog
+* Sat Jan 30 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-x
+
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-1
 - Updated to 2.11.8
 
