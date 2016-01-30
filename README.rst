@@ -6,7 +6,7 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux 6.
 Packaging status
 ----------------
 
-* RHEL/CentOS/Scientific Linux 6.x: 2.11.8-1
+* RHEL/CentOS/Scientific Linux 6.x: 2.11.8-2
 * `Other distribution version <https://github.com/jfut/ganeti-rpm/>`_
 
 Version 2.11.8: Important changes and security notes
