@@ -30,6 +30,7 @@ Source3: ganeti.sysconfig
 BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.11.6-sshd-service.patch
+Patch2: ganeti-2.11.8-fix-parse-drbd-version.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -108,6 +109,7 @@ and simple recovery after physical failures using commodity hardware.
 %setup -q
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -184,6 +186,7 @@ exit 0
 
 %changelog
 * Sat Jan 30 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-x
+- Added DRBD release version patch
 
 * Tue Jan  5 2016 Jun Futagawa <jfut@integ.jp> - 2.11.8-1
 - Updated to 2.11.8
