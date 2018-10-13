@@ -12,11 +12,11 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 # man version
-%define _man_version 2.15
+%define _man_version 2.16
 
 Name: ganeti
-Version: 2.15.2
-Release: 2%{?dist}
+Version: 2.16.0
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -234,6 +234,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sat Oct 13 2018 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
+- Updated to 2.16.0
+
 * Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch
 
