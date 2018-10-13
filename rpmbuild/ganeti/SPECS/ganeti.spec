@@ -75,8 +75,9 @@ BuildRequires: libcurl-devel
 Requires: bridge-utils
 Requires: iproute
 Requires: iputils
-Requires: lvm2
+Requires: libcap
 Requires: logrotate
+Requires: lvm2
 Requires: openssh
 Requires: python
 Requires: pyOpenSSL
@@ -236,6 +237,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Sat Oct 13 2018 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
 - Updated to 2.16.0
+- Added Requires: libcap
 
 * Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch
