@@ -31,7 +31,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.15.0-systemd-sshd.patch
 Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
-Patch3: ganeti-2.15.0-systemd-options.patch
+Patch3: ganeti-2.16.0-systemd-options.patch
 Patch4: ganeti-2.15.0-fix-parse-drbd-version.patch
 
 BuildRequires: python

@@ -1,0 +1,120 @@
+diff -urN ganeti-2.16.0.default/daemons/daemon-util.in ganeti-2.16.0/daemons/daemon-util.in
+--- ganeti-2.16.0.default/daemons/daemon-util.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/daemons/daemon-util.in	2018-10-20 14:09:52.945978283 +0900
+@@ -286,8 +286,11 @@
+   local daemonexec=$(_daemon_executable $name)
+ 
+   if use_systemctl; then
++    echo "OPTIONS=$@" > /var/lib/ganeti/${name}.options
+     systemctl start "${name}.service"
+-    return $?
++    ret=$?
++    rm -f /var/lib/ganeti/${name}.options
++    return $ret
+   fi
+ 
+   # Read $<daemon>_ARGS and $EXTRA_<daemon>_ARGS
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-confd.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-confd.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-confd.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-confd.service.in	2018-10-20 14:09:52.960978282 +0900
+@@ -10,7 +10,8 @@
+ Type = simple
+ User = @GNTCONFDUSER@
+ Group = @GNTCONFDGROUP@
+-ExecStart = @SBINDIR@/ganeti-confd -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-confd.options
++ExecStart = @SBINDIR@/ganeti-confd -f $OPTIONS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-kvmd.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-kvmd.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-kvmd.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-kvmd.service.in	2018-10-20 14:09:52.960978282 +0900
+@@ -8,7 +8,8 @@
+ [Service]
+ Type = simple
+ Group = @GNTDAEMONSGROUP@
+-ExecStart = @SBINDIR@/ganeti-kvmd -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-kvmd.options
++ExecStart = @SBINDIR@/ganeti-kvmd -f $OPTIONS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-luxid.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-luxid.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-luxid.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-luxid.service.in	2018-10-20 14:09:52.960978282 +0900
+@@ -10,7 +10,8 @@
+ Type = simple
+ User = @GNTLUXIDUSER@
+ Group = @GNTLUXIDGROUP@
+-ExecStart = @SBINDIR@/ganeti-luxid -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-luxid.options
++ExecStart = @SBINDIR@/ganeti-luxid -f $OPTIONS
+ Restart = on-failure
+ SuccessExitStatus = 0 11
+ 
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-metad.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-metad.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-metad.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-metad.service.in	2018-10-20 14:09:52.962978282 +0900
+@@ -8,7 +8,8 @@
+ Type = simple
+ User = @GNTMETADUSER@
+ Group = @GNTMETADGROUP@
+-ExecStart = @SBINDIR@/ganeti-metad -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-metad.options
++ExecStart = @SBINDIR@/ganeti-metad -f $OPTIONS
+ Restart = on-failure
+ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+ Capabilities=cap_net_bind_service+=ep
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-mond.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-mond.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-mond.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-mond.service.in	2018-10-20 14:09:52.963978282 +0900
+@@ -9,7 +9,8 @@
+ Type = simple
+ User = @GNTMONDUSER@
+ Group = @GNTMONDGROUP@
+-ExecStart = @SBINDIR@/ganeti-mond -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-mond.options
++ExecStart = @SBINDIR@/ganeti-mond -f $OPTIONS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-noded.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-noded.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-noded.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-noded.service.in	2018-10-20 14:09:52.963978282 +0900
+@@ -10,7 +10,8 @@
+ Type = simple
+ User = @GNTNODEDUSER@
+ Group = @GNTNODEDGROUP@
+-ExecStart = @SBINDIR@/ganeti-noded -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-noded.options
++ExecStart = @SBINDIR@/ganeti-noded -f $OPTIONS
+ Restart = on-failure
+ # Important: do not kill any KVM processes
+ KillMode = process
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-rapi.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-rapi.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-rapi.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-rapi.service.in	2018-10-20 14:09:52.963978282 +0900
+@@ -11,7 +11,8 @@
+ Type = simple
+ User = @GNTRAPIUSER@
+ Group = @GNTRAPIGROUP@
+-ExecStart = @SBINDIR@/ganeti-rapi -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-rapi.options
++ExecStart = @SBINDIR@/ganeti-rapi -f $OPTIONS
+ SuccessExitStatus = 0 11
+ Restart = on-failure
+ 
+diff -urN ganeti-2.16.0.default/doc/examples/systemd/ganeti-wconfd.service.in ganeti-2.16.0/doc/examples/systemd/ganeti-wconfd.service.in
+--- ganeti-2.16.0.default/doc/examples/systemd/ganeti-wconfd.service.in	2018-09-19 22:43:16.000000000 +0900
++++ ganeti-2.16.0/doc/examples/systemd/ganeti-wconfd.service.in	2018-10-20 14:09:52.963978282 +0900
+@@ -10,7 +10,8 @@
+ Type = simple
+ User = @GNTWCONFDUSER@
+ Group = @GNTWCONFDGROUP@
+-ExecStart = @SBINDIR@/ganeti-wconfd -f
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-wconfd.options
++ExecStart = @SBINDIR@/ganeti-wconfd -f $OPTIONS
+ Restart = on-failure
+ SuccessExitStatus = 0 11
+ 
