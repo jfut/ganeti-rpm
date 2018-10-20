@@ -22,7 +22,7 @@ Summary: Cluster virtual server management software
 License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
-Source0: http://ganeti.googlecode.com/files/ganeti-%{version}.tar.gz
+Source0: http://ganeti.googlecode.com/files/v%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
