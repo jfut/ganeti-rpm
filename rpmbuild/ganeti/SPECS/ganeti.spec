@@ -125,6 +125,7 @@ It is not required when the init system used is systemd.
 
 %prep
 %setup -q
+./autogen.sh
 
 %patch1 -p1
 %patch2 -p1
