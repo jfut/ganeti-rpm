@@ -38,12 +38,14 @@ BuildRequires: python
 BuildRequires: pyOpenSSL
 BuildRequires: pyparsing
 BuildRequires: python-bitarray
+BuildRequires: python-docutils
 BuildRequires: python-inotify
 BuildRequires: python-ipaddr
-BuildRequires: python-simplejson
 BuildRequires: python-paramiko
 BuildRequires: python-psutil
 BuildRequires: python-pycurl
+BuildRequires: python-simplejson
+BuildRequires: python-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
 BuildRequires: ghc
@@ -240,6 +242,8 @@ rm -rf ${RPM_BUILD_ROOT}
 - Updated to 2.16.0
 - Added Requires: libcap
 - Removed DRBD release version patch
+- Added BuildRequires: python-docutils
+- Added BuildRequires: python-sphinx
 
 * Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch
