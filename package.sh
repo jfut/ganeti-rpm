@@ -8,7 +8,7 @@ PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
             ghc-distributive ghc-generic-deriving ghc-hostname ghc-lens
             ghc-profunctors ghc-regex-pcre ghc-semigroupoids ghc-test-framework
             ghc-test-framework-hunit ghc-test-framework-quickcheck2
-            ghc-transformers-compat python-affinity python-prctl"
+            ghc-transformers-compat python-affinity python-prctl snf-image"
 
 # Directories
 PACKAGER="$(basename "${0}")"
