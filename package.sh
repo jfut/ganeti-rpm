@@ -80,6 +80,9 @@ build_package() {
             yum-builddep "${PACKAGE_SPEC_FILE}"
 
             # Download source and patch files
+            if [ ! -d SOURCES ]; then
+                mkdir SOURCES
+            fi
             spectool -g -A "${PACKAGE_SPEC_FILE}" -C SOURCES/
 
             # Build package
