@@ -74,11 +74,19 @@ build_package() {
         echo "Building package for ${PACKAGE}..."
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage "${PACKAGE}"
+        local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
         if [ ${is_overwrite} = "y" ]; then
+            # Install build dependencies
+            yum-builddep "${PACKAGE_SPEC_FILE}"
+
+            # Download source and patch files
+            spectool -g -A "${PACKAGE_SPEC_FILE}" -C SOURCES/
+
+            # Build package
             rpmbuild \
                 --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
                 --define "%dist ${RPM_DIST}" \
-                -ba "SPECS/${PACKAGE}.spec"
+                -ba "${PACKAGE_SPEC_FILE}"
         fi
         echo
         popd
