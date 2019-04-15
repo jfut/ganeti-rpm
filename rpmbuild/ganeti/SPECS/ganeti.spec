@@ -22,7 +22,7 @@ Summary: Cluster virtual server management software
 License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
-Source0: http://ganeti.googlecode.com/files/v%{version}.tar.gz
+Source0: https://github.com/ganeti/ganeti/archive/v%{version}.tar.gz
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
@@ -57,6 +57,7 @@ BuildRequires: ghc-curl-devel
 BuildRequires: ghc-network-devel
 BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-hslogger-devel
+BuildRequires: ghc-HUnit-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-lens-devel
 BuildRequires: ghc-lifted-base-devel
@@ -64,9 +65,6 @@ BuildRequires: ghc-parallel-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
 BuildRequires: ghc-temporary-devel
-BuildRequires: ghc-test-framework-devel
-BuildRequires: ghc-test-framework-hunit-devel
-BuildRequires: ghc-test-framework-quickcheck2-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
