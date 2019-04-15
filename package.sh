@@ -87,7 +87,7 @@ build_package() {
 
 # Main
 main() {
-    [ $# -lt 1 ] && ( usage; exit 1 );
+    [ $# -lt 1 ] && usage && exit 1
 
     # See how we're called.
     BUILD_ALL="no"
@@ -114,5 +114,5 @@ main() {
     fi
 }
 
-[ ${#BASH_SOURCE[@]} = 1 ] && main "$@"
+[ ${#BASH_SOURCE[@]} = 1 ] && main "${@}"
 
