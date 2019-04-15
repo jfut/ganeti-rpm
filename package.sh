@@ -6,7 +6,7 @@
 PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
             ghc-Crypto ghc-base-orphans ghc-bifunctors ghc-comonad ghc-contravariant ghc-curl
             ghc-distributive ghc-generic-deriving ghc-hostname ghc-lens
-            ghc-profunctors ghc-regex-pcre ghc-semigroupoids ghc-test-framework
+            ghc-profunctors ghc-regex-pcre ghc-semigroupoids ghc-tagged ghc-test-framework
             ghc-test-framework-hunit ghc-test-framework-quickcheck2
             ghc-transformers-compat python-affinity python-prctl snf-image"
 
