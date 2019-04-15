@@ -70,7 +70,7 @@ check_oldpackage() {
 
 # Build packages
 build_package() {
-    for PACKAGE in "${@}"; do
+    for PACKAGE in ${@}; do
         echo "Building package for ${PACKAGE}..."
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage "${PACKAGE}"
