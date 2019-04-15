@@ -7,7 +7,7 @@
 %bcond_with tests
 
 Name:           ghc-%{pkg_name}
-Version:        4.5
+Version:        4.3
 Release:        1%{?dist}
 Summary:        Semigroupoids: Category sans id
 
@@ -27,9 +27,8 @@ BuildRequires:  ghc-semigroups-devel
 BuildRequires:  ghc-transformers-compat-devel
 BuildRequires:  ghc-transformers-devel
 %if %{with tests}
-BuildRequires:  ghc-directory-devel
+BuildRequires:  ghc-Glob-devel
 BuildRequires:  ghc-doctest-devel
-BuildRequires:  ghc-filepath-devel
 %endif
 # End cabal-rpm deps
 
@@ -118,8 +117,8 @@ This package provides the Haskell %{pkg_name} library development files.
 
 
 %changelog
-* Mon Apr 15 2019 Jun Futagawa <jfut@integ.jp> - 4.5-1
-- Rebase spec file by cabal-rpm spec semigroupoids-4.5
+* Mon Apr 15 2019 Jun Futagawa <jfut@integ.jp> - 4.3-1
+- Rebase spec file by cabal-rpm spec semigroupoids-4.3
 
 * Fri Jan  9 2015 Jun Futagawa <jfut@integ.jp> - 4.2-2
 - Rebuild for ghc-transformers-compat update
