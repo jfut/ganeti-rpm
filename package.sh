@@ -77,7 +77,7 @@ build_package() {
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
         if [ ${is_overwrite} = "y" ]; then
             # Install build dependencies
-            yum-builddep "${PACKAGE_SPEC_FILE}"
+            yum-builddep -y "${PACKAGE_SPEC_FILE}"
 
             # Download source and patch files
             if [ ! -d SOURCES ]; then
