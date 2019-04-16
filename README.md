@@ -79,13 +79,14 @@ Build the specified package(s) only:
 
 - [Installation and Upgrade guides](https://github.com/jfut/ganeti-rpm/tree/master/doc)
 
-## Binary RPM files
+## YUM repository and binary RPM files
 
 - http://jfut.integ.jp/linux/ganeti/
 
 ## Other Ganeti resources
 
-- [The project site](http://code.google.com/p/ganeti/)
+- [Ganeti](http://www.ganeti.org/)
+- [Ganeti Source Repository(GitHub)](https://github.com/ganeti/ganeti)
 - [Ganeti's documentation](http://docs.ganeti.org/ganeti/current/html/)
 
 ## Contributing
