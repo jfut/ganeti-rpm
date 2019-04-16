@@ -4,7 +4,7 @@
 %define with_os_dir /usr/share/ganeti/os
 
 Name: ganeti-instance-debootstrap
-Version: 0.14
+Version: 0.16
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: debootstrap-based instance OS definition for ganeti
@@ -18,9 +18,16 @@ Patch1: ganeti-instance-debootstrap-0.12-add_support_for_rhel.patch
 BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-root
 
+BuildRequires: debootstrap
+BuildRequires: dump
+BuildRequires: kpartx
+BuildRequires: util-linux
+
 Requires: ganeti
 Requires: debootstrap
+Requires: dump
 Requires: kpartx
+Requires: util-linux
 
 %description
 This package provides an guest OS definition for Ganeti.
@@ -75,6 +82,9 @@ exit 0
 %{with_os_dir}/debootstrap/*
 
 %changelog
+* Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 0.16-1
+- Updated to 0.16
+
 * Thu May 15 2014 Jun Futagawa <jfut@integ.jp> - 0.14-1
 - Updated to 0.14
 
