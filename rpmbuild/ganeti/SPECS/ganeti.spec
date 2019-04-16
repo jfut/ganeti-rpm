@@ -15,7 +15,7 @@
 %define _man_version 2.16
 
 Name: ganeti
-Version: 2.16.0
+Version: 2.16.1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -242,6 +242,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
+- Updated to 2.16.1
+
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
 - Updated to 2.16.0
 - Added Requires: libcap
