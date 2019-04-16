@@ -56,6 +56,8 @@ Usage:
             integ-ganeti-repo:
                 ${INTEG_GANETI_REPO_PACKAGES}
 
+        -s Sign built packages.
+
         -i Install built packages.
         -u Uninstall installed packages.
 
@@ -96,6 +98,16 @@ check_oldpackage() {
         done
     else
         is_overwrite="y"
+    fi
+}
+
+# Check sign key
+check_signkey() {
+    SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
+    if [ ${SIGNKEY} -lt 1 ]; then
+        echo "Error: Ganeti RPM Packages sign key not found."
+        exit 1
+        SIGN_MODE="no"
     fi
 }
 
@@ -155,6 +167,28 @@ build_package() {
     done
 }
 
+sign_package() {
+    for PACKAGE in ${@}; do
+        echo "Signing package for ${PACKAGE}..."
+        pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
+
+        SIGN_RPM_LIST=""
+        RPM_FILE_LIST=$(find SRPMS RPMS -name "*.rpm")
+        for RPM_FILE in ${RPM_FILE_LIST}; do
+            IS_SIGNED=$(rpm -K "${RPM_FILE}" | grep -i "(md5) pgp" | wc -l)
+            if [ "${IS_SIGNED}" -eq 0 ]; then
+                SIGN_RPM_LIST="${SIGN_RPM_LIST} ${RPM_FILE}"
+            else
+                echo "Skip sign: ${RPM_FILE} is already signed."
+            fi
+        done
+        [ ! -z "${SIGN_RPM_LIST}" ] && rpm --addsign ${SIGN_RPM_LIST}
+
+        echo
+        popd
+    done
+}
+
 ghc_dependency_list() {
     EGREP_REGEX=""
     for PACKAGE in ${PACKAGES}; do
@@ -172,6 +206,7 @@ main() {
     [ $# -lt 1 ] && usage && exit 1
 
     # See how we're called.
+    SIGN_MODE="no"
     INSTALL_MODE="no"
     UNINSTALL_MODE="no"
     BUILD_ALL="no"
@@ -179,8 +214,11 @@ main() {
     BUILD_GANETI_DEPENDES_PACKAGES="no"
     CLEAN_MODE="no"
     GHC_DEPENDENCY_LIST="no"
-    while getopts iuadpcCl OPT; do
+    while getopts siuadpcCl OPT; do
         case "${OPT}" in
+            "s" )
+                SIGN_MODE="yes"
+                check_signkey ;;
             "i" )
                 INSTALL_MODE="yes" ;;
             "u" )
@@ -217,8 +255,14 @@ main() {
         uninstall_package "${@}"
     fi
 
-    # Build task
-    if [ "${BUILD_ALL}" = "yes" ]; then
+    # Sign or Build task
+    if [ "${SIGN_MODE}" = "yes" ]; then
+        if [ "${BUILD_ALL}" = "yes" ]; then
+            sign_package "${PACKAGES}"
+        elif [ "${BUILD_PACKAGES}" = "yes" ]; then
+            sign_package "${@}"
+        fi
+    elif [ "${BUILD_ALL}" = "yes" ]; then
         build_package "${PACKAGES}"
     elif [ "${BUILD_GANETI_DEPENDES_PACKAGES}" = "yes" ]; then
         build_package "${GANETI_DEPENDES_PACKAGES1} ${GANETI_DEPENDES_PACKAGES2} ${GANETI_DEPENDES_PACKAGES3}"
