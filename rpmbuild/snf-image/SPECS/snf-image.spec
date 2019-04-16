@@ -8,7 +8,7 @@ Vendor:         Synnefo development team
 
 License:        GPLv2
 URL:            https://github.com/grnet/snf-image
-Source0:        %{name}-%{version}://github.com/grnet/snf-image/archive/%{version}.tar.gz
+Source0:        https://github.com/grnet/snf-image/archive/%{version}.tar.gz
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 Patch1:         snf-image-0.23.1-kvm.patch
