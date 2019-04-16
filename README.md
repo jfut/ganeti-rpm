@@ -61,18 +61,67 @@ it necessary to rerun 'gnt-cluster renew-crypto --new-node-certificates'
 after the cluster is fully upgraded to 2.15.0, 2.14.1, 2.13.2, and 2.12.5.
 ```
 
-## Build the package
+## Building RPM Packages with Docker
 
-Build all packages:
-
-```
-./package.sh -a
-```
-
-Build the specified package(s) only:
+You can build RPM packages in Docker.
 
 ```
-./package.sh -p [PACAKGE]
+docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 .
+```
+
+Run the container with bash:
+
+```
+BUILD_HOSTNAME=ganeti-rpm-build.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 bash
+cd /pkg
+```
+
+### Build the package
+
+Uninstall, clean, and build all packages, and install:
+
+```
+./package.sh -ucia
+```
+
+Uninstall and clean all pacakges, and build ganeti dependencies packages only, and install:
+
+```
+./package.sh -ucid
+```
+
+Uninstall and clean all pacakges, and build the specified package(s) only, and install:
+
+```
+./package.sh -ucip PACAKGE
+```
+
+Build all packages with no overwrite and install:
+
+```
+./package.sh -o no -ia
+```
+
+### List ghc dependencies in target packages
+
+```
+./package.sh -ucid
+./package.sh -l
+```
+
+## Signing RPM Pacakges
+
+Sign all packages:
+
+```
+./package.sh -sa
+```
+
+Sign the specified package(s) only:
+
+```
+./package.sh -sp PACAKGE
 ```
 
 ## Documentation
