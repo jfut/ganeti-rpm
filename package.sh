@@ -31,10 +31,7 @@ PACKAGER="$(basename "${0}")"
 PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
 
-# Includes
-#. ${PACKAGER_DIR}/package-config
-#. ${PACKAGER_DIR}/package-prebuild
-
+# RPM macros
 RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
 
 # Usage
