@@ -48,6 +48,8 @@ Usage:
         -p Build the specified package(s) only. Available packages are:
             ${PACKAGES}
 
+        -l List ghc dependencies in target packages
+
 _EOF_
 }
 
@@ -111,6 +113,18 @@ build_package() {
     done
 }
 
+ghc_dependency_list() {
+    EGREP_REGEX=""
+    for PACKAGE in ${PACKAGES}; do
+        if [[ ${PACKAGE} =~ ^ghc-(.*) ]]; then
+            EGREP_REGEX="${EGREP_REGEX}|${BASH_REMATCH[1]}"
+        fi
+    done
+
+    # echo "REGEX: \"(${EGREP_REGEX:1})-"
+    ghc-pkg dot | tred | egrep "\"(${EGREP_REGEX:1})-" | sort
+}
+
 # Main
 main() {
     [ $# -lt 1 ] && usage && exit 1
@@ -118,12 +132,15 @@ main() {
     # See how we're called.
     BUILD_ALL="no"
     BUILD_PKGS="no"
-    while getopts ap OPT; do
+    GHC_DEPENDENCY_LIST="no"
+    while getopts apl OPT; do
         case "${OPT}" in
             "a" )
                 BUILD_ALL="yes" ;;
             "p" )
                 BUILD_PKGS="yes" ;;
+            "l" )
+                GHC_DEPENDENCY_LIST="yes" ;;
             * )
                 usage
                 exit 1
@@ -137,6 +154,11 @@ main() {
         build_package "${PACKAGES}"
     elif [ "${BUILD_PKGS}" = "yes" ]; then
         build_package "${@}"
+    fi
+
+    # GHC dependency list task
+    if [ "${GHC_DEPENDENCY_LIST}" = "yes" ]; then
+        ghc_dependency_list
     fi
 }
 
