@@ -70,7 +70,10 @@ BuildRequires: ghc-utf8-string-devel
 BuildRequires: ghc-vector-devel
 BuildRequires: ghc-zlib-devel
 BuildRequires: cabal-install
+BuildRequires: iproute
 BuildRequires: libcurl-devel
+BuildRequires: pandoc
+BuildRequires: graphviz
 
 Requires: bridge-utils
 Requires: iproute
