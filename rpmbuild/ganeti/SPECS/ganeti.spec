@@ -199,19 +199,22 @@ rm -rf ${RPM_BUILD_ROOT}
 %systemd_post ganeti.target ganeti-master.target ganeti-node.target
 %systemd_post ganeti-confd.service ganeti-noded.service
 %systemd_post ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
-#%systemd_post ganeti-ganeti-metad.service ganeti-mond.service
+%systemd_post ganeti-kvmd.service
+#%systemd_post ganeti-metad.service ganeti-mond.service
 
 %preun
 %systemd_preun ganeti.target ganeti-master.target ganeti-node.target
 %systemd_preun ganeti-confd.service ganeti-noded.service
 %systemd_preun ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
-#%systemd_preun ganeti-ganeti-metad.service ganeti-mond.service
+%systemd_preun ganeti-kvmd.service
+#%systemd_preun ganeti-metad.service ganeti-mond.service
 
 %postun
 %systemd_postun_with_restart ganeti.target ganeti-master.target ganeti-node.target
 %systemd_postun_with_restart ganeti-confd.service ganeti-noded.service
 %systemd_postun_with_restart ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
-#%systemd_postun_with_restart ganeti-ganeti-metad.service ganeti-mond.service
+%systemd_postun_with_restart ganeti-kvmd.service
+#%systemd_postun_with_restart ganeti-metad.service ganeti-mond.service
 
 %files
 %defattr(-,root,root)
@@ -239,12 +242,17 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Sat Oct 13 2018 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
+* Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
 - Updated to 2.16.0
 - Added Requires: libcap
 - Removed DRBD release version patch
 - Added BuildRequires: python-docutils
 - Added BuildRequires: python-sphinx
+- Added BuildRequires: ghc-HUnit-devel
+- Added BuildRequires: iproute
+- Added BuildRequires: pandoc
+- Added BuildRequires: graphviz
+- Added ganeti-kvmd.service in %systemd_post, %systemd_preun, and %systemd_postun_with_restart
 
 * Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch
