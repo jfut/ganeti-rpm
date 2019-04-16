@@ -163,7 +163,7 @@ install_package() {
 
             # Install target version packages only
             echo "Instal ${PACKAGE} packages..."
-            yum -y install RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}*${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
+            yum -y install RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
         fi
 
         popd
