@@ -59,6 +59,9 @@ Usage:
         -i Install built packages.
         -u Uninstall installed packages.
 
+        -c Clean the rpmbuild directory, but preserve downloaded archives.
+        -C Completely clean the rpmbuild directory.
+
         -l List ghc dependencies in target packages.
 
 _EOF_
@@ -94,6 +97,19 @@ check_oldpackage() {
     else
         is_overwrite="y"
     fi
+}
+
+# Clean but preserve downloaded archives
+clean_minimal() {
+    echo "Cleaning..."
+    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
+}
+
+# Clean everything
+clean_all() {
+    echo "Cleaning Everything..."
+    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
+    rm -f "${PACKAGER_RPM_DIR}"/*/SOURCES/*.{gz,bz2}
 }
 
 # Uninstall packages
@@ -161,8 +177,9 @@ main() {
     BUILD_ALL="no"
     BUILD_PACKAGES="no"
     BUILD_GANETI_DEPENDES_PACKAGES="no"
+    CLEAN_MODE="no"
     GHC_DEPENDENCY_LIST="no"
-    while getopts iuadpl OPT; do
+    while getopts iuadpcCl OPT; do
         case "${OPT}" in
             "i" )
                 INSTALL_MODE="yes" ;;
@@ -174,6 +191,10 @@ main() {
                 BUILD_GANETI_DEPENDES_PACKAGES="yes" ;;
             "p" )
                 BUILD_PACKAGES="yes" ;;
+            "c" )
+                CLEAN_MODE="minimal" ;;
+            "C" )
+                CLEAN_MODE="all" ;;
             "l" )
                 GHC_DEPENDENCY_LIST="yes" ;;
             * )
@@ -183,6 +204,13 @@ main() {
         esac
     done
     shift $((OPTIND - 1))
+
+    # Clean task
+    if [ "${CLEAN_MODE}" = "minimal" ]; then
+        clean_minimal
+    elif [ "${CLEAN_MODE}" = "all" ]; then
+        clean_all
+    fi
 
     # Uninstall task
     if [ "${UNINSTALL_MODE}" = "yes" ]; then
