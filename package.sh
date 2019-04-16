@@ -13,7 +13,7 @@ GANETI_DEPENDES_PACKAGES3="ghc-base-orphans ghc-bifunctors ghc-profunctors ghc-g
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
 # integ-ganeti repo
-INTEG_REPO_PACKAGES="integ-ganeti-release"
+INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 
 # sng-image
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
@@ -22,8 +22,9 @@ SNF_IMAGE_PACKAGES="python-prctl snf-image"
 PACKAGES="${GANETI_DEPENDES_PACKAGES1}
             ${GANETI_DEPENDES_PACKAGES2}
             ${GANETI_DEPENDES_PACKAGES3}
-            ${GANETI_PACKAGES} ${INTEG_REPO_PACKAGES}
-            ${SNF_IMAGE_PACKAGES}"
+            ${GANETI_PACKAGES}
+            ${SNF_IMAGE_PACKAGES}
+            ${INTEG_GANETI_REPO_PACKAGES}"
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -44,11 +45,22 @@ Usage:
     ${PACKAGER} [-a|-p package...]]
 
     Options:
-        -a Build all packages
+        -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
         -p Build the specified package(s) only. Available packages are:
-            ${PACKAGES}
+            ganeti dependencies:
+                ${GANETI_DEPENDES_PACKAGES1}
+                ${GANETI_DEPENDES_PACKAGES2}
+                ${GANETI_DEPENDES_PACKAGES3}
+            ganeti:
+                ${GANETI_PACKAGES}
+            snf-image:
+                ${SNF_IMAGE_PACKAGES}
+            integ-ganeti-repo:
+                ${INTEG_GANETI_REPO_PACKAGES}
 
-        -l List ghc dependencies in target packages
+        -i Install built packages.
+
+        -l List ghc dependencies in target packages.
 
 _EOF_
 }
@@ -107,6 +119,9 @@ build_package() {
                 --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
                 --define "%dist ${RPM_DIST}" \
                 -ba "${PACKAGE_SPEC_FILE}"
+
+            # Install package
+            [ "${INSTALL_MODE}" = "yes" ] && yum -y install RPMS/*/*.rpm
         fi
         echo
         popd
@@ -130,11 +145,14 @@ main() {
     [ $# -lt 1 ] && usage && exit 1
 
     # See how we're called.
+    INSTALL_MODE="no"
     BUILD_ALL="no"
     BUILD_PKGS="no"
     GHC_DEPENDENCY_LIST="no"
-    while getopts apl OPT; do
+    while getopts iapl OPT; do
         case "${OPT}" in
+            "i" )
+                INSTALL_MODE="yes" ;;
             "a" )
                 BUILD_ALL="yes" ;;
             "p" )
