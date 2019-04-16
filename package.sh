@@ -81,7 +81,6 @@ check_oldpackage() {
     RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
     RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
     RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
-
     if [ -z "${RPM_ARCHITECTURE}" ]; then
         RPM_ARCHITECTURE=$(uname -i)
     fi
@@ -92,7 +91,7 @@ check_oldpackage() {
             is_overwrite="y"
             return
         elif [ "${OVERWRITE_MODE}" = "no" ]; then
-            is_overwrite="-1"
+            is_overwrite="n"
             return
         fi
 
@@ -144,6 +143,33 @@ uninstall_package() {
     yum -y remove ${REMOVE_PACKAGES}
 }
 
+install_package() {
+    echo "Install packages..."
+    for PACKAGE in ${@}; do
+        pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
+
+        set +e
+        yum list installed "${PACKAGE}"
+        RET=$?
+        set -e
+        if [ "${RET}" -ne 0 ]; then
+            SPEC_FILE="SPECS/${PACKAGE}.spec"
+            RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
+            RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+            RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
+            if [ -z "${RPM_ARCHITECTURE}" ]; then
+                RPM_ARCHITECTURE=$(uname -i)
+            fi
+
+            # Install target version packages only
+            echo "Instal ${PACKAGE} packages..."
+            yum -y install RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}*${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
+        fi
+
+        popd
+    done
+}
+
 # Build packages
 build_package() {
     for PACKAGE in ${@}; do
@@ -171,13 +197,7 @@ build_package() {
 
         # Install packages
         if [ "${INSTALL_MODE}" = "yes" ]; then
-            set +e
-            yum list installed "${PACKAGE}"
-            RET=$?
-            set -e
-            if [ "${RET}" -ne 0 ]; then
-                yum -y install RPMS/*/*.rpm
-            fi
+            install_package ${PACKAGE}
         fi
 
         echo
