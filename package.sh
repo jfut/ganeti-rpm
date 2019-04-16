@@ -39,7 +39,7 @@ usage() {
     cat << _EOF_
 
 Usage:
-    ${PACKAGER} [-a|-p package...]]
+    ${PACKAGER} [-s] [-i] [-u] [-c|-C] [-l] [-a|-d|-p package...]]
 
     Options:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
