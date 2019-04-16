@@ -46,6 +46,7 @@ Usage:
 
     Options:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
+        -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
             ganeti dependencies:
                 ${GANETI_DEPENDES_PACKAGES1}
@@ -161,9 +162,10 @@ main() {
     INSTALL_MODE="no"
     UNINSTALL_MODE="no"
     BUILD_ALL="no"
-    BUILD_PKGS="no"
+    BUILD_PACKAGES="no"
+    BUILD_GANETI_DEPENDES_PACKAGES="no"
     GHC_DEPENDENCY_LIST="no"
-    while getopts iuapl OPT; do
+    while getopts iuadpl OPT; do
         case "${OPT}" in
             "i" )
                 INSTALL_MODE="yes" ;;
@@ -171,8 +173,10 @@ main() {
                 UNINSTALL_MODE="yes" ;;
             "a" )
                 BUILD_ALL="yes" ;;
+            "d" )
+                BUILD_GANETI_DEPENDES_PACKAGES="yes" ;;
             "p" )
-                BUILD_PKGS="yes" ;;
+                BUILD_PACKAGES="yes" ;;
             "l" )
                 GHC_DEPENDENCY_LIST="yes" ;;
             * )
@@ -191,7 +195,9 @@ main() {
     # Build task
     if [ "${BUILD_ALL}" = "yes" ]; then
         build_package "${PACKAGES}"
-    elif [ "${BUILD_PKGS}" = "yes" ]; then
+    elif [ "${BUILD_GANETI_DEPENDES_PACKAGES}" = "yes" ]; then
+        build_package "${GANETI_DEPENDES_PACKAGES1} ${GANETI_DEPENDES_PACKAGES2} ${GANETI_DEPENDES_PACKAGES3}"
+    elif [ "${BUILD_PACKAGES}" = "yes" ]; then
         build_package "${@}"
     fi
 
