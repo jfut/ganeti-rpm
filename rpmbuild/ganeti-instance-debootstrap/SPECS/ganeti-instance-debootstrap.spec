@@ -11,7 +11,7 @@ Summary: debootstrap-based instance OS definition for ganeti
 License: GPLv2
 URL: http://code.google.com/p/ganeti/
 
-Source0: http://ganeti.googlecode.com/files/ganeti-instance-debootstrap-%{version}.tar.gz
+Source0: https://github.com/ganeti/instance-debootstrap/archive/v%{version}.tar.gz
 
 Patch1: ganeti-instance-debootstrap-0.12-add_support_for_rhel.patch
 
@@ -28,7 +28,8 @@ It will install a minimal version of Debian or Ubuntu via debootstrap
 (thus it requires network access).
 
 %prep
-%setup -q
+%setup -q -n instance-debootstrap-%{version}
+./autogen.sh
 
 %patch1 -p1
 
