@@ -2,12 +2,28 @@
 #
 # Build RPMs for Ganeti & Tools
 
-# Packages to be built
-PACKAGES="integ-ganeti-release ganeti ganeti-instance-debootstrap
-            ghc-Crypto ghc-base-orphans ghc-bifunctors ghc-comonad ghc-contravariant ghc-curl
-            ghc-distributive ghc-generic-deriving ghc-lens
-            ghc-profunctors ghc-reflection ghc-regex-pcre ghc-semigroupoids ghc-tagged
-            python-prctl snf-image"
+# single packages
+GANETI_DEPENDES_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
+# in order of dependencies
+# (contravariant | tagged -> distributive) -> comonad) -> semigroupoids
+GANETI_DEPENDES_PACKAGES2="ghc-contravariant ghc-tagged ghc-distributive ghc-comonad ghc-semigroupoids"
+# (base-orphans | bifunctors | profunctors | generic-derivin | reflectiong) -> lens
+GANETI_DEPENDES_PACKAGES3="ghc-base-orphans ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
+# ganeti
+GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
+
+# integ-ganeti repo
+INTEG_REPO_PACKAGES="integ-ganeti-release"
+
+# sng-image
+SNF_IMAGE_PACKAGES="python-prctl snf-image"
+
+# all packages
+PACKAGES="${GANETI_DEPENDES_PACKAGES1}
+            ${GANETI_DEPENDES_PACKAGES2}
+            ${GANETI_DEPENDES_PACKAGES3}
+            ${GANETI_PACKAGES} ${INTEG_REPO_PACKAGES}
+            ${SNF_IMAGE_PACKAGES}"
 
 # Directories
 PACKAGER="$(basename "${0}")"
