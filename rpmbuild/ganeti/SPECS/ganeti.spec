@@ -33,6 +33,7 @@ Patch1: ganeti-2.16.0-systemd-sshd.patch
 Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
 Patch3: ganeti-2.16.0-systemd-options.patch
 Patch4: ganeti-2.16.0-vcs-version.patch
+Patch5: ganeti-2.16.1-semigroups-downgrade.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -135,6 +136,7 @@ It is not required when the init system used is systemd.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 %configure \
@@ -244,6 +246,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
 - Updated to 2.16.1
+- Added ganeti-2.16.1-semigroups-downgrade.patch
 
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
 - Updated to 2.16.0
