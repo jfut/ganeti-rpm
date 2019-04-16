@@ -5,10 +5,10 @@
 # single packages
 GANETI_DEPENDES_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
 # in order of dependencies
-# (contravariant | tagged -> distributive) -> comonad) -> semigroupoids
-GANETI_DEPENDES_PACKAGES2="ghc-contravariant ghc-tagged ghc-distributive ghc-comonad ghc-semigroupoids"
-# (base-orphans | bifunctors | profunctors | generic-derivin | reflectiong) -> lens
-GANETI_DEPENDES_PACKAGES3="ghc-base-orphans ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
+# (base-orphans | tagged -> (contravariant | distributive) -> comonad)) -> semigroupoids
+GANETI_DEPENDES_PACKAGES2="ghc-base-orphans ghc-tagged ghc-contravariant ghc-distributive ghc-comonad ghc-semigroupoids"
+# (bifunctors | profunctors | generic-derivin | reflectiong) -> lens
+GANETI_DEPENDES_PACKAGES3="ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
 # ganeti
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
@@ -39,7 +39,7 @@ usage() {
     cat << _EOF_
 
 Usage:
-    ${PACKAGER} [-s] [-i] [-u] [-c|-C] [-l] [-a|-d|-p package...]]
+    ${PACKAGER} [-s] [-i] [-u] [-c|-C] [-l] [-o yes|no] [-a|-d|-p package...]]
 
     Options:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
@@ -56,6 +56,8 @@ Usage:
             integ-ganeti-repo:
                 ${INTEG_GANETI_REPO_PACKAGES}
 
+        -o Overwrite built package: yes|no (Default: manual)
+
         -s Sign built packages.
 
         -i Install built packages.
@@ -71,7 +73,7 @@ _EOF_
 
 # Check old package
 check_oldpackage() {
-    PACKAGE="${1}"
+    local PACKAGE="${1}"
     local is_first=0
     is_overwrite="-1"
 
@@ -86,9 +88,17 @@ check_oldpackage() {
 
     RPM_FILE="RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm"
     if [ -f "${RPM_FILE}" ]; then
-        while [ ${is_overwrite} != "y" -a ${is_overwrite} != "n" ];
+        if [ "${OVERWRITE_MODE}" = "yes" ]; then
+            is_overwrite="y"
+            return
+        elif [ "${OVERWRITE_MODE}" = "no" ]; then
+            is_overwrite="-1"
+            return
+        fi
+
+        while [ "${is_overwrite}" != "y" -a "${is_overwrite}" != "n" ];
         do
-            if [ ${is_first} -ne 0 ]; then
+            if [ "${is_first}" -ne 0 ]; then
                 echo "-> BAD INPUT: Invalid charactor."
             fi
             echo "${RPM_FILE} already exists."
@@ -104,7 +114,7 @@ check_oldpackage() {
 # Check sign key
 check_signkey() {
     SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
-    if [ ${SIGNKEY} -lt 1 ]; then
+    if [ "${SIGNKEY}" -lt 1 ]; then
         echo "Error: Ganeti RPM Packages sign key not found."
         exit 1
         SIGN_MODE="no"
@@ -141,7 +151,7 @@ build_package() {
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage "${PACKAGE}"
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
-        if [ ${is_overwrite} = "y" ]; then
+        if [ "${is_overwrite}" = "y" ]; then
             # Install build dependencies
             yum-builddep -y "${PACKAGE_SPEC_FILE}"
 
@@ -160,7 +170,15 @@ build_package() {
         fi
 
         # Install packages
-        [ "${INSTALL_MODE}" = "yes" ] && yum -y install RPMS/*/*.rpm
+        if [ "${INSTALL_MODE}" = "yes" ]; then
+            set +e
+            yum list installed "${PACKAGE}"
+            RET=$?
+            set -e
+            if [ "${RET}" -ne 0 ]; then
+                yum -y install RPMS/*/*.rpm
+            fi
+        fi
 
         echo
         popd
@@ -192,7 +210,7 @@ sign_package() {
 ghc_dependency_list() {
     EGREP_REGEX=""
     for PACKAGE in ${PACKAGES}; do
-        if [[ ${PACKAGE} =~ ^ghc-(.*) ]]; then
+        if [[ "${PACKAGE}" =~ ^ghc-(.*) ]]; then
             EGREP_REGEX="${EGREP_REGEX}|${BASH_REMATCH[1]}"
         fi
     done
@@ -213,8 +231,9 @@ main() {
     BUILD_PACKAGES="no"
     BUILD_GANETI_DEPENDES_PACKAGES="no"
     CLEAN_MODE="no"
+    OVERWRITE_MODE="manual"
     GHC_DEPENDENCY_LIST="no"
-    while getopts siuadpcCl OPT; do
+    while getopts siuadpcCo:l OPT; do
         case "${OPT}" in
             "s" )
                 SIGN_MODE="yes"
@@ -233,6 +252,8 @@ main() {
                 CLEAN_MODE="minimal" ;;
             "C" )
                 CLEAN_MODE="all" ;;
+            "o" )
+                OVERWRITE_MODE="${OPTARG}" ;;
             "l" )
                 GHC_DEPENDENCY_LIST="yes" ;;
             * )
@@ -252,7 +273,11 @@ main() {
 
     # Uninstall task
     if [ "${UNINSTALL_MODE}" = "yes" ]; then
-        uninstall_package "${@}"
+        if [ "${BUILD_ALL}" = "yes" ]; then
+            uninstall_package "${PACKAGES}"
+        elif [ "${BUILD_PACKAGES}" = "yes" ]; then
+            uninstall_package "${@}"
+        fi
     fi
 
     # Sign or Build task
@@ -274,6 +299,9 @@ main() {
     if [ "${GHC_DEPENDENCY_LIST}" = "yes" ]; then
         ghc_dependency_list
     fi
+
+    echo
+    echo "# Success: (${SECONDS} seconds)"
 }
 
 [ ${#BASH_SOURCE[@]} = 1 ] && main "${@}"
