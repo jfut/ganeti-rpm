@@ -13,6 +13,7 @@ BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 Patch1:         snf-image-0.23.1-kvm.patch
 
+BuildRequires:  parted
 BuildRequires:  make
 BuildRequires:  python-prctl
 BuildRequires:  python2-scapy
@@ -20,6 +21,7 @@ BuildRequires:  python2-scapy
 Requires:       curl
 Requires:       kpartx
 #Requires:       mbr
+Requires:       parted
 Requires:       python >= 2.6
 Requires:       python-prctl
 Requires:       python2-scapy
