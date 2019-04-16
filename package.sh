@@ -1,6 +1,6 @@
 #!/bin/bash -ue
 #
-# Build RPMs for Ganeti & Tools
+# Build RPMs for Ganeti and Tools
 
 # single packages
 GANETI_DEPENDES_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
@@ -59,6 +59,7 @@ Usage:
                 ${INTEG_GANETI_REPO_PACKAGES}
 
         -i Install built packages.
+        -u Uninstall installed packages.
 
         -l List ghc dependencies in target packages.
 
@@ -97,6 +98,16 @@ check_oldpackage() {
     fi
 }
 
+# Uninstall packages
+uninstall_package() {
+    echo "Uninstall packages..."
+    REMOVE_PACKAGES=""
+    for PACKAGE in ${@}; do
+        REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE} ${PACKAGE}-devel ${PACKAGE}-debuginfo"
+    done
+    yum -y remove ${REMOVE_PACKAGES}
+}
+
 # Build packages
 build_package() {
     for PACKAGE in ${@}; do
@@ -120,9 +131,11 @@ build_package() {
                 --define "%dist ${RPM_DIST}" \
                 -ba "${PACKAGE_SPEC_FILE}"
 
-            # Install package
-            [ "${INSTALL_MODE}" = "yes" ] && yum -y install RPMS/*/*.rpm
         fi
+
+        # Install packages
+        [ "${INSTALL_MODE}" = "yes" ] && yum -y install RPMS/*/*.rpm
+
         echo
         popd
     done
@@ -146,13 +159,16 @@ main() {
 
     # See how we're called.
     INSTALL_MODE="no"
+    UNINSTALL_MODE="no"
     BUILD_ALL="no"
     BUILD_PKGS="no"
     GHC_DEPENDENCY_LIST="no"
-    while getopts iapl OPT; do
+    while getopts iuapl OPT; do
         case "${OPT}" in
             "i" )
                 INSTALL_MODE="yes" ;;
+            "u" )
+                UNINSTALL_MODE="yes" ;;
             "a" )
                 BUILD_ALL="yes" ;;
             "p" )
@@ -166,6 +182,11 @@ main() {
         esac
     done
     shift $((OPTIND - 1))
+
+    # Uninstall task
+    if [ "${UNINSTALL_MODE}" = "yes" ]; then
+        uninstall_package "${@}"
+    fi
 
     # Build task
     if [ "${BUILD_ALL}" = "yes" ]; then
