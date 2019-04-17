@@ -2,7 +2,7 @@
 
 Name:           snf-image
 Version:        0.23.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        snf-image is a Ganeti OS definition
 Vendor:         Synnefo development team
 
@@ -90,5 +90,9 @@ popd
 %{_sharedstatedir}/%{name}/helper
 
 %changelog
+* Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 0.23.1-2
+- Added BuildRequires: parted
+- Added Requires: parted
+
 * Mon Mar 18 2019 Jun Futagawa <jfut@integ.jp> - 0.23.1-1
 - Initial package
