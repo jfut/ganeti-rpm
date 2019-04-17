@@ -8,7 +8,7 @@ Official full version:
 
 New versions and updating:
 
-* (Upgrade guides](https://github.com/jfut/ganeti-rpm/tree/master/doc/)
+* [Upgrade guides](https://github.com/jfut/ganeti-rpm/tree/master/doc/)
 
 ## Installing the base system
 
@@ -238,7 +238,7 @@ yum-config-manager --disable integ-ganeti
 - RHEL/CentOS/Scientific Linux **6.x**
 
 ```
-rpm -Uvh http://jfut.integ.jp/linux/ganeti/6/x86_64/integ-ganeti-release-6-1.el6.noarch.rpm
+yum install http://jfut.integ.jp/linux/ganeti/6/x86_64/integ-ganeti-release-6-1.el6.noarch.rpm
 yum-config-manager --disable integ-ganeti
 ```
 
@@ -318,7 +318,9 @@ devices for physical volumes. This can be accomplished by editing
 `/dev/drbd[0-9]+` regular expression to the
 `filter` variable, like this:
 
-  filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
+```
+filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
+```
 
 ## Installing Ganeti
 
