@@ -1,0 +1,16 @@
+diff -urN ganeti-2.16.1.default/lib/client/gnt_cluster.py ganeti-2.16.1/lib/client/gnt_cluster.py
+--- ganeti-2.16.1.default/lib/client/gnt_cluster.py	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/lib/client/gnt_cluster.py	2019-04-17 15:28:17.705714498 +0900
+@@ -1163,12 +1163,6 @@
+       ctx.ssh.CopyFileToNode(node_name, port,
+                              ssconf_master_candidate_certs_filename)
+ 
+-    # Write the boostrap entry to the config using wconfd.
+-    config_live_lock = utils.livelock.LiveLock("renew_crypto")
+-    cfg = config.GetConfig(None, config_live_lock)
+-    cfg.AddNodeToCandidateCerts(constants.CRYPTO_BOOTSTRAP, master_digest)
+-    cfg.Update(cfg.GetClusterInfo(), ctx.feedback_fn)
+-
+   def _RenewServerAndClientCerts(ctx):
+     ctx.feedback_fn("Updating the cluster SSL certificate.")
+ 
