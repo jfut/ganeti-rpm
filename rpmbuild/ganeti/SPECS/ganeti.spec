@@ -243,7 +243,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
+* Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
 - Updated to 2.16.1
 - Added ganeti-2.16.1-semigroups-downgrade.patch
 - Added ganeti-2.16.1-systemd-options.patch
