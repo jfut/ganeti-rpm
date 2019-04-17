@@ -31,8 +31,8 @@ BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-2.16.0-systemd-sshd.patch
 Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
-Patch3: ganeti-2.16.0-systemd-options.patch
 Patch4: ganeti-2.16.0-vcs-version.patch
+Patch3: ganeti-2.16.1-systemd-options.patch
 Patch5: ganeti-2.16.1-semigroups-downgrade.patch
 
 BuildRequires: python
@@ -247,6 +247,7 @@ rm -rf ${RPM_BUILD_ROOT}
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
 - Updated to 2.16.1
 - Added ganeti-2.16.1-semigroups-downgrade.patch
+- Added ganeti-2.16.1-systemd-options.patch
 
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 2.16.0-1
 - Updated to 2.16.0
