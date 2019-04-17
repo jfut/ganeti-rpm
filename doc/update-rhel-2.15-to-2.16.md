@@ -43,6 +43,7 @@ yum --enablerepo=epel,integ-ganeti update ganeti
 
 ```
 systemctl start ganeti.target
+systemctl start ganeti-kvmd.service
 ```
 
 ## Update configuration files
@@ -52,6 +53,7 @@ systemctl start ganeti.target
 - RHEL/CentOS/Scientific Linux **7.x and later**
 
 ```
+systemctl stop ganeti-kvmd.service
 systemctl stop ganeti.target
 /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
 /usr/lib64/ganeti/tools/cfgupgrade --verbose
@@ -59,6 +61,7 @@ systemctl stop ganeti.target
 systemctl start ganeti.target
 gnt-cluster redist-conf
 systemctl restart ganeti.target
+systemctl start ganeti-kvmd.service
 gnt-cluster verify
 ```
 
