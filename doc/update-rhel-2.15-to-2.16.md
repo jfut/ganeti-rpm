@@ -19,8 +19,6 @@ Official documentation:
 
 Stop ganeti service and backup the configuration file.
 
-- RHEL/CentOS/Scientific Linux **7.x and later**
-
 ```
 systemctl stop ganeti-kvmd.service
 systemctl stop ganeti.target
@@ -37,9 +35,7 @@ yum --enablerepo=epel,integ-ganeti update ganeti
 
 ## Start ganeti node
 
-**Mandatory** on member nodes.
-
-- RHEL/CentOS/Scientific Linux **7.x and later**
+**Mandatory** on member nodes only.
 
 ```
 systemctl start ganeti.target
@@ -48,9 +44,7 @@ systemctl start ganeti-kvmd.service
 
 ## Update configuration files
 
-**Mandatory** on master node.
-
-- RHEL/CentOS/Scientific Linux **7.x and later**
+**Mandatory** on master node only.
 
 ```
 systemctl stop ganeti-kvmd.service
