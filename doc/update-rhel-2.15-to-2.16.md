@@ -22,7 +22,8 @@ Stop ganeti service and backup the configuration file.
 ```
 systemctl stop ganeti-kvmd.service
 systemctl stop ganeti.target
-tar czf /var/lib/ganeti-$(date +%FT%T).tar.gz -C /var/lib ganeti
+tar czf /root/ganeti-$(date +%FT%H-%M-%S).tar.gz -C /var/lib ganeti
+chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 ```
 
 ## Update ganeti package
@@ -68,11 +69,15 @@ Users are advised to re-generate Ganeti's server and node certificates after ins
 ```
 # --new-cluster-certificate option includes --new-node-certificates option.
 gnt-cluster renew-crypto --new-cluster-certificate
+
+# check new certificates
+openssl x509 -in /var/lib/ganeti/server.pem -noout -text
+openssl x509 -in /var/lib/ganeti/client.pem -noout -text
 ```
 
-On setups using RAPI and/or SPICE with Ganeti-generated certificates, --new-rapi-certificate and --new-spice-certificate should be appended to the command above.
+On setups using RAPI and/or SPICE with Ganeti-generated certificates, it should also re-generate them using the following command:
 
 ```
-gnt-cluster renew-crypto --new-cluster-certificate --new-rapi-certificate --new-spice-certificate
+gnt-cluster renew-crypto --new-rapi-certificate --new-spice-certificate
 ```
 
