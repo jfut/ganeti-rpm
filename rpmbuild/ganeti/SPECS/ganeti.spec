@@ -35,6 +35,7 @@ Patch3: ganeti-2.16.1-systemd-onetime-args.patch
 Patch4: ganeti-2.16.1-semigroups-downgrade.patch
 Patch5: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
 Patch6: ganeti-2.16.1-default-kvmd-args.patch
+Patch7: ganeti-2.16.1-rapi-require-authentication.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -138,6 +139,7 @@ It is not required when the init system used is systemd.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 %configure \

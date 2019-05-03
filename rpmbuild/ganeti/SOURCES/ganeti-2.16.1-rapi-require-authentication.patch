@@ -1,0 +1,11 @@
+diff -urN ganeti-2.16.1.default/doc/examples/ganeti.default ganeti-2.16.1/doc/examples/ganeti.default
+--- ganeti-2.16.1.default/doc/examples/ganeti.default	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/ganeti.default	2019-05-03 18:47:09.803221124 +0900
+@@ -1,6 +1,6 @@
+ # Default arguments for Ganeti daemons
+ NODED_ARGS=""
+-RAPI_ARGS=""
++RAPI_ARGS="--require-authentication"
+ CONFD_ARGS=""
+ MOND_ARGS=""
+ WCONFD_ARGS=""
