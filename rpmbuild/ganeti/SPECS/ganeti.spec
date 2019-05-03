@@ -34,6 +34,7 @@ Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
 Patch3: ganeti-2.16.1-systemd-onetime-args.patch
 Patch4: ganeti-2.16.1-semigroups-downgrade.patch
 Patch5: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
+Patch6: ganeti-2.16.1-default-kvmd-args.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -136,6 +137,7 @@ It is not required when the init system used is systemd.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 %configure \
