@@ -1,0 +1,137 @@
+diff -urN ganeti-2.16.1.default/daemons/daemon-util.in ganeti-2.16.1/daemons/daemon-util.in
+--- ganeti-2.16.1.default/daemons/daemon-util.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/daemons/daemon-util.in	2019-05-03 17:54:00.342453126 +0900
+@@ -68,6 +68,7 @@
+ LUXID_ARGS=
+ RAPI_ARGS=
+ MOND_ARGS=
++KVMD_ARGS=
+ 
+ # Read defaults file if it exists
+ if [[ -s $defaults_file ]]; then
+@@ -286,7 +287,13 @@
+   local daemonexec=$(_daemon_executable $name)
+ 
+   if use_systemctl; then
++    local onetime_conf="/var/lib/ganeti/${name}.onetime.conf"
++    echo "ONETIME_ARGS=$@" > "${onetime_conf}"
++
+     systemctl start "${name}.service"
++    ret=$?
++
++    rm -f "${onetime_conf}"
+     return $?
+   fi
+ 
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-confd.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-confd.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-confd.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-confd.service.in	2019-05-03 17:43:56.225223090 +0900
+@@ -10,7 +10,9 @@
+ Type = simple
+ User = @GNTCONFDUSER@
+ Group = @GNTCONFDGROUP@
+-ExecStart = @SBINDIR@/ganeti-confd -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-confd.onetime.conf
++ExecStart = @SBINDIR@/ganeti-confd -f $CONFD_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-kvmd.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-kvmd.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-kvmd.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-kvmd.service.in	2019-05-03 17:50:33.515690171 +0900
+@@ -8,7 +8,9 @@
+ [Service]
+ Type = simple
+ Group = @GNTDAEMONSGROUP@
+-ExecStart = @SBINDIR@/ganeti-kvmd -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-kvmd.onetime.conf
++ExecStart = @SBINDIR@/ganeti-kvmd -f $KVMD_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-luxid.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-luxid.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-luxid.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-luxid.service.in	2019-05-03 17:45:15.387516449 +0900
+@@ -10,7 +10,9 @@
+ Type = simple
+ User = @GNTLUXIDUSER@
+ Group = @GNTLUXIDGROUP@
+-ExecStart = @SBINDIR@/ganeti-luxid -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-luxid.onetime.conf
++ExecStart = @SBINDIR@/ganeti-luxid -f $LUXID_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ SuccessExitStatus = 0 11
+ 
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-metad.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-metad.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-metad.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-metad.service.in	2019-05-03 17:46:23.904769392 +0900
+@@ -8,7 +8,9 @@
+ Type = simple
+ User = @GNTMETADUSER@
+ Group = @GNTMETADGROUP@
+-ExecStart = @SBINDIR@/ganeti-metad -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-metad.onetime.conf
++ExecStart = @SBINDIR@/ganeti-metad -f $METAD_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+ Capabilities=cap_net_bind_service+=ep
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-mond.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-mond.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-mond.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-mond.service.in	2019-05-03 17:51:35.915920357 +0900
+@@ -9,7 +9,9 @@
+ Type = simple
+ User = @GNTMONDUSER@
+ Group = @GNTMONDGROUP@
+-ExecStart = @SBINDIR@/ganeti-mond -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-mond.onetime.conf
++ExecStart = @SBINDIR@/ganeti-mond -f $MOND_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ 
+ [Install]
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-noded.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-noded.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-noded.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-noded.service.in	2019-05-03 17:48:48.952304450 +0900
+@@ -10,7 +10,9 @@
+ Type = simple
+ User = @GNTNODEDUSER@
+ Group = @GNTNODEDGROUP@
+-ExecStart = @SBINDIR@/ganeti-noded -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-noded.onetime.conf
++ExecStart = @SBINDIR@/ganeti-noded -f $NODED_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ # Important: do not kill any KVM processes
+ KillMode = process
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-rapi.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-rapi.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-rapi.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-rapi.service.in	2019-05-03 17:49:15.534402510 +0900
+@@ -11,7 +11,9 @@
+ Type = simple
+ User = @GNTRAPIUSER@
+ Group = @GNTRAPIGROUP@
+-ExecStart = @SBINDIR@/ganeti-rapi -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-rapi.onetime.conf
++ExecStart = @SBINDIR@/ganeti-rapi -f $RAPI_ARGS $ONETIME_ARGS
+ SuccessExitStatus = 0 11
+ Restart = on-failure
+ 
+diff -urN ganeti-2.16.1.default/doc/examples/systemd/ganeti-wconfd.service.in ganeti-2.16.1/doc/examples/systemd/ganeti-wconfd.service.in
+--- ganeti-2.16.1.default/doc/examples/systemd/ganeti-wconfd.service.in	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/doc/examples/systemd/ganeti-wconfd.service.in	2019-05-03 17:49:53.483542498 +0900
+@@ -10,7 +10,9 @@
+ Type = simple
+ User = @GNTWCONFDUSER@
+ Group = @GNTWCONFDGROUP@
+-ExecStart = @SBINDIR@/ganeti-wconfd -f
++EnvironmentFile = -@SYSCONFDIR@/default/ganeti
++EnvironmentFile = -@LOCALSTATEDIR@/lib/ganeti/ganeti-wconfd.onetime.conf
++ExecStart = @SBINDIR@/ganeti-wconfd -f $WCONFD_ARGS $ONETIME_ARGS
+ Restart = on-failure
+ SuccessExitStatus = 0 11
+ 
