@@ -60,6 +60,58 @@ systemctl start ganeti-kvmd.service
 gnt-cluster verify
 ```
 
+**Troubleshooting**
+
+- 'Can't find node' messages
+
+You can ignore the 'Can't find node' messages and continue.
+
+```
+# /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
+Please make sure you have read the upgrade notes for Ganeti 2.16.1
+(available in the UPGRADE file and included in other documentation
+formats). Continue with upgrading configuration?
+y/[n]/?: y
+2019-05-07 17:55:14,887: Found configuration version 2150000 (2.15.0)
+2019-05-07 17:55:14,887: Creating symlink from /var/lib/ganeti/rapi_users to /var/lib/ganeti/rapi/users
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,898: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
+2019-05-07 17:55:14,903: Writing configuration file to /var/lib/ganeti/config.data
+Configuration successfully upgraded to version 2.16.1.
+```
+
+- Restore an old configuration
+
+You can restore an old configuration from a backup file.
+
+```
+# on all nodes
+systemctl stop ganeti-kvmd.service
+systemctl stop ganeti.target
+mv /var/lib/ganeti /var/lib/ganeti.failed
+tar zxf /root/ganeti-BACKUP_DATE.tar.gz -C /var/lib
+
+yum downgrade ganeti-2.x.y-z.el7
+
+systemctl start ganeti.target
+systemctl start ganeti-kvmd.service
+```
+
 ### Updated X.509 certificate signing algorithm by [Ganeti 2.16.1 Release](https://github.com/ganeti/ganeti/releases/tag/v2.16.1)
 
 Ganeti now uses the SHA-256 digest algorithm to sign all generated X.509 certificates used to secure the RPC communications between nodes. Previously, Ganeti was using SHA-1 which is seen as weak (but not broken) and has been deprecated by most vendors; most notably, OpenSSL — used by Ganeti on some setups — rejects SHA-1-signed certificates when configured to run on security level 2 and above.
