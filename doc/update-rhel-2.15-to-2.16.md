@@ -95,9 +95,9 @@ y/[n]/?: y
 Configuration successfully upgraded to version 2.16.1.
 ```
 
-- Restore an old configuration
+- Restore an old configuration and downgrade Ganeti
 
-You can restore an old configuration from a backup file.
+You can restore an old configuration from a backup file and downgrade Ganeti.
 
 ```
 # on all nodes
