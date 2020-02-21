@@ -39,16 +39,16 @@ Uninstall, clean, and build all packages, and install:
 ./package.sh -ucia
 ```
 
-Uninstall and clean all pacakges, and build ganeti dependencies packages only, and install:
+Uninstall and clean all packages, and build ganeti dependencies packages only, and install:
 
 ```
 ./package.sh -ucid
 ```
 
-Uninstall and clean all pacakges, and build the specified package(s) only, and install:
+Uninstall and clean all packages, and build the specified package(s) only, and install:
 
 ```
-./package.sh -ucip PACAKGE
+./package.sh -ucip PACKAGE
 ```
 
 Build all packages with no overwrite and install:
@@ -64,7 +64,7 @@ Build all packages with no overwrite and install:
 ./package.sh -l
 ```
 
-## Signing RPM Pacakges
+## Signing RPM Packages
 
 Sign all packages:
 

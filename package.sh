@@ -3,12 +3,18 @@
 # Build RPMs for Ganeti and Tools
 
 # single packages
-GANETI_DEPENDES_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
+GANETI_DEPENDS_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
 # in order of dependencies
 # (base-orphans | tagged -> (contravariant | distributive) -> comonad)) -> semigroupoids
-GANETI_DEPENDES_PACKAGES2="ghc-base-orphans ghc-tagged ghc-contravariant ghc-distributive ghc-comonad ghc-semigroupoids"
+GANETI_DEPENDS_PACKAGES2="ghc-base-orphans ghc-tagged ghc-contravariant ghc-distributive ghc-comonad ghc-semigroupoids"
 # (bifunctors | profunctors | generic-derivin | reflectiong) -> lens
-GANETI_DEPENDES_PACKAGES3="ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
+GANETI_DEPENDS_PACKAGES3="ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
+# mond/metad dependencies
+# ghc-PSQueue | ghc-clock | ghc-bytestring-builder -> ghc-zlib-bindings -> ghc-io-streams
+# ghc-enumerator -> (ghc-attoparsec-enumerator ghc-blaze-builder-enumerator
+# ghc-bytestring-mmap ghc-zlib-enum) -> ghc-snap-core -> ghc-snap-server
+GANETI_DEPENDS_PACKAGES4="ghc-PSQueue ghc-clock ghc-bytestring-builder ghc-zlib-bindings ghc-io-streams"
+GANETI_DEPENDS_PACKAGES5="ghc-enumerator ghc-attoparsec-enumerator ghc-blaze-builder-enumerator ghc-bytestring-mmap ghc-zlib-enum ghc-snap-core ghc-snap-server"
 # ganeti
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
@@ -19,9 +25,11 @@ INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
 
 # all packages
-PACKAGES="${GANETI_DEPENDES_PACKAGES1}
-            ${GANETI_DEPENDES_PACKAGES2}
-            ${GANETI_DEPENDES_PACKAGES3}
+PACKAGES="${GANETI_DEPENDS_PACKAGES1}
+            ${GANETI_DEPENDS_PACKAGES2}
+            ${GANETI_DEPENDS_PACKAGES3}
+            ${GANETI_DEPENDS_PACKAGES4}
+            ${GANETI_DEPENDS_PACKAGES5}
             ${GANETI_PACKAGES}
             ${SNF_IMAGE_PACKAGES}
             ${INTEG_GANETI_REPO_PACKAGES}"
@@ -46,9 +54,11 @@ Usage:
         -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
             ganeti dependencies:
-                ${GANETI_DEPENDES_PACKAGES1}
-                ${GANETI_DEPENDES_PACKAGES2}
-                ${GANETI_DEPENDES_PACKAGES3}
+                ${GANETI_DEPENDS_PACKAGES1}
+                ${GANETI_DEPENDS_PACKAGES2}
+                ${GANETI_DEPENDS_PACKAGES3}
+                ${GANETI_DEPENDS_PACKAGES4}
+                ${GANETI_DEPENDS_PACKAGES5}
             ganeti:
                 ${GANETI_PACKAGES}
             snf-image:
@@ -249,7 +259,7 @@ main() {
     UNINSTALL_MODE="no"
     BUILD_ALL="no"
     BUILD_PACKAGES="no"
-    BUILD_GANETI_DEPENDES_PACKAGES="no"
+    BUILD_GANETI_DEPENDS_PACKAGES="no"
     CLEAN_MODE="no"
     OVERWRITE_MODE="manual"
     GHC_DEPENDENCY_LIST="no"
@@ -265,7 +275,7 @@ main() {
             "a" )
                 BUILD_ALL="yes" ;;
             "d" )
-                BUILD_GANETI_DEPENDES_PACKAGES="yes" ;;
+                BUILD_GANETI_DEPENDS_PACKAGES="yes" ;;
             "p" )
                 BUILD_PACKAGES="yes" ;;
             "c" )
@@ -309,8 +319,8 @@ main() {
         fi
     elif [ "${BUILD_ALL}" = "yes" ]; then
         build_package "${PACKAGES}"
-    elif [ "${BUILD_GANETI_DEPENDES_PACKAGES}" = "yes" ]; then
-        build_package "${GANETI_DEPENDES_PACKAGES1} ${GANETI_DEPENDES_PACKAGES2} ${GANETI_DEPENDES_PACKAGES3}"
+    elif [ "${BUILD_GANETI_DEPENDS_PACKAGES}" = "yes" ]; then
+        build_package "${GANETI_DEPENDS_PACKAGES1} ${GANETI_DEPENDS_PACKAGES2} ${GANETI_DEPENDS_PACKAGES3} ${GANETI_DEPENDS_PACKAGES4} ${GANETI_DEPENDS_PACKAGES5}"
     elif [ "${BUILD_PACKAGES}" = "yes" ]; then
         build_package "${@}"
     fi
