@@ -21,6 +21,9 @@ You can build RPM packages in Docker.
 
 ```
 docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 .
+
+# no cache
+docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 . --no-cache
 ```
 
 Run the container with bash:
