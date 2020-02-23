@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.16.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -57,16 +57,18 @@ BuildRequires: ghc-base64-bytestring-devel
 BuildRequires: ghc-case-insensitive-devel
 BuildRequires: ghc-Crypto-devel
 BuildRequires: ghc-curl-devel
-BuildRequires: ghc-network-devel
 BuildRequires: ghc-hinotify-devel
 BuildRequires: ghc-hslogger-devel
 BuildRequires: ghc-HUnit-devel
 BuildRequires: ghc-json-devel
 BuildRequires: ghc-lens-devel
 BuildRequires: ghc-lifted-base-devel
+BuildRequires: ghc-network-devel
 BuildRequires: ghc-parallel-devel
+BuildRequires: ghc-PSQueue-devel
 BuildRequires: ghc-QuickCheck-devel
 BuildRequires: ghc-regex-pcre-devel
+BuildRequires: ghc-snap-server-devel
 BuildRequires: ghc-temporary-devel
 BuildRequires: ghc-text-devel
 BuildRequires: ghc-utf8-string-devel
@@ -77,6 +79,7 @@ BuildRequires: iproute
 BuildRequires: libcurl-devel
 BuildRequires: pandoc
 BuildRequires: graphviz
+BuildRequires: m4
 
 Requires: bridge-utils
 Requires: iproute
@@ -154,6 +157,8 @@ It is not required when the init system used is systemd.
   --with-iallocator-search-path=%{iallocator_search_path} \
   --with-xen-bootloader=/usr/bin/pygrub \
   --with-kvm-path=/usr/libexec/qemu-kvm \
+  --enable-monitoring \
+  --enable-metadata \
   $@
 make
 
@@ -180,8 +185,8 @@ install -m 644 doc/examples/systemd/ganeti-common.service ${RPM_BUILD_ROOT}/%{_u
 install -m 644 doc/examples/systemd/ganeti-confd.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-confd.service
 install -m 644 doc/examples/systemd/ganeti-kvmd.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-kvmd.service
 install -m 644 doc/examples/systemd/ganeti-luxid.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-luxid.service
-#install -m 644 doc/examples/systemd/ganeti-metad.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-metad.service
-#install -m 644 doc/examples/systemd/ganeti-mond.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-mond.service
+install -m 644 doc/examples/systemd/ganeti-metad.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-metad.service
+install -m 644 doc/examples/systemd/ganeti-mond.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-mond.service
 install -m 644 doc/examples/systemd/ganeti-noded.service  ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-noded.service
 install -m 644 doc/examples/systemd/ganeti-rapi.service   ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-rapi.service
 install -m 644 doc/examples/systemd/ganeti-wconfd.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-wconfd.service
@@ -205,21 +210,21 @@ rm -rf ${RPM_BUILD_ROOT}
 %systemd_post ganeti-confd.service ganeti-noded.service
 %systemd_post ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
 %systemd_post ganeti-kvmd.service
-#%systemd_post ganeti-metad.service ganeti-mond.service
+%systemd_post ganeti-metad.service ganeti-mond.service
 
 %preun
 %systemd_preun ganeti.target ganeti-master.target ganeti-node.target
 %systemd_preun ganeti-confd.service ganeti-noded.service
 %systemd_preun ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
 %systemd_preun ganeti-kvmd.service
-#%systemd_preun ganeti-metad.service ganeti-mond.service
+%systemd_preun ganeti-metad.service ganeti-mond.service
 
 %postun
 %systemd_postun_with_restart ganeti.target ganeti-master.target ganeti-node.target
 %systemd_postun_with_restart ganeti-confd.service ganeti-noded.service
 %systemd_postun_with_restart ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
 %systemd_postun_with_restart ganeti-kvmd.service
-#%systemd_postun_with_restart ganeti-metad.service ganeti-mond.service
+%systemd_postun_with_restart ganeti-metad.service ganeti-mond.service
 
 %files
 %defattr(-,root,root)
@@ -247,6 +252,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Thu Feb 20 2020 Lance Albertson <lance@osuosl.org - 2.16.1-2
+- Add build dependencies for metad and mond and enable them in the build
+
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
 - Updated to 2.16.1
 - Added ganeti-2.16.1-semigroups-downgrade.patch
