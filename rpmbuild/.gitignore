@@ -4,3 +4,4 @@ RPMS
 SRPMS
 *.gz
 *.bz2
+*.cabal
