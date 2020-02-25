@@ -4,6 +4,6 @@
     sharedscripts
     delaycompress
     postrotate
-        /usr/lib64/ganeti/daemon-util rotate-all-logs
+        /usr/lib64/ganeti/daemon-util rotate-all-logs > /dev/null 2>&1 || true
     endscript
 }
