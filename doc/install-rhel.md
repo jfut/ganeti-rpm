@@ -468,7 +468,7 @@ Initiate a manual ssh connection from node2 to node1 and vice versa.
 
 - Setting up RHEL/CentOS/Scientific Linux
 
-I recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image).
+We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image).
 
 - Setting up Debian (require ganeti-instance-debootstrap)
 
