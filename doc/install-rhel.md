@@ -62,10 +62,21 @@ systemctl enable ksm.service
 systemctl enable ksmtuned.service
 ```
 
+- RHEL/CentOS/Scientific Linux **7.7.1908**
+
+[On 7.7.1908, it can not paste to execute multi-line `systemctl ...`.](https://bugs.centos.org/view.php?id=16758)
+
+```
+true | systemctl enable libvirtd.service
+true | systemctl enable ksm.service
+true | systemctl enable ksmtuned.service
+```
+
 Disable unused virbrX:
 
 ```
 systemctl start libvirtd.service
+
 virsh net-autostart default --disable
 virsh net-destroy default
 ```
@@ -342,6 +353,18 @@ yum --enablerepo=epel,integ-ganeti install ganeti
 yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap snf-image
 ```
 
+Required ports:
+
+Several network ports must be available and opened so the different nodes can communicate properly between them.
+
+- ganeti-noded: 1811/tcp
+- ganeti-confd: 1814/udp
+- ganeti-rapi: 5080/tcp
+- ganeti-mond: 1815/tcp
+- ganeti-metad: 80/tcp
+- DRBD port for instances: 11000/tcp - 14999/tcp
+- VNC port: 5900/tcp
+
 Service configuration:
 
 - RHEL/CentOS/Scientific Linux **7.x and later**
@@ -354,6 +377,30 @@ systemctl enable ganeti-wconfd.service
 systemctl enable ganeti-rapi.service
 systemctl enable ganeti-luxid.service
 systemctl enable ganeti-kvmd.service
+
+# Optional: ganeti-mond is the daemon providing the Ganeti monitoring functionality.
+systemctl enable ganeti-mond.service
+# Optional: ganeti-metad is the daemon providing the metadata service.
+systemctl enable ganeti-metad.service
+```
+
+- RHEL/CentOS/Scientific Linux **7.7.1908**
+
+[On 7.7.1908, it can not paste to execute multi-line `systemctl ...`.](https://bugs.centos.org/view.php?id=16758)
+
+```
+true | systemctl enable ganeti.target
+true | systemctl enable ganeti-confd.service
+true | systemctl enable ganeti-noded.service
+true | systemctl enable ganeti-wconfd.service
+true | systemctl enable ganeti-rapi.service
+true | systemctl enable ganeti-luxid.service
+true | systemctl enable ganeti-kvmd.service
+
+# Optional: ganeti-mond is the daemon providing the Ganeti monitoring functionality.
+true | systemctl enable ganeti-mond.service
+# Optional: ganeti-metad is the daemon providing the metadata service.
+true | systemctl enable ganeti-metad.service
 ```
 
 - KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
