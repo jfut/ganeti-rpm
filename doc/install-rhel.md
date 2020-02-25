@@ -12,6 +12,9 @@ New versions and updating:
 
 ## Installing the base system
 
+Ganeti works on a single node, but we recommend a configuration with 3 or more nodes.
+With two nodes, there is a problem with voting to determine the master during a master failover.
+
 **Mandatory** on all nodes.
 
 Note that Ganeti requires the hostnames of the systems.
@@ -25,6 +28,7 @@ e.g. DNS or `/etc/hosts`:
 # node names
 192.168.1.11    node1.example.com node1
 192.168.1.12    node2.example.com node2
+192.168.1.13    node3.example.com node3
 # instance names
 192.168.1.101   instance1.example.com instance1
 192.168.1.102   instance2.example.com instance2
@@ -433,6 +437,10 @@ node.
 ```
 gnt-node add <NODENAME>
 gnt-node add node2
+
+gnt-node add node3
+
+... and more node.
 ```
 
 **Troubleshooting**
