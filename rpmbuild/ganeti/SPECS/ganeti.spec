@@ -252,8 +252,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Thu Feb 20 2020 Lance Albertson <lance@osuosl.org - 2.16.1-2
-- Add build dependencies for metad and mond and enable them in the build
+* Tue Feb 25 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-2
+- Add build dependencies for metad and mond and enable them in the build (#25, thanks @ramereth)
+- Improve messages for unused daemons when running logrotate (#23)
 
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 2.16.1-1
 - Updated to 2.16.1
