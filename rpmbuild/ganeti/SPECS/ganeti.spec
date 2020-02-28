@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.16.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -252,6 +252,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Fri Feb 28 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-3
+
 * Tue Feb 25 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-2
 - Add build dependencies for metad and mond and enable them in the build (#25, thanks @ramereth)
 - Improve messages for unused daemons when running logrotate (#23)
