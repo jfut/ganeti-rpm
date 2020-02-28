@@ -37,6 +37,7 @@ Patch5: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
 Patch6: ganeti-2.16.1-default-kvmd-args.patch
 Patch7: ganeti-2.16.1-rapi-require-authentication.patch
 Patch8: ganeti-2.16.1-systemd-ambient-capabilities.patch
+Patch9: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -145,6 +146,7 @@ It is not required when the init system used is systemd.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 %configure \
@@ -256,6 +258,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Fri Feb 28 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-3
 - Add AmbientCapabilities in ganeti-metad.service (#26)
+- Add ask whether to continue the upgrade without RPM (#24)
 
 * Tue Feb 25 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-2
 - Add build dependencies for metad and mond and enable them in the build (#25, thanks @ramereth)

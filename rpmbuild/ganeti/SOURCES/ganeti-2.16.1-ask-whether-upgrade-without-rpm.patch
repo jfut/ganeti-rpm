@@ -1,0 +1,15 @@
+diff -urN ganeti-2.16.1.default/lib/client/gnt_cluster.py ganeti-2.16.1/lib/client/gnt_cluster.py
+--- ganeti-2.16.1.default/lib/client/gnt_cluster.py	2019-04-01 15:29:37.000000000 +0900
++++ ganeti-2.16.1/lib/client/gnt_cluster.py	2020-02-28 14:38:17.455632899 +0900
+@@ -2376,6 +2376,11 @@
+              " has to be given")
+     return 1
+ 
++  usertext = ("This Ganeti is installed by RPM package, so it is recommended"
++              " to upgrade using RPM. Continue?")
++  if not AskUser(usertext):
++    return 1
++
+   # If we're not told to resume, verify there is no upgrade
+   # in progress.
+   if not opts.resume:
