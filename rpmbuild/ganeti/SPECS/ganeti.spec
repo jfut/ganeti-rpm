@@ -15,8 +15,8 @@
 %define _man_version 2.16
 
 Name: ganeti
-Version: 2.16.1
-Release: 3%{?dist}
+Version: 2.16.2
+Release: 0%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -256,6 +256,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue May 26 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-0
+- Updated to 2.16.2
+
 * Fri Feb 28 2020 Jun Futagawa <jfut@integ.jp> - 2.16.1-3
 - Add AmbientCapabilities in ganeti-metad.service (#26)
 - Add ask whether to continue the upgrade without RPM (#24)
