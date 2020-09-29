@@ -133,7 +133,8 @@ index c85f7a739..485ca5c3d 100644
 @@ -71,6 +140,12 @@ function setup_bridge {
  
      # Connect the interface to the bridge
-     ip link set $INTERFACE master $LINK
+-    brctl addif $LINK $INTERFACE
++    ip link set $INTERFACE master $LINK
 +
 +    # VLAN aware bridge?
 +    # https://developers.redhat.com/blog/2017/09/14/vlan-filter-support-on-bridge/
