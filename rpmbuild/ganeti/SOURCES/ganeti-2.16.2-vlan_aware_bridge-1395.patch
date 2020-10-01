@@ -1,0 +1,146 @@
+From 0064b5a5146fb3a641dd07effb501b98dea5b99c Mon Sep 17 00:00:00 2001
+From: Sascha Lucas <sascha_lucas@web.de>
+Date: Sat, 22 Jun 2019 15:48:24 +0200
+Subject: [PATCH] add VLAN aware bridging
+
+This implements issue #1387. A bridge with VLAN filtering must be
+setup. With traditional ifupdown this can be accomplished by adding
+a post-up directive. Example /etc/network/interfaces snipped:
+
+auto gnt-br
+iface gnt-br inet manual
+        bridge_ports bond0
+        bridge_fd 0
+        bridge_stp off
+        post-up ip link set dev gnt-br type bridge vlan_filtering 1
+
+To not force the admin to setup VLANs on the bridge uplink interface
+(here bond0) on every node in the cluster, they get configured
+automatically.
+
+VLAN aware and traditional vlan/bridges can coexist, but not within
+the same VLAN. I.e. to use VLAN 100 on the vlan aware bridge gnt-br,
+one must remove traditional vlan interface for vlan 100 (bond0.100).
+
+Signed-off-by: Sascha Lucas <sascha_lucas@web.de>
+---
+ man/gnt-instance.rst | 11 ++++---
+ tools/net-common.in  | 75 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+), 4 deletions(-)
+
+diff --git a/man/gnt-instance.rst b/man/gnt-instance.rst
+index de49794f5..f9354ba09 100644
+--- a/man/gnt-instance.rst
++++ b/man/gnt-instance.rst
+@@ -178,10 +178,13 @@ name
+    identifier. An instance can not have two NICs with the same name.
+ 
+ vlan
+-   in openvswitch mode specifies the VLANs that the NIC will be
+-   connected to. To connect as an access port use ``n`` or ``.n`` with
+-   **n** being the VLAN ID. To connect as an trunk port use ``:n[:n]``.
+-   A hybrid port can be created with ``.n:n[:n]``
++   in bridged and openvswitch mode specifies the VLANs that the NIC
++   will be connected to. To connect as an access port use ``n`` or 
++   ``.n`` with **n** being the VLAN ID. To connect as an trunk port
++   use ``:n[:n]``. A hybrid port can be created with ``.n:n[:n]``. For
++   bridged mode, the bridge needs VLAN filtering enabled. Assuming a
++   bridge named **gnt-br**, this is accomplished by running ``ip link
++   set dev gnt-br type bridge vlan_filtering 1``.
+ 
+ Of these "mode" and "link" are NIC parameters, and inherit their
+ default at cluster level.  Alternatively, if no network is desired for
+diff --git a/tools/net-common.in b/tools/net-common.in
+index c85f7a739..485ca5c3d 100644
+--- a/tools/net-common.in
++++ b/tools/net-common.in
+@@ -63,6 +63,75 @@ function fix_mac {
+   ip link set $INTERFACE address $FIXED_MAC || true
+ }
+ 
++function log_info() {
++  echo "${@}" >&2
++  logger -p local1.info -t ${0}[$$] -- "${@}"
++}
++
++function bridge_vlan_add {
++  local VID="${1}"
++  shift
++
++  # when the VID is in use by traditional VLAN interface, then the
++  # tap on the VLAN aware bridge will not receive traffic
++  if [ -r /proc/net/vlan/config ]; then
++    local vlan_interface="$(awk -F '[| ]*' -v vlan="^${VID}$" 'match($2, vlan) { print $1 }' /proc/net/vlan/config)"
++    if [ -n "${vlan_interface}" ]; then
++      echo "VLAN ${VID} is in use by interface ${vlan_interface}"
++      exit 1
++    fi
++  fi
++
++  # add the VLAN to the tap
++  # $@ is either empty or contains "pvid untagged"
++  bridge vlan add dev ${INTERFACE} vid ${VID} "${@}" master
++  # add the VLAN to the bridge uplinks
++  local uplink
++  for uplink in ${BRIDGE_UPLINKS}; do
++    log_info "configuring VLAN ${VID} on interface ${uplink} (reason: instance ${INSTANCE})"
++    bridge vlan add dev ${uplink} vid ${VID} master
++  done
++}
++
++function setup_bridge_vlan_aware {
++  # enforce the admin to configure vlan filtering explicit
++  if [ $(</sys/class/net/${LINK}/bridge/vlan_filtering) -ne 1 ]; then
++    echo "Instance ${INSTANCE} NIC ${INTERFACE_INDEX} configured for VLAN support, but bridge ${LINK} has VLAN filtering disabled"
++    exit 1
++  fi
++
++  # VLANs must be added one by one to the bridge's uplink ports
++  # find them once here
++  local i dev
++  BRIDGE_UPLINKS=""
++  for i in /sys/class/net/${LINK}/lower_*; do
++    dev=${i#/sys/class/net/${LINK}/lower_}
++    case ${dev} in
++      tap*) :;;
++      *)    BRIDGE_UPLINKS="${BRIDGE_UPLINKS} ${dev}";;
++    esac
++  done
++
++  # array of VLANs to number them
++  local VLANS=( ${VLAN//:/ } )
++  local i
++  # loop over array keys
++  for i in "${!VLANS[@]}"; do
++    # handle the first VLAN special
++    if [ ${i} -eq 0 ]; then
++      # does not start with a colon? -> must be untagged (access or hybrid)
++      if [ "${VLAN:0:1}" != ":" ]; then
++        bridge_vlan_add ${VLANS[$i]#.} pvid untagged
++      else
++        bridge_vlan_add ${VLANS[$i]}
++      fi
++    # all other VLANs are tagged
++    else
++      bridge_vlan_add ${VLANS[$i]}
++    fi
++  done
++}
++
+ function setup_bridge {
+   if [ "$MODE" = "bridged" ]; then
+     fix_mac
+@@ -71,6 +140,12 @@ function setup_bridge {
+ 
+     # Connect the interface to the bridge
+-    brctl addif $LINK $INTERFACE
++    ip link set $INTERFACE master $LINK
++
++    # VLAN aware bridge?
++    # https://developers.redhat.com/blog/2017/09/14/vlan-filter-support-on-bridge/
++    if [ -n "${VLAN}" ]; then
++      setup_bridge_vlan_aware
++    fi
+   fi
+ }
+ 
