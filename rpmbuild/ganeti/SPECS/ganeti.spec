@@ -16,7 +16,7 @@
 
 Name: ganeti
 Version: 2.16.2
-Release: 0%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -258,6 +258,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
+- Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
+
 * Tue May 26 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-0
 - Updated to 2.16.2
 
