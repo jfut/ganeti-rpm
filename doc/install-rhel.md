@@ -95,7 +95,6 @@ br0 is an example of bridge interface.
 
 - Using NetworkManager
 
-
 ```
 nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.method ignore bridge.stp no bridge.forward-delay 0 con-name "br0" ifname "br0"
 nmcli connection modify "eno1" connection.slave-type bridge connection.master "br0"
@@ -103,6 +102,13 @@ nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24 1
 nmcli connection up br0
 nmcli connection down eth0
 nmcli connection up bridge-slave-eth0
+
+# VLAN filter support on bridge(VLAN aware bridge)
+# Require ganeti-2.16.2-1 RPM or later
+# set LVAN 100: gnt-instance modify --net 0:modify,vlan=100 instance1
+nmcli connection modify br0 bridge.vlan-filtering yes
+nmcli connection down br0
+nmcli connection up br0
 ```
 
 You can setup it easily by using [nmcli-cli](https://github.com/jfut/nmcli-cli).
