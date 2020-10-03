@@ -34,7 +34,7 @@ docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 ba
 cd /pkg
 ```
 
-### Build the package
+### Run build command in the container
 
 Uninstall, clean, and build all packages, and install:
 
@@ -60,6 +60,14 @@ Build all packages with no overwrite and install:
 ./package.sh -o no -ia
 ```
 
+Build the new ganeti RPM package version using the already released dependency libraries and install:
+
+```
+yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
+yum-config-manager --enable integ-ganeti
+./package.sh -ip ganeti
+```
+
 ### List ghc dependencies in target packages
 
 ```
@@ -68,6 +76,17 @@ Build all packages with no overwrite and install:
 ```
 
 ## Signing RPM Packages
+
+Run the container with bash:
+
+```
+BUILD_HOSTNAME=ganeti-rpm-build.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg ganeti-rpmbuild-centos7 bash
+cd /pkg
+
+# Set your gpg name
+echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
+```
 
 Sign all packages:
 
