@@ -105,7 +105,7 @@ nmcli connection up bridge-slave-eth0
 
 # VLAN filter support on bridge(VLAN aware bridge)
 # Require ganeti-2.16.2-1 RPM or later
-# set LVAN 100: gnt-instance modify --net 0:modify,vlan=100 instance1
+# set VLAN 100: gnt-instance modify --net 0:modify,vlan=100 instance1
 nmcli connection modify br0 bridge.vlan-filtering yes
 nmcli connection down br0
 nmcli connection up br0
