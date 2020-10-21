@@ -39,6 +39,7 @@ Patch7: ganeti-2.16.1-rapi-require-authentication.patch
 Patch8: ganeti-2.16.1-systemd-ambient-capabilities.patch
 Patch9: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 Patch10: ganeti-2.16.2-vlan_aware_bridge-1395.patch
+Patch11: ganeti-2.16.2-add-rtsopts-hflags.patch
 
 BuildRequires: python
 BuildRequires: pyOpenSSL
@@ -149,6 +150,7 @@ It is not required when the init system used is systemd.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 %configure \

@@ -1,0 +1,11 @@
+--- ganeti-2.16.2/Makefile.in	2020-05-22 15:44:58.000000000 +0000
++++ ganeti-2.16.2.b/Makefile.in	2020-10-21 08:50:15.000000000 +0000
+@@ -1228,7 +1228,7 @@
+ HS_SRC_PROGS = $(filter-out test/%,$(HS_ALL_PROGS))
+ HS_PROG_SRCS = $(patsubst %,%.hs,$(HS_DEFAULT_PROGS)) src/mon-collector.hs
+ HS_BUILT_TEST_HELPERS = $(HS_BIN_ROLES:%=test/hs/%) test/hs/hail
+-HFLAGS = -O -Wall -isrc -fwarn-monomorphism-restriction -fwarn-tabs \
++HFLAGS = -O -Wall -isrc -fwarn-monomorphism-restriction -fwarn-tabs -rtsopts \
+ 	-optP-include -optP$(HASKELL_PACKAGE_VERSIONS_FILE) \
+ 	-hide-all-packages `cat $(HASKELL_PACKAGE_IDS_FILE)` \
+ 	$(GHC_BYVERSION_FLAGS) $(am__append_12) $(am__append_13)
