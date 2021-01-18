@@ -19,7 +19,18 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
 You can build RPM packages in Docker.
 
+- CentOS 8
+
+```bash
+docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 .
+
+# pull the latest base image + no cache
+docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 . --pull=true --no-cache
 ```
+
+- CentOS 7
+
+```bash
 docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 .
 
 # pull the latest base image + no cache
@@ -28,10 +39,18 @@ docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 . --pull=tr
 
 Run the container with bash:
 
+- CentOS 8
+
+```bash
+BUILD_HOSTNAME=ganeti-rpmbuild-centos8.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos8 bash
 ```
-BUILD_HOSTNAME=ganeti-rpm-build.integ.jp
+
+- CentOS 7
+
+```bash
+BUILD_HOSTNAME=ganeti-rpmbuild-centos7.integ.jp
 docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 bash
-cd /pkg
 ```
 
 ### Run build command in the container

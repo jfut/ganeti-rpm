@@ -1,0 +1,18 @@
+FROM centos:8
+
+MAINTAINER Jun Futagawa <jfut@integ.jp>
+LABEL maintainer="Jun Futagawa <jfut@integ.jp>"
+
+RUN yum -y update && \
+    yum -y groupinstall "Development Tools" && \
+    yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release && \
+    yum clean all && \
+    useradd -G wheel rpmbuild && \
+    echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/wheel && \
+    mkdir -p ~rpmbuild/bin && \
+    echo 'PATH=~/local/bin:${PATH}' >> ~rpmbuild/.bashrc && \
+    rm -rf /var/cache/yum
+
+USER rpmbuild
+WORKDIR /pkg
+
