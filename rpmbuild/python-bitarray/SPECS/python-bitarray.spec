@@ -12,20 +12,16 @@
 
 Name:           python-%{srcname}
 Version:        0.8.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        %{sum}
 
 Group:          Development/Languages
 License:        Python
 URL:            http://pypi.python.org/pypi/%{srcname}/
-Source0:        http://pypi.python.org/packages/source/b/%{srcname}/%{srcname}-%{version}.tar.gz
+Source0:        https://pypi.python.org/packages/source/b/%{srcname}/%{srcname}-%{version}.tar.gz
 
-BuildRequires:  python2-devel
-%if 0%{?rhel}
-BuildRequires:  python-setuptools
-%else
-BuildRequires:  python2-setuptools
-%endif
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
 
 %if %{with py3}
 BuildRequires:  python%{python3_pkgversion}-devel
@@ -41,24 +37,6 @@ representation are provided. This can be useful when bit level access to binary
 files is required, such as portable bitmap image files (.pbm). Also, when
 dealing with compressed data which uses variable bit length encoding
 you may find this module useful.
-
-
-%package -n python2-%{srcname}
-Summary:  %{sum}
-Provides: python-%{srcname} = %{version}-%{release}
-Obsoletes: python-%{srcname} < %{version}-%{release}
-%{?python_provide:%python_provide python2-%{srcname}}
-
-%description -n python2-%{srcname}
-Bitarrays are sequence types and behave very much like usual lists.
-Eight bits are represented by one byte in contiguous block of memory.
-The user can select between two representations; little-endian and big-endian.
-Most of the functionality is implemented in C.Methods for accessing the machine
-representation are provided. This can be useful when bit level access to binary
-files is required, such as portable bitmap image files (.pbm). Also, when
-dealing with compressed data which uses variable bit length encoding
-you may find this module useful.
-This is Python 2 version.
 
 
 %if %{with py3}
@@ -83,21 +61,15 @@ This is Python 3 version.
 %setup -q -n %{srcname}-%{version}
 
 %build
-%py2_build
 %if %{with py3}
 %py3_build
 %endif
 
 
 %install
-%py2_install
 %if %{with py3}
 %py3_install
 %endif
-
-
-%files -n python2-%{srcname}
-%{python2_sitearch}/*
 
 
 %if %{with py3}
@@ -107,6 +79,11 @@ This is Python 3 version.
 
 
 %changelog
+* Mon Jan 18 2021 Jun Futagawa <jfut@integ.jp> - 0.8.3-3
+- Fork from https://src.fedoraproject.org/rpms/python-bitarray/tree/epel7
+- Add %{python3_pkgversion} for python36
+- Remove python2 build
+
 * Thu Mar 07 2019 Troy Dawson <tdawson@redhat.com> - 0.8.3-2
 - Rebuilt to change main python from 3.4 to 3.6
 
