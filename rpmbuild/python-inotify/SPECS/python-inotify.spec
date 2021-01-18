@@ -3,14 +3,14 @@
 Summary:       Monitor filesystem events with Python under Linux
 Name:          python-inotify
 Version:       0.9.6
-Release:       13%{?dist}
+Release:       14%{?dist}
 License:       MIT
 Group:         Development/Libraries
 URL:           https://github.com/seb-m/pyinotify
 Source0:       http://seb.dbzteam.org/pub/pyinotify/releases/pyinotify-%{version}.tar.gz
 Patch01:       pyinotify-0.9.6-epoint.patch
 BuildRequires: gmp-devel
-BuildRequires: python3-devel
+BuildRequires: python%{python3_pkgversion}-devel
 BuildArch:     noarch
 
 %description
@@ -20,12 +20,12 @@ recent Linux Kernel feature (merged in kernel 2.6.13) called
 inotify. inotify is an event-driven notifier, its notifications are
 exported from kernel space to user space.
 
-%package -n    python3-inotify
+%package -n    python%{python3_pkgversion}-inotify
 Summary:       Monitor filesystem events with Python under Linux
 Group:         Development/Languages
 %{?python_provide:%python_provide python3-inotify}
 
-%description -n python3-inotify
+%description -n python%{python3_pkgversion}-inotify
 This is a Python 3 module for watching filesystems changes. pyinotify
 can be used for various kind of fs monitoring. pyinotify relies on a
 recent Linux Kernel feature (merged in kernel 2.6.13) called
@@ -48,14 +48,19 @@ pushd %{py3dir}
 %py3_install
 popd
 
-%files -n python3-inotify
+%files -n python%{python3_pkgversion}-inotify
 %license COPYING
 %doc ACKS README.md
-%{_bindir}/%{oname}
+%{_bindir}/%{oname}%{python3_pkgversion}
 %{python3_sitelib}/%{oname}*
 %{python3_sitelib}/__pycache__/%{oname}*
 
 %changelog
+* Mon Jan 18 2021 Jun Futagawa <jfut@integ.jp> - 0.9.6-14
+- Fork from https://git.centos.org/rpms/python-inotify/tree/c8
+- Add %{python3_pkgversion} for python36
+- Rename /usr/bin/pyinotify to /usr/bin/pyinotify36
+
 * Thu Nov 15 2018 Matej Marusak <mmarusak@redhat.com> - 0.9.6-13
 - Only ship one executable (#1646714)
 

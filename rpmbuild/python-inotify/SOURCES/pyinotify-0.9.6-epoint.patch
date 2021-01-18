@@ -7,5 +7,5 @@ index 15d68ab..cf6dc5b 100755
      py_modules=['pyinotify'],
      package_dir=package_dir,
 +    entry_points = { 'console_scripts' :
-+                     [ 'pyinotify = pyinotify:command_line', ] },
++                     [ 'pyinotify36 = pyinotify:command_line', ] },
      )
