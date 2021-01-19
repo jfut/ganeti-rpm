@@ -1,4 +1,14 @@
-%{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;rpm -q --qf '%{V}' $Z | sed 's/\\.[0-9]*//')}
+# el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
+%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+
+# python version
+%define python3_pkgversion 3
+%if 0%{?rhel} == 7
+%define python3_pkgversion 36
+%endif
+
+# man version
+%define _man_version 3.0
 
 # search path
 %define _search_sharedir /usr/share
@@ -11,11 +21,8 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
-# man version
-%define _man_version 2.16
-
 Name: ganeti
-Version: 2.16.2
+Version: 3.0.0
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -40,47 +47,22 @@ Patch8: ganeti-2.16.1-systemd-ambient-capabilities.patch
 Patch9: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 Patch10: ganeti-2.16.2-vlan_aware_bridge-1395.patch
 
-BuildRequires: python
-BuildRequires: pyOpenSSL
-BuildRequires: pyparsing
-BuildRequires: python-bitarray
-BuildRequires: python-docutils
-BuildRequires: python-inotify
-BuildRequires: python-ipaddr
-BuildRequires: python-paramiko
-BuildRequires: python-psutil
-BuildRequires: python-pycurl
-BuildRequires: python-simplejson
-BuildRequires: python-sphinx
+BuildRequires: python%{python3_pkgversion}
+BuildRequires: python%{python3_pkgversion}-bitarray
+BuildRequires: python%{python3_pkgversion}-docutils
+BuildRequires: python%{python3_pkgversion}-inotify
+BuildRequires: python%{python3_pkgversion}-paramiko
+BuildRequires: python%{python3_pkgversion}-psutil
+BuildRequires: python%{python3_pkgversion}-pycurl
+BuildRequires: python%{python3_pkgversion}-pyOpenSSL
+BuildRequires: python%{python3_pkgversion}-pyparsing
+BuildRequires: python%{python3_pkgversion}-simplejson
+#BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
-BuildRequires: ghc
-BuildRequires: ghc-attoparsec-devel
-BuildRequires: ghc-base64-bytestring-devel
-BuildRequires: ghc-case-insensitive-devel
-BuildRequires: ghc-Crypto-devel
-BuildRequires: ghc-curl-devel
-BuildRequires: ghc-hinotify-devel
-BuildRequires: ghc-hslogger-devel
-BuildRequires: ghc-HUnit-devel
-BuildRequires: ghc-json-devel
-BuildRequires: ghc-lens-devel
-BuildRequires: ghc-lifted-base-devel
-BuildRequires: ghc-network-devel
-BuildRequires: ghc-parallel-devel
-BuildRequires: ghc-PSQueue-devel
-BuildRequires: ghc-QuickCheck-devel
-BuildRequires: ghc-regex-pcre-devel
-BuildRequires: ghc-snap-server-devel
-BuildRequires: ghc-temporary-devel
-BuildRequires: ghc-text-devel
-BuildRequires: ghc-utf8-string-devel
-BuildRequires: ghc-vector-devel
-BuildRequires: ghc-zlib-devel
-BuildRequires: cabal-install
 BuildRequires: iproute
 BuildRequires: libcurl-devel
-BuildRequires: pandoc
+#BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
 
@@ -91,16 +73,17 @@ Requires: libcap
 Requires: logrotate
 Requires: lvm2
 Requires: openssh
-Requires: python
-Requires: pyOpenSSL
-Requires: pyparsing
-Requires: python-bitarray
-Requires: python-inotify
-Requires: python-ipaddr
-Requires: python-simplejson
-Requires: python-paramiko
-Requires: python-psutil
-Requires: python-pycurl
+Requires: python%{python3_pkgversion}
+Requires: python%{python3_pkgversion}-bitarray
+Requires: python%{python3_pkgversion}-docutils
+Requires: python%{python3_pkgversion}-inotify
+Requires: python%{python3_pkgversion}-paramiko
+Requires: python%{python3_pkgversion}-psutil
+Requires: python%{python3_pkgversion}-pycurl
+Requires: python%{python3_pkgversion}-pyOpenSSL
+Requires: python%{python3_pkgversion}-pyparsing
+Requires: python%{python3_pkgversion}-simplejson
+#Requires: python%{python3_pkgversion}-sphinx
 Requires: socat
 
 Requires(post):   systemd-units
@@ -139,18 +122,22 @@ It is not required when the init system used is systemd.
 %prep
 %setup -q
 
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
+#%patch3 -p1
+#%patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
+#%patch6 -p1
+#%patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
+#%patch10 -p1
 
 %build
+# https://github.com/haskell-crypto/cryptonite/issues/326
+cabal install cryptonite -f -use_target_attributes
+cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond metad htest network_bsd"
+
 %configure \
   --prefix=%{_prefix} \
   --sysconfdir=%{_sysconfdir} \
@@ -205,7 +192,11 @@ install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
 RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
+%if 0%{?rhel} == 7
 /usr/lib/rpm/redhat/brp-compress
+%else
+/usr/lib/rpm/brp-compress
+%endif
 RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
 %clean
@@ -258,6 +249,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Jan 19 2021 Jun Futagawa <jfut@integ.jp> - 3.0.0-1
+- Update to 3.0.0
+- Remove BuildRequires: python-ipaddr
+- Remove Requires: python-ipaddr
+- Use ghc binary package instead of RPMs
+- Add %{python3_pkgversion}
+
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
 
