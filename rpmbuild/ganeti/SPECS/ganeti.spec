@@ -65,6 +65,15 @@ BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
 
+# unittests
+BuildRequires: fakeroot
+%if 0%{?rhel} == 7
+BuildRequires: python%{python3_pkgversion}-PyYAML
+%else
+BuildRequires: python%{python3_pkgversion}-pyyaml
+%endif
+BuildRequires: python%{python3_pkgversion}-mock
+
 Requires: iproute
 Requires: iputils
 Requires: libcap
@@ -81,7 +90,6 @@ Requires: python%{python3_pkgversion}-pycurl
 Requires: python%{python3_pkgversion}-pyOpenSSL
 Requires: python%{python3_pkgversion}-pyparsing
 Requires: python%{python3_pkgversion}-simplejson
-#Requires: python%{python3_pkgversion}-sphinx
 Requires: socat
 
 Requires(post):   systemd-units
@@ -191,6 +199,9 @@ RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
 %endif
 RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
+%check
+sudo make py-tests
+
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
@@ -250,6 +261,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add %{python3_pkgversion}
 - Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
 - Add %global debug_package %{nil}
+- Add a check by python unittests(make py-tests) in %check
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
