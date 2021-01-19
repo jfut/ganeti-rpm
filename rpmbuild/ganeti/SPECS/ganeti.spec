@@ -1,5 +1,7 @@
 # el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
+%if 0%{?rhel} == 7
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+%endif
 
 # without debuginfo
 %global debug_package %{nil}
