@@ -36,16 +36,10 @@ Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.16.0-systemd-sshd.patch
-Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
-Patch3: ganeti-2.16.1-systemd-onetime-args.patch
-Patch4: ganeti-2.16.1-semigroups-downgrade.patch
-Patch5: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
-Patch6: ganeti-2.16.1-default-kvmd-args.patch
-Patch7: ganeti-2.16.1-rapi-require-authentication.patch
-Patch8: ganeti-2.16.1-systemd-ambient-capabilities.patch
-Patch9: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
-Patch10: ganeti-2.16.2-vlan_aware_bridge-1395.patch
+Patch1: ganeti-2.15.0-avoid-systemd-request-repeated.patch
+Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
+Patch3: ganeti-2.16.1-systemd-ambient-capabilities.patch
+Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
@@ -122,16 +116,10 @@ It is not required when the init system used is systemd.
 %prep
 %setup -q
 
-#%patch1 -p1
+%patch1 -p1
 %patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
-%patch5 -p1
-#%patch6 -p1
-#%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-#%patch10 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 # https://github.com/haskell-crypto/cryptonite/issues/326
