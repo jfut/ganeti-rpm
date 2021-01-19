@@ -152,6 +152,7 @@ cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond meta
   --with-kvm-path=/usr/libexec/qemu-kvm \
   --enable-monitoring \
   --enable-metadata \
+  --enable-haskell-tests \
   $@
 make
 
@@ -201,6 +202,7 @@ RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
 %check
 sudo make py-tests
+make hs-tests
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -262,6 +264,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
 - Add %global debug_package %{nil}
 - Add a check by python unittests(make py-tests) in %check
+- Add a check by haskell unittests(make hs-tests) in %check
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
