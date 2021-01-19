@@ -51,12 +51,12 @@ BuildRequires: python%{python3_pkgversion}-pycurl
 BuildRequires: python%{python3_pkgversion}-pyOpenSSL
 BuildRequires: python%{python3_pkgversion}-pyparsing
 BuildRequires: python%{python3_pkgversion}-simplejson
-#BuildRequires: python%{python3_pkgversion}-sphinx
+BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
 BuildRequires: iproute
 BuildRequires: libcurl-devel
-#BuildRequires: pandoc
+BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
 
