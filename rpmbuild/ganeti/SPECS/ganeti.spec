@@ -1,6 +1,9 @@
 # el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
 
+# without debuginfo
+%global debug_package %{nil}
+
 # python version
 %define python3_pkgversion 3
 %if 0%{?rhel} == 7
@@ -244,6 +247,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Use ghc binary package instead of RPMs
 - Add %{python3_pkgversion}
 - Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
+- Add %global debug_package %{nil}
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
