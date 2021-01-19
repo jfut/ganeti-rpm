@@ -131,7 +131,7 @@ cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond meta
   --sysconfdir=%{_sysconfdir} \
   --libdir=%{_libdir} \
   --enable-symlinks \
-  --with-ssh-initscript=%{_initrddir}/sshd \
+  --with-sshd-restart-command="systemctl restart sshd.service" \
   --with-export-dir=%{_localstatedir}/lib/%{name}/export \
   --with-os-search-path=%{os_search_path} \
   --with-extstorage-search-path=%{extstorage_search_path} \
@@ -243,6 +243,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Remove Requires: python-ipaddr
 - Use ghc binary package instead of RPMs
 - Add %{python3_pkgversion}
+- Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
