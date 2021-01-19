@@ -63,7 +63,6 @@ BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
 
-Requires: bridge-utils
 Requires: iproute
 Requires: iputils
 Requires: libcap
@@ -244,6 +243,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Update to 3.0.0
 - Remove BuildRequires: python-ipaddr
 - Remove Requires: python-ipaddr
+- Remove Requires: bridge-utils
 - Use ghc binary package instead of RPMs
 - Add %{python3_pkgversion}
 - Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
