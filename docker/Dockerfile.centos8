@@ -6,6 +6,7 @@ LABEL maintainer="Jun Futagawa <jfut@integ.jp>"
 RUN dnf -y update && \
     dnf -y groupinstall "Development Tools" && \
     dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release && \
+    dnf config-manager --enable powertools && \
     dnf clean all && \
     useradd -G wheel rpmbuild && \
     echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/wheel && \
