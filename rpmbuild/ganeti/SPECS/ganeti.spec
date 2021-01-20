@@ -192,6 +192,11 @@ install -m 644 doc/examples/systemd/ganeti-node.target ${RPM_BUILD_ROOT}/%{_unit
 install -m 644 doc/examples/systemd/ganeti.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
 install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
+# remove document source files
+rm -f doc/examples/*.in
+rm -f doc/examples/hooks/*.in
+rm -rf doc/examples/systemd
+
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
 RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
@@ -239,7 +244,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config %{_unitdir}/*.service
 %config %{_unitdir}/*.target
-%doc COPYING INSTALL NEWS README UPGRADE doc/
+%doc COPYING INSTALL NEWS README UPGRADE doc/examples doc/html
 %{_bindir}/h*
 %{_sbindir}/g*
 %{_libdir}/%{name}
@@ -268,6 +273,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add a check by python unittests(make py-tests) in %check
 - Add a check by haskell unittests(make hs-tests) in %check
 - Add ganeti-3.0.0-ghc-json-version.patch
+- Remove document source files
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
