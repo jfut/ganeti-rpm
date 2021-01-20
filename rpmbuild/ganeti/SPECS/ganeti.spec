@@ -45,6 +45,7 @@ Patch1: ganeti-2.15.0-avoid-systemd-request-repeated.patch
 Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
 Patch3: ganeti-2.16.1-systemd-ambient-capabilities.patch
 Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
+Patch5: ganeti-3.0.0-ghc-json-version.patch
 
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
@@ -132,6 +133,7 @@ It is not required when the init system used is systemd.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 # https://github.com/haskell-crypto/cryptonite/issues/326
@@ -265,6 +267,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add %global debug_package %{nil}
 - Add a check by python unittests(make py-tests) in %check
 - Add a check by haskell unittests(make hs-tests) in %check
+- Add ganeti-3.0.0-ghc-json-version.patch
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
