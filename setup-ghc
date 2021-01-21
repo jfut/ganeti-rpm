@@ -1,8 +1,6 @@
 #!/bin/bash
 #
 # Setup GHC environment to build Ganeti
-#
-# @author Jun Futagawa
 
 set -euo pipefail
 
