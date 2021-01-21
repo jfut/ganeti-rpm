@@ -58,25 +58,25 @@ docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 ba
 Uninstall, clean, and build all packages, and install:
 
 ```
-./package.sh -ucia
+./build-rpm -ucia
 ```
 
 Uninstall and clean all packages, and build ganeti dependencies packages only, and install:
 
 ```
-./package.sh -ucid
+./build-rpm -ucid
 ```
 
 Uninstall and clean all packages, and build the specified package(s) only, and install:
 
 ```
-./package.sh -ucip PACKAGE
+./build-rpm -ucip PACKAGE
 ```
 
 Build all packages with no overwrite and install:
 
 ```
-./package.sh -o no -ia
+./build-rpm -o no -ia
 ```
 
 Build the new ganeti RPM package version using the already released dependency libraries and install:
@@ -84,14 +84,14 @@ Build the new ganeti RPM package version using the already released dependency l
 ```
 yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
 yum-config-manager --enable integ-ganeti
-./package.sh -ip ganeti
+./build-rpm -ip ganeti
 ```
 
 ### List ghc dependencies in target packages
 
 ```
-./package.sh -ucid
-./package.sh -l
+./build-rpm -ucid
+./build-rpm -l
 ```
 
 ## Signing RPM Packages
@@ -110,13 +110,13 @@ echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
 Sign all packages:
 
 ```
-./package.sh -sa
+./build-rpm -sa
 ```
 
 Sign the specified package(s) only:
 
 ```
-./package.sh -sp PACAKGE
+./build-rpm -sp PACAKGE
 ```
 
 ## Other Ganeti resources
