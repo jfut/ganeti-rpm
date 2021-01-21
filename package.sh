@@ -3,19 +3,7 @@
 # Build RPMs for Ganeti and Tools
 
 # single packages
-GANETI_DEPENDS_PACKAGES1="ghc-Crypto ghc-curl ghc-regex-pcre"
-# in order of dependencies
-# (base-orphans | tagged -> (contravariant | distributive) -> comonad)) -> semigroupoids
-GANETI_DEPENDS_PACKAGES2="ghc-base-orphans ghc-tagged ghc-contravariant ghc-distributive ghc-comonad ghc-semigroupoids"
-# (bifunctors | profunctors | generic-derivin | reflectiong) -> lens
-GANETI_DEPENDS_PACKAGES3="ghc-bifunctors ghc-profunctors ghc-generic-deriving ghc-reflection ghc-lens"
-# mond/metad dependencies
-# ghc-PSQueue | ghc-clock | ghc-bytestring-builder -> ghc-zlib-bindings -> ghc-io-streams
-# ghc-enumerator -> (ghc-attoparsec-enumerator ghc-blaze-builder-enumerator
-# ghc-bytestring-mmap ghc-zlib-enum) -> ghc-snap-core -> ghc-snap-server
-GANETI_DEPENDS_PACKAGES4="ghc-PSQueue ghc-clock ghc-bytestring-builder ghc-zlib-bindings ghc-io-streams"
-GANETI_DEPENDS_PACKAGES5="ghc-enumerator ghc-attoparsec-enumerator ghc-blaze-builder-enumerator ghc-bytestring-mmap ghc-zlib-enum ghc-snap-core ghc-snap-server"
-# ganeti
+GANETI_DEPENDS_PACKAGES=""
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
 # integ-ganeti repo
@@ -25,11 +13,7 @@ INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
 
 # all packages
-PACKAGES="${GANETI_DEPENDS_PACKAGES1}
-            ${GANETI_DEPENDS_PACKAGES2}
-            ${GANETI_DEPENDS_PACKAGES3}
-            ${GANETI_DEPENDS_PACKAGES4}
-            ${GANETI_DEPENDS_PACKAGES5}
+PACKAGES="${GANETI_DEPENDS_PACKAGES}
             ${GANETI_PACKAGES}
             ${SNF_IMAGE_PACKAGES}
             ${INTEG_GANETI_REPO_PACKAGES}"
@@ -47,18 +31,14 @@ usage() {
     cat << _EOF_
 
 Usage:
-    ${PACKAGER} [-s] [-i] [-u] [-c|-C] [-l] [-o yes|no] [-a|-d|-p package...]]
+    ${PACKAGER} [-s] [-i] [-u] [-c|-C] [-o yes|no] [-a|-d|-p package...]]
 
     Options:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
         -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
             ganeti dependencies:
-                ${GANETI_DEPENDS_PACKAGES1}
-                ${GANETI_DEPENDS_PACKAGES2}
-                ${GANETI_DEPENDS_PACKAGES3}
-                ${GANETI_DEPENDS_PACKAGES4}
-                ${GANETI_DEPENDS_PACKAGES5}
+                ${GANETI_DEPENDS_PACKAGES}
             ganeti:
                 ${GANETI_PACKAGES}
             snf-image:
@@ -75,8 +55,6 @@ Usage:
 
         -c Clean the rpmbuild directory, but preserve downloaded archives.
         -C Completely clean the rpmbuild directory.
-
-        -l List ghc dependencies in target packages.
 
 _EOF_
 }
@@ -237,18 +215,6 @@ sign_package() {
     done
 }
 
-ghc_dependency_list() {
-    EGREP_REGEX=""
-    for PACKAGE in ${PACKAGES}; do
-        if [[ "${PACKAGE}" =~ ^ghc-(.*) ]]; then
-            EGREP_REGEX="${EGREP_REGEX}|${BASH_REMATCH[1]}"
-        fi
-    done
-
-    # echo "REGEX: \"(${EGREP_REGEX:1})-"
-    ghc-pkg dot | tred | egrep "\"(${EGREP_REGEX:1})-" | sort
-}
-
 # Main
 main() {
     [ $# -lt 1 ] && usage && exit 1
@@ -262,8 +228,7 @@ main() {
     BUILD_GANETI_DEPENDS_PACKAGES="no"
     CLEAN_MODE="no"
     OVERWRITE_MODE="manual"
-    GHC_DEPENDENCY_LIST="no"
-    while getopts siuadpcCo:l OPT; do
+    while getopts siuadpcCo: OPT; do
         case "${OPT}" in
             "s" )
                 SIGN_MODE="yes"
@@ -284,8 +249,6 @@ main() {
                 CLEAN_MODE="all" ;;
             "o" )
                 OVERWRITE_MODE="${OPTARG}" ;;
-            "l" )
-                GHC_DEPENDENCY_LIST="yes" ;;
             * )
                 usage
                 exit 1
@@ -320,14 +283,9 @@ main() {
     elif [ "${BUILD_ALL}" = "yes" ]; then
         build_package "${PACKAGES}"
     elif [ "${BUILD_GANETI_DEPENDS_PACKAGES}" = "yes" ]; then
-        build_package "${GANETI_DEPENDS_PACKAGES1} ${GANETI_DEPENDS_PACKAGES2} ${GANETI_DEPENDS_PACKAGES3} ${GANETI_DEPENDS_PACKAGES4} ${GANETI_DEPENDS_PACKAGES5}"
+        build_package "${GANETI_DEPENDS_PACKAGES}"
     elif [ "${BUILD_PACKAGES}" = "yes" ]; then
         build_package "${@}"
-    fi
-
-    # GHC dependency list task
-    if [ "${GHC_DEPENDENCY_LIST}" = "yes" ]; then
-        ghc_dependency_list
     fi
 
     echo
