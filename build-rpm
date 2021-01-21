@@ -8,12 +8,16 @@ set -euo pipefail
 RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
 
 # python3_pkgversion for define option
+PYTHON3_PKGVERSION_OPTION_EL8=3
 PYTHON3_PKGVERSION_OPTION_EL7=36
 
 # single packages
 GANETI_DEPENDS_PACKAGES=()
+GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
-if [ "${RPM_DIST}" = ".el7" ]; then
+if [ "${RPM_DIST}" = ".el8" ]; then
+    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
+elif [ "${RPM_DIST}" = ".el7" ]; then
     GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
 fi
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
@@ -26,7 +30,9 @@ SNF_IMAGE_PACKAGES="python-prctl snf-image"
 
 # all packages
 PACKAGES=""
-if [ "${RPM_DIST}" = ".el7" ]; then
+if [ "${RPM_DIST}" = ".el8" ]; then
+    PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
+elif [ "${RPM_DIST}" = ".el7" ]; then
     PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
 fi
 PACKAGES="${PACKAGES} ${GANETI_PACKAGES} ${SNF_IMAGE_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
@@ -47,6 +53,8 @@ Usage:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
         -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
+	    ganeti dependencies (el8 only):
+                ${GANETI_DEPENDS_PACKAGES_EL8}
 	    ganeti dependencies (el7 only):
                 ${GANETI_DEPENDS_PACKAGES_EL7}
             ganeti:
@@ -78,7 +86,9 @@ check_oldpackage() {
     SPEC_FILE="SPECS/${PACKAGE}.spec"
     RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
     RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+    set +e
     RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
+    set -e
     if [ -z "${RPM_ARCHITECTURE}" ]; then
         RPM_ARCHITECTURE=$(uname -i)
     fi
@@ -175,6 +185,15 @@ build_package() {
 
         # check python package
         local PYTHON3_PKGVERSION_OPTION=""
+        # el8 only
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL8}"
+            if [ "${RPM_DIST}" != ".el8" ]; then
+                echo "Skip ${PACKAGE} because it is for el8 only"
+                continue
+            fi
+        fi
+        # el7 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
             PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL7}"
             if [ "${RPM_DIST}" != ".el7" ]; then
