@@ -128,7 +128,7 @@ uninstall_package() {
     for PACKAGE in ${@}; do
         REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE} ${PACKAGE}-devel ${PACKAGE}-debuginfo"
     done
-    yum -y remove ${REMOVE_PACKAGES}
+    sudo yum -y remove ${REMOVE_PACKAGES}
 }
 
 install_package() {
@@ -137,7 +137,7 @@ install_package() {
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
 
         set +e
-        yum list installed "${PACKAGE}"
+        sudo yum list installed "${PACKAGE}"
         RET=$?
         set -e
         if [ "${RET}" -ne 0 ]; then
@@ -151,7 +151,7 @@ install_package() {
 
             # Install target version packages only
             echo "Instal ${PACKAGE} packages..."
-            yum -y install RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
+            sudo yum -y install ${PWD}/RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
         fi
 
         popd
@@ -167,7 +167,7 @@ build_package() {
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
         if [ "${is_overwrite}" = "y" ]; then
             # Install build dependencies
-            yum-builddep -y "${PACKAGE_SPEC_FILE}"
+            sudo yum-builddep -y "${PACKAGE_SPEC_FILE}"
 
             # Download source and patch files
             if [ ! -d SOURCES ]; then
