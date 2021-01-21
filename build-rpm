@@ -1,6 +1,8 @@
-#!/bin/bash -ue
+#!/bin/bash
 #
 # Build RPMs for Ganeti and Tools
+
+set -euo pipefail
 
 # single packages
 GANETI_DEPENDS_PACKAGES=""
