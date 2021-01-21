@@ -4,8 +4,18 @@
 
 set -euo pipefail
 
+# RPM macros
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
+
+# python3_pkgversion for define option
+PYTHON3_PKGVERSION_OPTION_EL7=36
+
 # single packages
-GANETI_DEPENDS_PACKAGES=""
+GANETI_DEPENDS_PACKAGES=()
+GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
+if [ "${RPM_DIST}" = ".el7" ]; then
+    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
+fi
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
 # integ-ganeti repo
@@ -15,18 +25,16 @@ INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
 
 # all packages
-PACKAGES="${GANETI_DEPENDS_PACKAGES}
-            ${GANETI_PACKAGES}
-            ${SNF_IMAGE_PACKAGES}
-            ${INTEG_GANETI_REPO_PACKAGES}"
+PACKAGES=""
+if [ "${RPM_DIST}" = ".el7" ]; then
+    PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
+fi
+PACKAGES="${PACKAGES} ${GANETI_PACKAGES} ${SNF_IMAGE_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
 
 # Directories
 PACKAGER="$(basename "${0}")"
 PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
-
-# RPM macros
-RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
 
 # Usage
 usage() {
@@ -39,8 +47,8 @@ Usage:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
         -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
-            ganeti dependencies:
-                ${GANETI_DEPENDS_PACKAGES}
+	    ganeti dependencies (el7 only):
+                ${GANETI_DEPENDS_PACKAGES_EL7}
             ganeti:
                 ${GANETI_PACKAGES}
             snf-image:
@@ -164,6 +172,17 @@ install_package() {
 build_package() {
     for PACKAGE in ${@}; do
         echo "Building package for ${PACKAGE}..."
+
+        # check python package
+        local PYTHON3_PKGVERSION_OPTION=""
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL7}"
+            if [ "${RPM_DIST}" != ".el7" ]; then
+                echo "Skip ${PACKAGE} because it is for el7 only"
+                continue
+            fi
+        fi
+
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage "${PACKAGE}"
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
@@ -178,11 +197,18 @@ build_package() {
             spectool -g -A "${PACKAGE_SPEC_FILE}" -C SOURCES/
 
             # Build package
-            rpmbuild \
-                --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
-                --define "%dist ${RPM_DIST}" \
-                -ba "${PACKAGE_SPEC_FILE}"
-
+            if [ -z "${PYTHON3_PKGVERSION_OPTION}" ]; then
+                rpmbuild \
+                    --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
+                    --define "%dist ${RPM_DIST}" \
+                    -ba "${PWD}/${PACKAGE_SPEC_FILE}"
+            else
+                rpmbuild \
+                    --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
+                    --define "%dist ${RPM_DIST}" \
+                    --define "python3_pkgversion ${PYTHON3_PKGVERSION_OPTION}" \
+                    -ba "${PWD}/${PACKAGE_SPEC_FILE}"
+            fi
         fi
 
         # Install packages
