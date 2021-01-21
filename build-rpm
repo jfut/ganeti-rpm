@@ -181,7 +181,7 @@ build_package() {
         local PYTHON3_PKGVERSION_OPTION=""
         # el8 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
-            PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL8}"
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
             if [[ "${RPM_DIST}" != ".el8" ]]; then
                 echo "Skip ${PACKAGE} because it is for el8 only"
                 continue
@@ -189,7 +189,7 @@ build_package() {
         fi
         # el7 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
-            PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL7}"
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
             if [[ "${RPM_DIST}" != ".el7" ]]; then
                 echo "Skip ${PACKAGE} because it is for el7 only"
                 continue
@@ -201,27 +201,20 @@ build_package() {
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
         if [[ "${is_overwrite}" = "y" ]]; then
             # Install build dependencies
-            sudo yum-builddep -y "${PACKAGE_SPEC_FILE}"
+            eval sudo yum-builddep -y ${PYTHON3_PKGVERSION_OPTION} "\"${PACKAGE_SPEC_FILE}\""
 
             # Download source and patch files
             if [[ ! -d SOURCES ]]; then
                 mkdir SOURCES
             fi
-            spectool -g -A "${PACKAGE_SPEC_FILE}" -C SOURCES/
+            eval spectool -g -A ${PYTHON3_PKGVERSION_OPTION} "\"${PACKAGE_SPEC_FILE}\"" -C SOURCES/
 
             # Build package
-            if [[ -z "${PYTHON3_PKGVERSION_OPTION}" ]]; then
-                rpmbuild \
-                    --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
-                    --define "%dist ${RPM_DIST}" \
-                    -ba "${PWD}/${PACKAGE_SPEC_FILE}"
-            else
-                rpmbuild \
-                    --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
-                    --define "%dist ${RPM_DIST}" \
-                    --define "python3_pkgversion ${PYTHON3_PKGVERSION_OPTION}" \
-                    -ba "${PWD}/${PACKAGE_SPEC_FILE}"
-            fi
+            eval rpmbuild \
+                --define "\"%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}\"" \
+                --define "\"%dist ${RPM_DIST}\"" \
+                ${PYTHON3_PKGVERSION_OPTION} \
+                -ba "\"${PWD}/${PACKAGE_SPEC_FILE}\""
         fi
 
         # Install packages
