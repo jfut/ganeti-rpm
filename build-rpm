@@ -15,9 +15,9 @@ PYTHON3_PKGVERSION_OPTION_EL7=36
 GANETI_DEPENDS_PACKAGES=()
 GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
-if [ "${RPM_DIST}" = ".el8" ]; then
+if [[ "${RPM_DIST}" = ".el8" ]]; then
     GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
-elif [ "${RPM_DIST}" = ".el7" ]; then
+elif [[ "${RPM_DIST}" = ".el7" ]]; then
     GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
 fi
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
@@ -29,13 +29,7 @@ INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
 
 # all packages
-PACKAGES=""
-if [ "${RPM_DIST}" = ".el8" ]; then
-    PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
-elif [ "${RPM_DIST}" = ".el7" ]; then
-    PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
-fi
-PACKAGES="${PACKAGES} ${GANETI_PACKAGES} ${SNF_IMAGE_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
+PACKAGES="${GANETI_DEPENDS_PACKAGES} ${GANETI_PACKAGES} ${SNF_IMAGE_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -89,23 +83,23 @@ check_oldpackage() {
     set +e
     RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
     set -e
-    if [ -z "${RPM_ARCHITECTURE}" ]; then
+    if [[ -z "${RPM_ARCHITECTURE}" ]]; then
         RPM_ARCHITECTURE=$(uname -i)
     fi
 
     RPM_FILE="RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm"
-    if [ -f "${RPM_FILE}" ]; then
-        if [ "${OVERWRITE_MODE}" = "yes" ]; then
+    if [[ -f "${RPM_FILE}" ]]; then
+        if [[ "${OVERWRITE_MODE}" = "yes" ]]; then
             is_overwrite="y"
             return
-        elif [ "${OVERWRITE_MODE}" = "no" ]; then
+        elif [[ "${OVERWRITE_MODE}" = "no" ]]; then
             is_overwrite="n"
             return
         fi
 
-        while [ "${is_overwrite}" != "y" -a "${is_overwrite}" != "n" ];
+        while [[ "${is_overwrite}" != "y" ]] && [[ "${is_overwrite}" != "n" ]];
         do
-            if [ "${is_first}" -ne 0 ]; then
+            if [[ "${is_first}" -ne 0 ]]; then
                 echo "-> BAD INPUT: Invalid charactor."
             fi
             echo "${RPM_FILE} already exists."
@@ -121,7 +115,7 @@ check_oldpackage() {
 # Check sign key
 check_signkey() {
     SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
-    if [ "${SIGNKEY}" -lt 1 ]; then
+    if [[ "${SIGNKEY}" -lt 1 ]]; then
         echo "Error: Ganeti RPM Packages sign key not found."
         exit 1
         SIGN_MODE="no"
@@ -160,12 +154,12 @@ install_package() {
         sudo yum list installed "${PACKAGE}"
         RET=$?
         set -e
-        if [ "${RET}" -ne 0 ]; then
+        if [[ "${RET}" -ne 0 ]]; then
             SPEC_FILE="SPECS/${PACKAGE}.spec"
             RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
             RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
             RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
-            if [ -z "${RPM_ARCHITECTURE}" ]; then
+            if [[ -z "${RPM_ARCHITECTURE}" ]]; then
                 RPM_ARCHITECTURE=$(uname -i)
             fi
 
@@ -188,7 +182,7 @@ build_package() {
         # el8 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
             PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL8}"
-            if [ "${RPM_DIST}" != ".el8" ]; then
+            if [[ "${RPM_DIST}" != ".el8" ]]; then
                 echo "Skip ${PACKAGE} because it is for el8 only"
                 continue
             fi
@@ -196,7 +190,7 @@ build_package() {
         # el7 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
             PYTHON3_PKGVERSION_OPTION="${PYTHON3_PKGVERSION_OPTION_EL7}"
-            if [ "${RPM_DIST}" != ".el7" ]; then
+            if [[ "${RPM_DIST}" != ".el7" ]]; then
                 echo "Skip ${PACKAGE} because it is for el7 only"
                 continue
             fi
@@ -205,18 +199,18 @@ build_package() {
         pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
         check_oldpackage "${PACKAGE}"
         local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
-        if [ "${is_overwrite}" = "y" ]; then
+        if [[ "${is_overwrite}" = "y" ]]; then
             # Install build dependencies
             sudo yum-builddep -y "${PACKAGE_SPEC_FILE}"
 
             # Download source and patch files
-            if [ ! -d SOURCES ]; then
+            if [[ ! -d SOURCES ]]; then
                 mkdir SOURCES
             fi
             spectool -g -A "${PACKAGE_SPEC_FILE}" -C SOURCES/
 
             # Build package
-            if [ -z "${PYTHON3_PKGVERSION_OPTION}" ]; then
+            if [[ -z "${PYTHON3_PKGVERSION_OPTION}" ]]; then
                 rpmbuild \
                     --define "%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}" \
                     --define "%dist ${RPM_DIST}" \
@@ -231,7 +225,7 @@ build_package() {
         fi
 
         # Install packages
-        if [ "${INSTALL_MODE}" = "yes" ]; then
+        if [[ "${INSTALL_MODE}" = "yes" ]]; then
             install_package ${PACKAGE}
         fi
 
@@ -249,13 +243,13 @@ sign_package() {
         RPM_FILE_LIST=$(find SRPMS RPMS -name "*.rpm")
         for RPM_FILE in ${RPM_FILE_LIST}; do
             IS_SIGNED=$(rpm -K "${RPM_FILE}" | grep -i "(md5) pgp" | wc -l)
-            if [ "${IS_SIGNED}" -eq 0 ]; then
+            if [[ "${IS_SIGNED}" -eq 0 ]]; then
                 SIGN_RPM_LIST="${SIGN_RPM_LIST} ${RPM_FILE}"
             else
                 echo "Skip sign: ${RPM_FILE} is already signed."
             fi
         done
-        [ ! -z "${SIGN_RPM_LIST}" ] && rpm --addsign ${SIGN_RPM_LIST}
+        [[ ! -z "${SIGN_RPM_LIST}" ]] && rpm --addsign ${SIGN_RPM_LIST}
 
         echo
         popd
@@ -264,7 +258,7 @@ sign_package() {
 
 # Main
 main() {
-    [ $# -lt 1 ] && usage && exit 1
+    [[ $# -lt 1 ]] && usage && exit 1
 
     # See how we're called.
     SIGN_MODE="no"
@@ -305,33 +299,33 @@ main() {
     shift $((OPTIND - 1))
 
     # Clean task
-    if [ "${CLEAN_MODE}" = "minimal" ]; then
+    if [[ "${CLEAN_MODE}" = "minimal" ]]; then
         clean_minimal
-    elif [ "${CLEAN_MODE}" = "all" ]; then
+    elif [[ "${CLEAN_MODE}" = "all" ]]; then
         clean_all
     fi
 
     # Uninstall task
-    if [ "${UNINSTALL_MODE}" = "yes" ]; then
-        if [ "${BUILD_ALL}" = "yes" ]; then
+    if [[ "${UNINSTALL_MODE}" = "yes" ]]; then
+        if [[ "${BUILD_ALL}" = "yes" ]]; then
             uninstall_package "${PACKAGES}"
-        elif [ "${BUILD_PACKAGES}" = "yes" ]; then
+        elif [[ "${BUILD_PACKAGES}" = "yes" ]]; then
             uninstall_package "${@}"
         fi
     fi
 
     # Sign or Build task
-    if [ "${SIGN_MODE}" = "yes" ]; then
-        if [ "${BUILD_ALL}" = "yes" ]; then
+    if [[ "${SIGN_MODE}" = "yes" ]]; then
+        if [[ "${BUILD_ALL}" = "yes" ]]; then
             sign_package "${PACKAGES}"
-        elif [ "${BUILD_PACKAGES}" = "yes" ]; then
+        elif [[ "${BUILD_PACKAGES}" = "yes" ]]; then
             sign_package "${@}"
         fi
-    elif [ "${BUILD_ALL}" = "yes" ]; then
+    elif [[ "${BUILD_ALL}" = "yes" ]]; then
         build_package "${PACKAGES}"
-    elif [ "${BUILD_GANETI_DEPENDS_PACKAGES}" = "yes" ]; then
+    elif [[ "${BUILD_GANETI_DEPENDS_PACKAGES}" = "yes" ]]; then
         build_package "${GANETI_DEPENDS_PACKAGES}"
-    elif [ "${BUILD_PACKAGES}" = "yes" ]; then
+    elif [[ "${BUILD_PACKAGES}" = "yes" ]]; then
         build_package "${@}"
     fi
 
@@ -339,5 +333,5 @@ main() {
     echo "# Success: (${SECONDS} seconds)"
 }
 
-[ ${#BASH_SOURCE[@]} = 1 ] && main "${@}"
+[[ ${#BASH_SOURCE[@]} = 1 ]] && main "${@}"
 
