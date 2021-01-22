@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+export LC_ALL=C
+
 # RPM macros
 RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
 
@@ -47,9 +49,9 @@ Usage:
         -a Build all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
         -d Build ganeti dependencies packages only.
         -p Build the specified package(s) only. Available packages are:
-	    ganeti dependencies (el8 only):
+            ganeti dependencies (el8 only):
                 ${GANETI_DEPENDS_PACKAGES_EL8}
-	    ganeti dependencies (el7 only):
+            ganeti dependencies (el7 only):
                 ${GANETI_DEPENDS_PACKAGES_EL7}
             ganeti:
                 ${GANETI_PACKAGES}
@@ -71,23 +73,41 @@ Usage:
 _EOF_
 }
 
+# Get package list
+package_list() {
+    local SPEC_FILE="${1}"
+    local PACKAGE="${2}"
+    local PACKAGE_PREFIX="${3}"
+
+    local RPMBILD_BASE_DIR=$(dirname $(dirname "${SPEC_FILE}"))
+    local RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
+    local RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+
+    PACKAGE_LIST=()
+    set +o pipefail
+    # RPM
+    PACKAGE_LIST+=( $(find "${RPMBILD_BASE_DIR}" -type f -regextype posix-basic \
+        -regex ".*/RPMS/.*/${PACKAGE_PREFIX}-.*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.*.rpm") )
+    # SRPM
+    PACKAGE_LIST+=( $(find "${RPMBILD_BASE_DIR}" -type f -regextype posix-basic \
+        -regex ".*/SRPMS/${PACKAGE}-.*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.*.rpm") )
+    set -o pipefail
+
+    if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+        echo ${PACKAGE_LIST[@]}
+    fi
+}
+
 # Check old package
 check_oldpackage() {
-    local PACKAGE="${1}"
+    local PACKAGE_LIST=(${@})
     local is_first=0
-    is_overwrite="-1"
 
-    SPEC_FILE="SPECS/${PACKAGE}.spec"
-    RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
-    RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
-    set +e
-    RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
-    set -e
-    if [[ -z "${RPM_ARCHITECTURE}" ]]; then
-        RPM_ARCHITECTURE=$(uname -i)
+    if [[ ${#PACKAGE_LIST[@]} -eq 0 ]]; then
+        return
     fi
 
-    RPM_FILE="RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm"
+    RPM_FILE=${PACKAGE_LIST[0]}
     if [[ -f "${RPM_FILE}" ]]; then
         if [[ "${OVERWRITE_MODE}" = "yes" ]]; then
             is_overwrite="y"
@@ -97,13 +117,17 @@ check_oldpackage() {
             return
         fi
 
+        echo "Found current version packages:"
+        for i in ${PACKAGE_LIST[@]}; do
+            echo "- ${i}"
+        done
+
         while [[ "${is_overwrite}" != "y" ]] && [[ "${is_overwrite}" != "n" ]];
         do
             if [[ "${is_first}" -ne 0 ]]; then
                 echo "-> BAD INPUT: Invalid charactor."
             fi
-            echo "${RPM_FILE} already exists."
-            echo -n "Do you want to overwrite it? [y/n]: "
+            echo -n "Do you want to rebuild and overwrite it? [y/n]: "
             read is_overwrite < /dev/tty
             is_first=1
         done
@@ -138,50 +162,17 @@ clean_all() {
 # Uninstall packages
 uninstall_package() {
     echo "Uninstall packages..."
+
     REMOVE_PACKAGES=""
     for PACKAGE in ${@}; do
-        REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE} ${PACKAGE}-devel ${PACKAGE}-debuginfo"
-    done
-    sudo yum -y remove ${REMOVE_PACKAGES}
-}
-
-install_package() {
-    echo "Install packages..."
-    for PACKAGE in ${@}; do
-        pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
-
-        set +e
-        sudo yum list installed "${PACKAGE}"
-        RET=$?
-        set -e
-        if [[ "${RET}" -ne 0 ]]; then
-            SPEC_FILE="SPECS/${PACKAGE}.spec"
-            RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
-            RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
-            RPM_ARCHITECTURE=$(egrep -i "^(BuildArchitectures|BuildArch):" "${SPEC_FILE}" | awk '{ print $2 }' | tail -1)
-            if [[ -z "${RPM_ARCHITECTURE}" ]]; then
-                RPM_ARCHITECTURE=$(uname -i)
-            fi
-
-            # Install target version packages only
-            echo "Instal ${PACKAGE} packages..."
-            sudo yum -y install ${PWD}/RPMS/${RPM_ARCHITECTURE}/${PACKAGE}-*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.${RPM_ARCHITECTURE}.rpm
-        fi
-
-        popd
-    done
-}
-
-# Build packages
-build_package() {
-    for PACKAGE in ${@}; do
-        echo "Building package for ${PACKAGE}..."
+        local PACKAGE_PREFIX="${PACKAGE}"
 
         # check python package
         local PYTHON3_PKGVERSION_OPTION=""
         # el8 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
             PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}
             if [[ "${RPM_DIST}" != ".el8" ]]; then
                 echo "Skip ${PACKAGE} because it is for el8 only"
                 continue
@@ -190,40 +181,119 @@ build_package() {
         # el7 only
         if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
             PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
             if [[ "${RPM_DIST}" != ".el7" ]]; then
                 echo "Skip ${PACKAGE} because it is for el7 only"
                 continue
             fi
         fi
 
-        pushd "${PACKAGER_RPM_DIR}/${PACKAGE}"
-        check_oldpackage "${PACKAGE}"
-        local PACKAGE_SPEC_FILE="SPECS/${PACKAGE}.spec"
-        if [[ "${is_overwrite}" = "y" ]]; then
+        local PACKAGE_SPEC_FILE="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_SPEC_FILE}" "${PACKAGE}" "${PACKAGE_PREFIX}") )
+
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            for PACKAGE_NAME in ${PACKAGE_LIST[@]}; do
+                # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
+                PACKAGE_NAME="${PACKAGE_NAME##*/}"
+                # example-1.0.0.rpm -> example-1.0.0
+                PACKAGE_NAME="${PACKAGE_NAME%.*}"
+                REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE_NAME}"
+            done
+        fi
+    done
+
+    if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
+        sudo yum -y remove ${REMOVE_PACKAGES}
+        echo
+    fi
+}
+
+install_package() {
+    echo "Install packages..."
+    for PACKAGE in ${@}; do
+        if [[ "${PACKAGE}" =~ \.src\.rpm$ ]]; then
+            echo "Skip install source rpm: ${PACKAGE}"
+            continue
+        fi
+        PACKAGE_NAME="${PACKAGE}"
+        # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
+        PACKAGE_NAME="${PACKAGE_NAME##*/}"
+        # example-1.0.0.rpm -> example-1.0.0
+        PACKAGE_NAME="${PACKAGE_NAME%.*}"
+
+        set +e
+        sudo yum list installed "${PACKAGE_NAME}" > /dev/null 2>&1
+        RET=$?
+        set -e
+        if [[ "${RET}" -ne 0 ]]; then
+            # Install target version package only
+            echo "Install ${PACKAGE} package..."
+            sudo yum -y install "${PACKAGE}"
+        fi
+    done
+}
+
+# Build packages
+build_package() {
+    for PACKAGE in ${@}; do
+        echo "Building package for ${PACKAGE}..."
+        local PACKAGE_PREFIX="${PACKAGE}"
+
+        # check python package
+        local PYTHON3_PKGVERSION_OPTION=""
+        # el8 only
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}
+            if [[ "${RPM_DIST}" != ".el8" ]]; then
+                echo "Skip ${PACKAGE} because it is for el8 only"
+                continue
+            fi
+        fi
+        # el7 only
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
+            if [[ "${RPM_DIST}" != ".el7" ]]; then
+                echo "Skip ${PACKAGE} because it is for el7 only"
+                continue
+            fi
+        fi
+
+        local PACKAGE_SPEC_FILE="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_SPEC_FILE}" "${PACKAGE}" "${PACKAGE_PREFIX}") )
+
+        is_overwrite="default"
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            check_oldpackage "${PACKAGE_LIST[@]}"
+        fi
+
+        if [[ "${is_overwrite}" = "default" ]] || [[ "${is_overwrite}" = "y" ]]; then
             # Install build dependencies
             eval sudo yum-builddep -y ${PYTHON3_PKGVERSION_OPTION} "\"${PACKAGE_SPEC_FILE}\""
 
             # Download source and patch files
-            if [[ ! -d SOURCES ]]; then
-                mkdir SOURCES
+            local PACKAGE_SOURCES="${PACKAGER_RPM_DIR}/SOURCES"
+            if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
+                mkdir "${PACKAGE_SOURCES}"
             fi
-            eval spectool -g -A ${PYTHON3_PKGVERSION_OPTION} "\"${PACKAGE_SPEC_FILE}\"" -C SOURCES/
+            eval spectool -g -A ${PYTHON3_PKGVERSION_OPTION} "\"${PACKAGE_SPEC_FILE}\"" -C "${PACKAGE_SOURCES}/"
 
             # Build package
             eval rpmbuild \
                 --define "\"%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}\"" \
                 --define "\"%dist ${RPM_DIST}\"" \
                 ${PYTHON3_PKGVERSION_OPTION} \
-                -ba "\"${PWD}/${PACKAGE_SPEC_FILE}\""
+                -ba "\"${PACKAGE_SPEC_FILE}\""
         fi
 
         # Install packages
         if [[ "${INSTALL_MODE}" = "yes" ]]; then
-            install_package ${PACKAGE}
+            local PACKAGE_LIST=( $(package_list "${PACKAGE_SPEC_FILE}" "${PACKAGE}" "${PACKAGE_PREFIX}") )
+            install_package "${PACKAGE_LIST[@]}"
         fi
 
         echo
-        popd
     done
 }
 
@@ -302,7 +372,7 @@ main() {
     if [[ "${UNINSTALL_MODE}" = "yes" ]]; then
         if [[ "${BUILD_ALL}" = "yes" ]]; then
             uninstall_package "${PACKAGES}"
-        elif [[ "${BUILD_PACKAGES}" = "yes" ]]; then
+        else
             uninstall_package "${@}"
         fi
     fi
@@ -322,7 +392,6 @@ main() {
         build_package "${@}"
     fi
 
-    echo
     echo "# Success: (${SECONDS} seconds)"
 }
 
