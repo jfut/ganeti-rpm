@@ -19,7 +19,7 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
 You can build RPM packages in Docker.
 
-- CentOS 8
+### CentOS 8
 
 ```bash
 docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 .
@@ -28,7 +28,14 @@ docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 .
 docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 . --pull=true --no-cache
 ```
 
-- CentOS 7
+Run the container with bash:
+
+```bash
+BUILD_HOSTNAME=ganeti-rpmbuild-centos8.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos8 bash
+```
+
+### CentOS 7
 
 ```bash
 docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 .
@@ -39,44 +46,76 @@ docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 . --pull=tr
 
 Run the container with bash:
 
-- CentOS 8
-
-```bash
-BUILD_HOSTNAME=ganeti-rpmbuild-centos8.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos8 bash
-```
-
-- CentOS 7
-
 ```bash
 BUILD_HOSTNAME=ganeti-rpmbuild-centos7.integ.jp
 docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 bash
 ```
 
+## Usage: build-rpm
+
+```
+Usage:
+    build-rpm [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
+
+    Target Options:
+        -a all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
+        -d ganeti dependencies packages only.
+        -p the specified package(s) only. Available packages are:
+            ganeti dependencies (el8 only):
+                python-bitarray
+            ganeti dependencies (el7 only):
+                python-inotify
+            ganeti:
+                ganeti ganeti-instance-debootstrap
+            snf-image:
+                python-prctl snf-image
+            integ-ganeti-repo:
+                integ-ganeti-release
+
+    Task Options:
+        -c Clean clean the rpmbuild directory, but preserve downloaded archives.
+        -C Completely clean the rpmbuild directory.
+
+        -b Build packages
+        -o Overwrite built package: yes|no (Default: manual)
+
+        -s Sign built packages.
+
+        -i Install built packages.
+        -u Uninstall installed packages.
+
+        Task Execution Order:
+            Uninstall -> Clean -> Build -> Sign -> Install
+
+        If the build (-b) and install (-i) options are specified at the same time,
+        the installation will be done immediately after the individual packages are built.
+        This is to resolve dependencies needed to build the next package.
+```
+
 ### Run build command in the container
 
-Uninstall, clean, and build all packages, and install:
+All packages + uninstall, clean, build, and install:
 
 ```
-./build-rpm -ucia
+./build-rpm -a -ucbi
 ```
 
-Uninstall and clean all packages, and build ganeti dependencies packages only, and install:
+Ganeti dependencies packages + uninstall, clean, build, and install:
 
 ```
-./build-rpm -ucid
+./build-rpm -d -ucbi
 ```
 
-Uninstall and clean all packages, and build the specified package(s) only, and install:
+The specified package(s) + uninstall, clean, build, and install:
 
 ```
-./build-rpm -ucip PACKAGE
+./build-rpm -p -ucbi PACKAGE
 ```
 
 Build all packages with no overwrite and install:
 
 ```
-./build-rpm -o no -ia
+./build-rpm -a -bi -o no
 ```
 
 Build the new ganeti RPM package version using the already released dependency libraries and install:
@@ -84,14 +123,7 @@ Build the new ganeti RPM package version using the already released dependency l
 ```
 yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
 yum-config-manager --enable integ-ganeti
-./build-rpm -ip ganeti
-```
-
-### List ghc dependencies in target packages
-
-```
-./build-rpm -ucid
-./build-rpm -l
+./build-rpm -p -bi ganeti
 ```
 
 ## Signing RPM Packages
@@ -110,13 +142,13 @@ echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
 Sign all packages:
 
 ```
-./build-rpm -sa
+./build-rpm -a -s
 ```
 
 Sign the specified package(s) only:
 
 ```
-./build-rpm -sp PACAKGE
+./build-rpm -p -s PACAKGE
 ```
 
 ## Other Ganeti resources
