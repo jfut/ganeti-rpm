@@ -5,7 +5,7 @@
 
 Name: python-prctl
 Version: 1.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: python-prctl -- Control process attributes through prctl
 Group: System Environment/Libraries
 License: GPL
@@ -52,6 +52,8 @@ rm -rf %{buildroot}
 %{python_sitearch}/python_%{srcname}-%{version}-*.egg-info
 
 %changelog
+* Sat Jan 23 2021 Jun Futagawa <jfut@integ.jp> - 1.7-3
+
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 1.7-2
 - Added Add BuildRequires: libcap-devel
 
