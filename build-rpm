@@ -60,6 +60,9 @@ Usage:
             integ-ganeti-repo:
                 ${INTEG_GANETI_REPO_PACKAGES}
 
+        -c Clean the rpmbuild directory, but preserve downloaded archives.
+        -C Completely clean the rpmbuild directory.
+
         -o Overwrite built package: yes|no (Default: manual)
 
         -s Sign built packages.
@@ -67,10 +70,20 @@ Usage:
         -i Install built packages.
         -u Uninstall installed packages.
 
-        -c Clean the rpmbuild directory, but preserve downloaded archives.
-        -C Completely clean the rpmbuild directory.
-
 _EOF_
+}
+
+# Clean but preserve downloaded archives
+clean_minimal() {
+    echo "Cleaning..."
+    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
+}
+
+# Clean everything
+clean_all() {
+    echo "Cleaning Everything..."
+    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
+    rm -f "${PACKAGER_RPM_DIR}"/*/SOURCES/*.{gz,bz2}
 }
 
 # Get package list
@@ -136,104 +149,7 @@ check_oldpackage() {
     fi
 }
 
-# Check sign key
-check_signkey() {
-    SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
-    if [[ "${SIGNKEY}" -lt 1 ]]; then
-        echo "Error: Ganeti RPM Packages sign key not found."
-        exit 1
-        SIGN_MODE="no"
-    fi
-}
-
-# Clean but preserve downloaded archives
-clean_minimal() {
-    echo "Cleaning..."
-    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
-}
-
-# Clean everything
-clean_all() {
-    echo "Cleaning Everything..."
-    rm -rf "${PACKAGER_RPM_DIR}"/*/{BUILD,BUILDROOT,RPMS,SRPMS}
-    rm -f "${PACKAGER_RPM_DIR}"/*/SOURCES/*.{gz,bz2}
-}
-
-# Uninstall packages
-uninstall_package() {
-    echo "Uninstall packages..."
-
-    REMOVE_PACKAGES=""
-    for PACKAGE in ${@}; do
-        local PACKAGE_PREFIX="${PACKAGE}"
-
-        # check python package
-        local PYTHON3_PKGVERSION_OPTION=""
-        # el8 only
-        if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
-            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
-            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}
-            if [[ "${RPM_DIST}" != ".el8" ]]; then
-                echo "Skip ${PACKAGE} because it is for el8 only"
-                continue
-            fi
-        fi
-        # el7 only
-        if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
-            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
-            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
-            if [[ "${RPM_DIST}" != ".el7" ]]; then
-                echo "Skip ${PACKAGE} because it is for el7 only"
-                continue
-            fi
-        fi
-
-        local PACKAGE_SPEC_FILE="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
-        local PACKAGE_LIST=( $(package_list "${PACKAGE_SPEC_FILE}" "${PACKAGE}" "${PACKAGE_PREFIX}") )
-
-        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
-            for PACKAGE_NAME in ${PACKAGE_LIST[@]}; do
-                # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
-                PACKAGE_NAME="${PACKAGE_NAME##*/}"
-                # example-1.0.0.rpm -> example-1.0.0
-                PACKAGE_NAME="${PACKAGE_NAME%.*}"
-                REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE_NAME}"
-            done
-        fi
-    done
-
-    if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
-        sudo yum -y remove ${REMOVE_PACKAGES}
-        echo
-    fi
-}
-
-install_package() {
-    echo "Install packages..."
-    for PACKAGE in ${@}; do
-        if [[ "${PACKAGE}" =~ \.src\.rpm$ ]]; then
-            echo "Skip install source rpm: ${PACKAGE}"
-            continue
-        fi
-        PACKAGE_NAME="${PACKAGE}"
-        # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
-        PACKAGE_NAME="${PACKAGE_NAME##*/}"
-        # example-1.0.0.rpm -> example-1.0.0
-        PACKAGE_NAME="${PACKAGE_NAME%.*}"
-
-        set +e
-        sudo yum list installed "${PACKAGE_NAME}" > /dev/null 2>&1
-        RET=$?
-        set -e
-        if [[ "${RET}" -ne 0 ]]; then
-            # Install target version package only
-            echo "Install ${PACKAGE} package..."
-            sudo yum -y install "${PACKAGE}"
-        fi
-    done
-}
-
-# Build packages
+# Build package
 build_package() {
     for PACKAGE in ${@}; do
         echo "Building package for ${PACKAGE}..."
@@ -297,6 +213,17 @@ build_package() {
     done
 }
 
+# Check sign key
+check_signkey() {
+    SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
+    if [[ "${SIGNKEY}" -lt 1 ]]; then
+        echo "Error: Ganeti RPM Packages sign key not found."
+        exit 1
+        SIGN_MODE="no"
+    fi
+}
+
+# Sign package
 sign_package() {
     for PACKAGE in ${@}; do
         echo "Signing package for ${PACKAGE}..."
@@ -317,6 +244,80 @@ sign_package() {
         echo
         popd
     done
+}
+
+install_package() {
+    echo "Install packages..."
+    for PACKAGE in ${@}; do
+        if [[ "${PACKAGE}" =~ \.src\.rpm$ ]]; then
+            echo "Skip install source rpm: ${PACKAGE}"
+            continue
+        fi
+        PACKAGE_NAME="${PACKAGE}"
+        # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
+        PACKAGE_NAME="${PACKAGE_NAME##*/}"
+        # example-1.0.0.rpm -> example-1.0.0
+        PACKAGE_NAME="${PACKAGE_NAME%.*}"
+
+        set +e
+        sudo yum list installed "${PACKAGE_NAME}" > /dev/null 2>&1
+        RET=$?
+        set -e
+        if [[ "${RET}" -ne 0 ]]; then
+            # Install target version package only
+            echo "Install ${PACKAGE} package..."
+            sudo yum -y install "${PACKAGE}"
+        fi
+    done
+}
+
+# Uninstall package
+uninstall_package() {
+    echo "Uninstall packages..."
+
+    REMOVE_PACKAGES=""
+    for PACKAGE in ${@}; do
+        local PACKAGE_PREFIX="${PACKAGE}"
+
+        # check python package
+        local PYTHON3_PKGVERSION_OPTION=""
+        # el8 only
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}
+            if [[ "${RPM_DIST}" != ".el8" ]]; then
+                echo "Skip ${PACKAGE} because it is for el8 only"
+                continue
+            fi
+        fi
+        # el7 only
+        if [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
+            PYTHON3_PKGVERSION_OPTION="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
+            PACKAGE_PREFIX=${PACKAGE_PREFIX/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
+            if [[ "${RPM_DIST}" != ".el7" ]]; then
+                echo "Skip ${PACKAGE} because it is for el7 only"
+                continue
+            fi
+        fi
+
+        local PACKAGE_SPEC_FILE="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_SPEC_FILE}" "${PACKAGE}" "${PACKAGE_PREFIX}") )
+
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            for PACKAGE_NAME in ${PACKAGE_LIST[@]}; do
+                # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
+                PACKAGE_NAME="${PACKAGE_NAME##*/}"
+                # example-1.0.0.rpm -> example-1.0.0
+                PACKAGE_NAME="${PACKAGE_NAME%.*}"
+                REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE_NAME}"
+            done
+        fi
+    done
+
+    if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
+        sudo yum -y remove ${REMOVE_PACKAGES}
+        echo
+    fi
 }
 
 # Main
