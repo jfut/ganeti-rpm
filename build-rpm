@@ -256,7 +256,6 @@ check_signkey() {
     if [[ "${SIGNKEY}" -lt 1 ]]; then
         echo "Error: Ganeti RPM Packages sign key not found."
         exit 1
-        SIGN_TASK="no"
     fi
 }
 
@@ -371,17 +370,23 @@ main() {
     [[ $# -lt 1 ]] && usage && exit 1
 
     # See how we're called.
+    TARGET_ALL="no"
+    TARGET_PACKAGES="no"
+    TARGET_DEPENDS_PACKAGES="no"
     CLEAN_TASK="no"
     BUILD_TASK="no"
     SIGN_TASK="no"
     INSTALL_TASK="no"
     UNINSTALL_TASK="no"
-    TARGET_ALL="no"
-    TARGET_PACKAGES="no"
-    TARGET_DEPENDS_PACKAGES="no"
     OVERWRITE_MODE="manual"
-    while getopts cCbsiuo:adp OPT; do
+    while getopts adpcCbsiuo: OPT; do
         case "${OPT}" in
+            "a" )
+                TARGET_ALL="yes" ;;
+            "d" )
+                TARGET_DEPENDS_PACKAGES="yes" ;;
+            "p" )
+                TARGET_PACKAGES="yes" ;;
             "c" )
                 CLEAN_TASK="minimal" ;;
             "C" )
@@ -395,12 +400,6 @@ main() {
                 INSTALL_TASK="yes" ;;
             "u" )
                 UNINSTALL_TASK="yes" ;;
-            "a" )
-                TARGET_ALL="yes" ;;
-            "d" )
-                TARGET_DEPENDS_PACKAGES="yes" ;;
-            "p" )
-                TARGET_PACKAGES="yes" ;;
             "o" )
                 OVERWRITE_MODE="${OPTARG}" ;;
             * )
@@ -412,38 +411,42 @@ main() {
     shift $((OPTIND - 1))
 
     # Target package
+    local TARGET=""
     if [[ "${TARGET_ALL}" = "yes" ]]; then
-        TARGET_PACKAGES="${PACKAGES}"
+        TARGET="${PACKAGES}"
     elif [[ "${TARGET_DEPENDS_PACKAGES}" = "yes" ]]; then
-        TARGET_PACKAGES="${GANETI_DEPENDS_PACKAGES}"
+        TARGET="${GANETI_DEPENDS_PACKAGES}"
     elif [[ "${TARGET_PACKAGES}" = "yes" ]]; then
-        TARGET_PACKAGES="${@}"
+        TARGET="${@}"
+    else
+        echo "Error: no target package. Use -a or -d or -p package..."
+        exit 1
     fi
 
     # Uninstall task
     if [[ "${UNINSTALL_TASK}" = "yes" ]]; then
-        uninstall_package "${TARGET_PACKAGES[@]}"
+        uninstall_package "${TARGET[@]}"
     fi
 
     # Clean task
     if [[ "${CLEAN_TASK}" != "no" ]]; then
-        clean_rpmbuild_directory "${CLEAN_TASK}" "${TARGET_PACKAGES[@]}"
+        clean_rpmbuild_directory "${CLEAN_TASK}" "${TARGET[@]}"
     fi
 
     # Build task
     if [[ "${BUILD_TASK}" = "yes" ]]; then
-        build_package "${TARGET_PACKAGES[@]}"
+        build_package "${TARGET[@]}"
     fi
 
     # Sign task
     if [[ "${SIGN_TASK}" = "yes" ]]; then
-        sign_package "${TARGET_PACKAGES[@]}"
+        sign_package "${TARGET[@]}"
     fi
 
     # Install task
     if [[ "${UNINSTALL_TASK}" = "no" ]]; then
         if [[ "${INSTALL_TASK}" = "yes" ]]; then
-            install_package "${TARGET_PACKAGES[@]}"
+            install_package "${TARGET[@]}"
         fi
     fi
 
