@@ -13,19 +13,23 @@ RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|
 PYTHON3_PKGVERSION_OPTION_EL8=3
 PYTHON3_PKGVERSION_OPTION_EL7=36
 
+# integ-ganeti repo
+INTEG_GANETI_REPO_PACKAGES_EL8="integ-ganeti-release-8"
+INTEG_GANETI_REPO_PACKAGES_EL7="integ-ganeti-release-7"
+
 # single packages
 GANETI_DEPENDS_PACKAGES=()
 GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
+
 if [[ "${RPM_DIST}" = ".el8" ]]; then
+    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL8}"
     GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
 elif [[ "${RPM_DIST}" = ".el7" ]]; then
+    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL7}"
     GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
 fi
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
-
-# integ-ganeti repo
-INTEG_GANETI_REPO_PACKAGES="integ-ganeti-release"
 
 # sng-image
 SNF_IMAGE_PACKAGES="python-prctl snf-image"
@@ -58,7 +62,7 @@ Usage:
             snf-image:
                 ${SNF_IMAGE_PACKAGES}
             integ-ganeti-repo:
-                ${INTEG_GANETI_REPO_PACKAGES}
+                ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
 
     Task Options:
         -c Clean clean the rpmbuild directory, but preserve downloaded archives.
@@ -93,7 +97,11 @@ setup_package_option() {
     local PACKAGE="${PACKAGE_OPTION[package]}"
 
     # spec_file
-    PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
+    SPEC_NAME="${PACKAGE}"
+    if [[ "${SPEC_NAME}" =~ ^integ-ganeti-release ]]; then
+        SPEC_NAME="integ-ganeti-release"
+    fi
+    PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${SPEC_NAME}.spec"
 
     # package_prefix
     PACKAGE_OPTION[package_prefix]="${PACKAGE}"
