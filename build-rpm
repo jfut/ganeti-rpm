@@ -31,11 +31,8 @@ elif [[ "${RPM_DIST}" = ".el7" ]]; then
 fi
 GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
 
-# sng-image
-SNF_IMAGE_PACKAGES="python-prctl snf-image"
-
 # all packages
-PACKAGES="${GANETI_DEPENDS_PACKAGES} ${GANETI_PACKAGES} ${SNF_IMAGE_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
+PACKAGES="${GANETI_DEPENDS_PACKAGES} ${GANETI_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -50,7 +47,7 @@ Usage:
     ${PACKAGER} [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
 
     Target Options:
-        -a all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
+        -a all packages (ganeti and its dependencies and integ-ganeti repo).
         -d ganeti dependencies packages only.
         -p the specified package(s) only. Available packages are:
             ganeti dependencies (el8 only):
@@ -59,8 +56,6 @@ Usage:
                 ${GANETI_DEPENDS_PACKAGES_EL7}
             ganeti:
                 ${GANETI_PACKAGES}
-            snf-image:
-                ${SNF_IMAGE_PACKAGES}
             integ-ganeti-repo:
                 ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
 
