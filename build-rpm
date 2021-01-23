@@ -137,10 +137,10 @@ clean_rpmbuild_directory() {
     for PACKAGE in ${@}; do
         echo "- ${PACKAGE}"
         if [[ "${CLEAN_TASK}" = "full" ]]; then
-            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}/{BUILD,BUILDROOT,RPMS,SRPMS}"
-            rm -f "${PACKAGER_RPM_DIR}/${PACKAGE}/SOURCES/*.{gz,bz2}"
+            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}"/{BUILD,BUILDROOT,RPMS,SRPMS}
+            rm -f "${PACKAGER_RPM_DIR}/${PACKAGE}"/SOURCES/*.{gz,bz2}
         else
-            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}/{BUILD,BUILDROOT,RPMS,SRPMS}"
+            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}"/{BUILD,BUILDROOT,RPMS,SRPMS}
         fi
     done
 }
