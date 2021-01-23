@@ -14,9 +14,9 @@ Source: https://github.com/seveas/python-prctl/archive/v%{version}.tar.gz
 
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  libcap-devel
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+BuildRequires: libcap-devel
+BuildRequires: python-devel
+BuildRequires: python-setuptools
 
 %description
 The linux prctl function allows you to control specific characteristics of a
@@ -55,7 +55,7 @@ rm -rf %{buildroot}
 * Sat Jan 23 2021 Jun Futagawa <jfut@integ.jp> - 1.7-3
 
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 1.7-2
-- Added Add BuildRequires: libcap-devel
+- Add BuildRequires: libcap-devel
 
 * Mon Mar 18 2019 Jun Futagawa <jfut@integ.jp> - 1.7-1
 - Initial package
