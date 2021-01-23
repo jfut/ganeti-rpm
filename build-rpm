@@ -236,7 +236,7 @@ build_package() {
             eval sudo yum-builddep -y ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\""
 
             # Download source and patch files
-            local PACKAGE_SOURCES="${PACKAGER_RPM_DIR}/SOURCES"
+            local PACKAGE_SOURCES="${PACKAGER_RPM_DIR}/${PACKAGE}/SOURCES"
             if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
                 mkdir "${PACKAGE_SOURCES}"
             fi
