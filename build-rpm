@@ -213,6 +213,10 @@ build_package() {
         # setup option
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
 
         local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
         is_overwrite="default"
@@ -271,6 +275,10 @@ sign_package() {
         # setup option
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
 
         local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
         if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
@@ -304,6 +312,10 @@ install_package() {
         # setup option
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
 
         set +e
         sudo yum list installed "${PACKAGE_OPTION[package_prefix]}" > /dev/null 2>&1
@@ -344,6 +356,10 @@ uninstall_package() {
         # setup option
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
 
         local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
         if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
