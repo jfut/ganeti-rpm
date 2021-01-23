@@ -92,16 +92,20 @@ setup_package_option() {
     local PACKAGE="${PACKAGE_OPTION[package]}"
 
     # spec_file
-    SPEC_NAME="${PACKAGE}"
-    if [[ "${SPEC_NAME}" =~ ^integ-ganeti-release ]]; then
-        SPEC_NAME="integ-ganeti-release"
-    fi
-    PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${SPEC_NAME}.spec"
-
+    PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
     # package_prefix
     PACKAGE_OPTION[package_prefix]="${PACKAGE}"
     # python3_pkgversion_option
     PACKAGE_OPTION[python3_pkgversion_option]=""
+
+    # integ-ganeti-release package
+    if [[ "${PACKAGE}" =~ ^integ-ganeti-release ]]; then
+        local PACKAGE_PREFIX="integ-ganeti-release"
+        PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE_PREFIX}.spec"
+        PACKAGE_OPTION[package_prefix]="${PACKAGE_PREFIX}"
+    fi
+
+    # python packages
     if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
         # el8 only
         PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
