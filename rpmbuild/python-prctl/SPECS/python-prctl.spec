@@ -17,6 +17,8 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libcap-devel
 BuildRequires: python-devel
 BuildRequires: python-setuptools
+# doc
+BuildRequires: python-sphinx
 
 %description
 The linux prctl function allows you to control specific characteristics of a
@@ -53,6 +55,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Sat Jan 23 2021 Jun Futagawa <jfut@integ.jp> - 1.7-3
+- Add BuildRequires: python-sphinx
 
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 1.7-2
 - Add BuildRequires: libcap-devel
