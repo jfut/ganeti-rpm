@@ -63,9 +63,12 @@ BuildRequires: qemu-img
 BuildRequires: socat
 BuildRequires: iproute
 BuildRequires: libcurl-devel
+
+# doc
 BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
+BuildRequires: man-db
 
 # unittests
 BuildRequires: fakeroot
