@@ -1,6 +1,6 @@
 # Ganeti installation tutorial for RHEL/CentOS/Scientific Linux
 
-This documentation is the short version for RHEL/CentOS/Scientific Linux and Fedora.
+This documentation is the short version for RHEL/CentOS/Scientific Linux.
 
 Official full version:
 
@@ -38,7 +38,7 @@ e.g. DNS or `/etc/hosts`:
 
 **Mandatory** on all nodes.
 
-- KVM on RHEL/CentOS/Scientific Linux **6.x and later**
+- KVM on RHEL/CentOS/Scientific Linux **7.x and later**
 
 ```
 yum install qemu-kvm libvirt python-virtinst virt-install bridge-utils
@@ -79,14 +79,6 @@ systemctl start libvirtd.service
 
 virsh net-autostart default --disable
 virsh net-destroy default
-```
-
-- KVM on RHEL/CentOS/Scientific Linux **6.x**
-
-```
-chkconfig messagebus on
-chkconfig libvirtd on
-chkconfig libvirt-guests off
 ```
 
 Create bridge interface:
@@ -163,60 +155,6 @@ Apply firewall rules:
 iptables-restore < /etc/sysconfig/iptables
 ```
 
-### Xen settings
-
-- Xen on RHEL/CentOS/Scientific Linux 5.x only
-
-**Mandatory** on all nodes.
-
-Service configuration:
-
-```
-chkconfig xend on
-chkconfig xendomains on
-# (Optional)
-chkconfig libvirtd off
-```
-
-Edit `/etc/xen/xend-config.sxp`:
-
-```
-(dom0-min-mem 0)
-(xend-relocation-server yes)
-(xend-relocation-port 8002)
-(xend-relocation-hosts-allow '')
-```
-
-Add dom0_mem to `/etc/grub.conf`:
-
-```
-title CentOS (2.6.18-xxx.xx.x.el5xen)
-      root (hd0,0)
-      kernel /xen.gz-2.6.18-xxx.xx.x.el5 dom0_mem=512M
-      module /vmlinuz-2.6.18-xxx.xx.x.el5xen ro root=/dev/VolGroup00/HostRoot
-      module /initrd-2.6.18-xxx.xx.x.el5xen.img
-```
-
-You need to restart the Xen daemon for these settings to take effect.
-
-```
-/etc/init.d/xend restart
-```
-
-After installing either hypervisor, you need to reboot into your new 
-system. On some distributions this might involve configuring GRUB 
-appropriately, whereas others will configure it automatically when you 
-install the respective kernels.
-
-```
-reboot
-```
-
-Setup a kernel for an instance:
-
-  cd /boot
-  ln -s vmlinuz-`uname -r` vmlinuz-2.6-xenU
-
 ## Setting up yum repositories
 
 **Mandatory** on all nodes.
@@ -256,13 +194,6 @@ yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.
 yum-config-manager --disable integ-ganeti
 ```
 
-- RHEL/CentOS/Scientific Linux **6.x**
-
-```
-yum install http://jfut.integ.jp/linux/ganeti/6/x86_64/integ-ganeti-release-6-1.el6.noarch.rpm
-yum-config-manager --disable integ-ganeti
-```
-
 ## Installing DRBD
 
 **Mandatory** on all nodes.
@@ -291,14 +222,6 @@ Load DRBD kernel module:
 
 ```
 systemctl start systemd-modules-load
-```
-
-- RHEL/CentOS/Scientific Linux **5.x and 6.x**
-
-Create `/etc/default/drbd`:
-
-```
-ADD_MOD_PARAM="minor_count=128 usermode_helper=/bin/true"
 ```
 
 ## Configuring LVM
@@ -411,12 +334,6 @@ true | systemctl enable ganeti-mond.service
 # Optional: ganeti-metad is the daemon providing the metadata service.
 # If you want to disable ganeti-metad:
 true | systemctl enable ganeti-metad.service
-```
-
-- KVM on RHEL/CentOS/Scientific Linux **5.x and 6.x**
-
-```
-chkconfig ganeti on
 ```
 
 ## Initializing the cluster
