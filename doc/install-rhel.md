@@ -62,16 +62,6 @@ systemctl enable ksm.service
 systemctl enable ksmtuned.service
 ```
 
-- RHEL/CentOS/Scientific Linux **7.7.1908**
-
-[On 7.7.1908, it can not paste to execute multi-line `systemctl ...`.](https://bugs.centos.org/view.php?id=16758)
-
-```
-true | systemctl enable libvirtd.service
-true | systemctl enable ksm.service
-true | systemctl enable ksmtuned.service
-```
-
 Disable unused virbrX:
 
 ```
@@ -313,27 +303,6 @@ systemctl enable ganeti-mond.service
 # Optional: ganeti-metad is the daemon providing the metadata service.
 # If you want to disable ganeti-metad:
 systemctl enable ganeti-metad.service
-```
-
-- RHEL/CentOS/Scientific Linux **7.7.1908**
-
-[On 7.7.1908, it can not paste to execute multi-line `systemctl ...`.](https://bugs.centos.org/view.php?id=16758)
-
-```
-true | systemctl enable ganeti.target
-true | systemctl enable ganeti-confd.service
-true | systemctl enable ganeti-noded.service
-true | systemctl enable ganeti-wconfd.service
-true | systemctl enable ganeti-rapi.service
-true | systemctl enable ganeti-luxid.service
-true | systemctl enable ganeti-kvmd.service
-
-# Optional: ganeti-mond is the daemon providing the Ganeti monitoring functionality.
-true | systemctl enable ganeti-mond.service
-
-# Optional: ganeti-metad is the daemon providing the metadata service.
-# If you want to disable ganeti-metad:
-true | systemctl enable ganeti-metad.service
 ```
 
 ## Initializing the cluster
