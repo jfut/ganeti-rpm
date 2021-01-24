@@ -317,28 +317,15 @@ if [[ ! -d ~/.ssh ]]; then mkdir ~/.ssh; chmod 600 ~/.ssh; fi
 
 Initialize a cluster.
 
-Example:
-
 ```
 gnt-cluster init --vg-name <VOLUMEGROUP> --master-netdev <MASTERINTERFACE> --nic-parameters link=<BRIDGEINTERFACE> <CLUSTERNAME>
 ```
-
-- KVM
 
 Example for KVM:
 
 ```
 gnt-cluster init --vg-name vmvg --master-netdev <MASTERINTERFACE> --enabled-hypervisors kvm --nic-parameters link=<BRIDGEINTERFACE> gcluster
 e.g. gnt-cluster init --vg-name vmvg --master-netdev eth0 --enabled-hypervisors kvm --nic-parameters link=br0 gcluster
-```
-
-- Xen
-
-Example for Xen:
-
-```
-gnt-cluster init --vg-name vmvg --master-netdev <MASTERINTERFACE> --nic-parameters link=<BRIDGEINTERFACE> gcluster
-e.g. gnt-cluster init --vg-name vmvg --master-netdev eth0 --nic-parameters link=xenbr0 gcluster
 ```
 
 Set default metavg parameter for DRBD disk
@@ -349,16 +336,8 @@ gnt-cluster modify -D drbd:metavg=vmvg
 
 Enable use_bootloader for using VM's boot loader.
 
-- KVM
-
 ```
 gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
-```
-
-- Xen
-
-```
-gnt-cluster modify --hypervisor-parameters xen-pvm:use_bootloader=True
 ```
 
 ## Verifying the cluster
