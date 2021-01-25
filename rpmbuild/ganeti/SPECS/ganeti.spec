@@ -49,6 +49,7 @@ Patch5: ganeti-3.0.0-ghc-json-version.patch
 Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
 Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
 Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
+Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
 
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
@@ -143,6 +144,7 @@ It is not required when the init system used is systemd.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 # https://github.com/haskell-crypto/cryptonite/issues/326
