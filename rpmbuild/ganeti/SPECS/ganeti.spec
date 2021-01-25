@@ -43,7 +43,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 
 Patch1: ganeti-3.0.0-disable-start-rate-limit.patch
 Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
-Patch3: ganeti-2.16.1-systemd-ambient-capabilities.patch
+Patch3: ganeti-3.0.0-systemd-ambient-capabilities.patch
 Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 Patch5: ganeti-3.0.0-ghc-json-version.patch
 Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
