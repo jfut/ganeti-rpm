@@ -295,7 +295,7 @@ sign_package() {
                 if [[ "${IS_SIGNED}" -eq 0 ]]; then
                     SIGN_PACKAGES="${SIGN_PACKAGES} ${PACKAGE_PATH}"
                 else
-                    echo "Skip sign: ${RPM_FILE} is already signed."
+                    echo "    Skip sign: ${PACKAGE_PATH} is already signed."
                 fi
             done
         fi
