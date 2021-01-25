@@ -41,12 +41,13 @@ Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.15.0-avoid-systemd-request-repeated.patch
+Patch1: ganeti-3.0.0-disable-start-rate-limit.patch
 Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
 Patch3: ganeti-2.16.1-systemd-ambient-capabilities.patch
 Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
 Patch5: ganeti-3.0.0-ghc-json-version.patch
 Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
+Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
 
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
@@ -139,6 +140,7 @@ It is not required when the init system used is systemd.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 # https://github.com/haskell-crypto/cryptonite/issues/326
@@ -157,6 +159,8 @@ cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond meta
   --with-iallocator-search-path=%{iallocator_search_path} \
   --with-xen-bootloader=/usr/bin/pygrub \
   --with-kvm-path=/usr/libexec/qemu-kvm \
+  --with-user-prefix=gnt- \
+  --with-group-prefix=gnt- \
   --enable-monitoring \
   --enable-metadata \
   --enable-haskell-tests \
@@ -213,11 +217,47 @@ RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
 RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
 %check
+while read GROUP
+do
+    getent group ${GROUP} > /dev/null || sudo groupadd -f -r ${GROUP}
+done < doc/users/groups
+
+while read USER GROUP
+do
+    getent passwd ${USER} > /dev/null || sudo useradd -r -g ${GROUP} -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M ${USER}
+done < doc/users/users
+
+while read USER GROUP
+do
+    getent passwd ${USER} > /dev/null && sudo usermod -aG ${GROUP} ${USER}
+done < doc/users/groupmemberships
+
 sudo make py-tests
 make hs-tests
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
+
+%pre
+getent group gnt-admin > /dev/null   || groupadd -f -r gnt-admin
+getent group gnt-confd  > /dev/null  || groupadd -f -r gnt-confd
+getent group gnt-daemons > /dev/null || groupadd -f -r gnt-daemons
+getent group gnt-luxid > /dev/null   || groupadd -f -r gnt-luxid
+getent group gnt-masterd > /dev/null || groupadd -f -r gnt-masterd
+getent group gnt-metad > /dev/null   || groupadd -f -r gnt-metad
+getent group gnt-rapi > /dev/null    || groupadd -f -r gnt-rapi
+getent passwd gnt-confd > /dev/null   || useradd -r -g gnt-confd -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-confd
+getent passwd gnt-masterd > /dev/null || useradd -r -g gnt-confd -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-masterd
+getent passwd gnt-metad > /dev/null   || useradd -r -g gnt-metad -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-metad
+getent passwd gnt-rapi > /dev/null    || useradd -r -g gnt-rapi -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-rapi
+usermod -aG gnt-daemons gnt-confd
+usermod -aG gnt-admin gnt-masterd
+usermod -aG gnt-confd gnt-masterd
+usermod -aG gnt-daemons gnt-masterd
+usermod -aG gnt-masterd gnt-masterd
+usermod -aG gnt-daemons gnt-metad
+usermod -aG gnt-admin gnt-rapi
+usermod -aG gnt-daemons gnt-rapi
 
 %post
 %systemd_post ganeti.target ganeti-master.target ganeti-node.target
@@ -257,8 +297,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man*/g*
 %{_mandir}/man*/h*
 %{_mandir}/man*/mon-collector*
-%attr(750,root,root) %dir /var/lib/%{name}
-%attr(750,root,root) %dir /var/log/%{name}
+%attr(755,gnt-masterd,gnt-daemons) %dir /var/lib/%{name}
+%attr(770,gnt-masterd,gnt-daemons) %dir /var/log/%{name}
 
 %files sysvinit
 %defattr(-,root,root)
@@ -280,6 +320,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Add ganeti-3.0.0-ghc-json-version.patch
 - Remove document source files
 - Add ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch (#34)
+- Add --with-user-prefix and --with-group-prefix options (#20)
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
