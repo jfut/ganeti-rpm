@@ -1,14 +1,16 @@
-# Ganeti installation tutorial for RHEL/CentOS/Scientific Linux
+# Ganeti installation tutorial for RHEL/CentOS/others
 
-This documentation is the short version for RHEL/CentOS/Scientific Linux.
+This documentation is the short version for RHEL/CentOS/others 7.x and 8.x.
+
+**The DRBD disk template cannot be used with el8 because kmod-drbd84 and drbd84-utils for ELRepo el8 have not been released.**
 
 Official full version:
 
 - [Ganeti's documentation](http://docs.ganeti.org/ganeti/current/html/) > [Ganeti installation tutorial](http://docs.ganeti.org/ganeti/current/html/install.html)
 
-New versions and updating:
+Upgrade / update to the latest version:
 
-* [Upgrade guides](https://github.com/jfut/ganeti-rpm/tree/master/doc/)
+* [Upgrade guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc/)
 
 ## Installing the base system
 
@@ -36,27 +38,37 @@ e.g. DNS or `/etc/hosts`:
 
 ## Installing The Hypervisor
 
+Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/CentOS/Scientific CentOS.
+
 **Mandatory** on all nodes.
 
-- KVM on RHEL/CentOS/Scientific Linux **7.x and later**
+- KVM on RHEL/CentOS/others **7.x**
 
+The oldest version of qemu supported by Ganeti is `qemu-2.11`. Therefore, it is recommended to install `qemu-kvm-ev`(version `2.12.x`) instead of `qemu-kvm`(version `1.5.x`) on `el7`.
+
+```bash
+# centos-release-qemu-ev - QEMU Enterprise Virtualization packages from the CentOS Virtualization SIG repository
+yum install centos-release-qemu-ev
+yum install qemu-kvm-ev libvirt python-virtinst virt-install bridge-utils
 ```
-yum install qemu-kvm libvirt python-virtinst virt-install bridge-utils
+
+- KVM on RHEL/CentOS/others **8.x**
+
+```bash
+dnf install qemu-kvm libvirt python-virtinst virt-install bridge-utils
 ```
 
 ### KVM settings
 
-- KVM on RHEL/CentOS/Scientific Linux
+- KVM on RHEL/CentOS/others
 
 **Mandatory** on all nodes.
 
-(Optional) Service configuration for libvirt:
-
-- RHEL/CentOS/Scientific Linux **7.x and later**
+(Optional) Service configuration for libvirt.
 
 Enable services:
 
-```
+```bash
 systemctl enable libvirtd.service
 systemctl enable ksm.service
 systemctl enable ksmtuned.service
@@ -64,7 +76,7 @@ systemctl enable ksmtuned.service
 
 Disable unused virbrX:
 
-```
+```bash
 systemctl start libvirtd.service
 
 virsh net-autostart default --disable
@@ -73,17 +85,17 @@ virsh net-destroy default
 
 Create bridge interface:
 
-br0 is an example of bridge interface.
+`br0` is an example of bridge interface.
 
 - Using NetworkManager
 
-```
+```bash
 nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.method ignore bridge.stp no bridge.forward-delay 0 con-name "br0" ifname "br0"
 nmcli connection modify "eno1" connection.slave-type bridge connection.master "br0"
-nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24 192.168.1.254" ipv4.dns "192.168.1.254"
+nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24 192.168.1.254" ipv4.dns "192.168.1.1,"192.168.1.2"
 nmcli connection up br0
-nmcli connection down eth0
-nmcli connection up bridge-slave-eth0
+nmcli connection down eno1
+nmcli connection up bridge-slave-eno1
 
 # VLAN filter support on bridge(VLAN aware bridge)
 # Require ganeti-2.16.2-1 RPM or later
@@ -95,33 +107,14 @@ nmcli connection up br0
 
 You can setup it easily by using [nmcli-cli](https://github.com/jfut/nmcli-cli).
 
-- Using manual configuration
+```bash
+nmcli-cli-bridge-add -x br1 eno1
+nmcli-cli-ipv4 -x br1 static 192.168.1.11/24 192.168.1.254 "192.168.1.1,"192.168.1.2"
+nmcli connection modify br0 bridge.vlan-filtering yes
 
-Edit `/etc/sysconfig/network-scripts/ifcfg-eth0`:
-
-```
-DEVICE="eth0"
-BOOTPROTO="static"
-HWADDR="??:??:??:??:??:??"
-ONBOOT="yes"
-BRIDGE="br0"
-```
-
-Edit `/etc/sysconfig/network-scripts/ifcfg-br0`:
-
-```
-DEVICE="br0"
-TYPE=Bridge
-BOOTPROTO="static"
-IPADDR="192.168.1.11"
-NETMASK="255.255.255.0"
-ONBOOT="yes"
-```
-
-Apply network configurations.
-
-```
-/etc/init.d/network restart
+nmcli connection up br0
+nmcli connection down eno1
+nmcli connection up bridge-slave-eno1
 ```
 
 Allow to bridge interface access.
@@ -141,76 +134,79 @@ COMMIT
 
 Apply firewall rules:
 
-```
+```bash
 iptables-restore < /etc/sysconfig/iptables
 ```
 
-## Setting up yum repositories
+## Setting up yum/dnf repositories
 
 **Mandatory** on all nodes.
 
-Install ELRepo repository:
+Install ELRepo repository for DRBD packages:
 
-e.g. RHEL/CentOS **7.x**:
-
-```
-rpm --import http://elrepo.org/RPM-GPG-KEY-elrepo.org
-yum install https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+```bash
+# RHEL/CentOS/others **7.x**
+yum install elrepo-release
 yum-config-manager --disable elrepo
+
+# RHEL/CentOS/others **8.x**
+dnf install elrepo-release
+dnf config-manager --disable elrepo
 ```
 
-e.g. Scientific Linux:
+Install EPEL repository for dependency packages:
 
-```
-yum install yum-conf-elrepo
-yum-config-manager --disable elrepo
-```
-
-Install EPEL repository:
-
-e.g. Scientific Linux:
-
-```
-yum install yum-conf-epel
+```bash
+# RHEL/CentOS/others **7.x**
+yum install epel-release
 yum-config-manager --disable epel
+
+# RHEL/CentOS/others **8.x**
+dnf install epel-release
+dnf config-manager --disable epel
 ```
 
 Install Integ Ganeti repository:
 
-- RHEL/CentOS/Scientific Linux **7.x**
-
-```
-yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
+```bash
+# RHEL/CentOS/others **7.x**
+yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
 yum-config-manager --disable integ-ganeti
+
+# RHEL/CentOS/others **8.x**
+dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el7.noarch.rpm
+dnf config-manager --disable integ-ganeti
 ```
 
 ## Installing DRBD
+
+**kmod-drbd84 and drbd84-utils for el8 in ELRepo have not been released.**
 
 **Mandatory** on all nodes.
 
 Install DRBD package:
 
-```
-yum --enablerepo=elrepo install drbd84-utils kmod-drbd84
+```bash
+yum --enablerepo=elrepo install kmod-drbd84 drbd84-utils
 ```
 
-- RHEL/CentOS/Scientific Linux **7.x and later**
+- RHEL/CentOS/others **7.x and later**
 
 Create `/etc/modules-load.d/drbd.conf`:
 
-```
-drbd
+```bash
+echo "drbd" >> /etc/modules-load.d/drbd.conf
 ```
 
 Create `/etc/modprobe.d/drbd.conf`:
 
-```
-options drbd minor_count=128 usermode_helper=/bin/true
+```bash
+echo "options drbd minor_count=128 usermode_helper=/bin/true" >> /etc/modprobe.d/drbd.conf
 ```
 
 Load DRBD kernel module:
 
-```
+```bash
 systemctl start systemd-modules-load
 ```
 
@@ -225,14 +221,14 @@ need to do it before trying to initialize the Ganeti cluster. This is
 done by formatting the devices/partitions you want to use for it and
 then adding them to the relevant volume group.
 
-```
+```bash
 pvcreate /dev/sda3
 vgcreate vmvg /dev/sda3
 ```
 
 or
 
-```
+```bash
 pvcreate /dev/sdb1
 pvcreate /dev/sdc1
 vgcreate vmvg /dev/sdb1 /dev/sdc1
@@ -241,7 +237,7 @@ vgcreate vmvg /dev/sdb1 /dev/sdc1
 If you want to add a device later you can do so with the *vgextend*
 command:
 
-```
+```bash
 pvcreate /dev/sdd1
 vgextend vmvg /dev/sdd1
 ```
@@ -252,7 +248,7 @@ devices for physical volumes. This can be accomplished by editing
 `/dev/drbd[0-9]+` regular expression to the
 `filter` variable, like this:
 
-```
+```bash
 filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 ```
 
@@ -262,17 +258,17 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 
 - Install Ganeti:
 
-```
+```bash
 yum --enablerepo=epel,integ-ganeti install ganeti
 ```
 
 - (Optional) Install Ganeti Instance Debootstrap and snf-image:
 
-```
+```bash
 yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap snf-image
 ```
 
-Required ports:
+Required ports(default):
 
 Several network ports must be available and opened so the different nodes can communicate properly between them.
 
@@ -281,14 +277,11 @@ Several network ports must be available and opened so the different nodes can co
 - ganeti-rapi: 5080/tcp
 - ganeti-mond: 1815/tcp
 - ganeti-metad: 80/tcp
-- DRBD port for instances: 11000/tcp - 14999/tcp
-- VNC port: 5900/tcp
+- DRBD/VNC port for instances: 11000/tcp - 14999/tcp
 
 Service configuration:
 
-- RHEL/CentOS/Scientific Linux **7.x and later**
-
-```
+```bash
 systemctl enable ganeti.target
 systemctl enable ganeti-confd.service
 systemctl enable ganeti-noded.service
@@ -311,32 +304,32 @@ systemctl enable ganeti-metad.service
 
 Create ~/.ssh directory.
 
-```
+```bash
 if [[ ! -d ~/.ssh ]]; then mkdir ~/.ssh; chmod 600 ~/.ssh; fi
 ```
 
 Initialize a cluster.
 
-```
+```bash
 gnt-cluster init --vg-name <VOLUMEGROUP> --master-netdev <MASTERINTERFACE> --nic-parameters link=<BRIDGEINTERFACE> <CLUSTERNAME>
 ```
 
 Example for KVM:
 
-```
-gnt-cluster init --vg-name vmvg --master-netdev <MASTERINTERFACE> --enabled-hypervisors kvm --nic-parameters link=<BRIDGEINTERFACE> gcluster
-e.g. gnt-cluster init --vg-name vmvg --master-netdev eth0 --enabled-hypervisors kvm --nic-parameters link=br0 gcluster
+```bash
+# gnt-cluster init --vg-name vmvg --master-netdev <MASTERINTERFACE> --enabled-hypervisors kvm --nic-parameters link=<BRIDGEINTERFACE> gcluster
+gnt-cluster init --vg-name vmvg --master-netdev eno1 --enabled-hypervisors kvm --nic-parameters link=br0 gcluster
 ```
 
 Set default metavg parameter for DRBD disk
 
-```
+```bash
 gnt-cluster modify -D drbd:metavg=vmvg
 ```
 
 Enable use_bootloader for using VM's boot loader.
 
-```
+```bash
 gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
 ```
 
@@ -344,7 +337,7 @@ gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
 
 **Mandatory** on master node.
 
-```
+```bash
 gnt-cluster verify
 ```
 
@@ -356,7 +349,7 @@ After you have initialized your cluster you need to join the other nodes
 to it. You can do so by executing the following command on the master
 node.
 
-```
+```bash
 gnt-node add <NODENAME>
 gnt-node add node2
 
@@ -382,13 +375,35 @@ ERROR: node node2.example.com: ssh communication with node 'node1.example.com': 
 
 Initiate a manual ssh connection from node2 to node1 and vice versa.
 
+## Manage ganeti services
+
+**Mandatory** on all nodes.
+
+### Start
+
+```bash
+systemctl start ganeti.target
+systemctl start ganeti-kvmd.service
+
+# Optional: ganeti-metad is the daemon providing the metadata service.
+systemctl start ganeti-metad.service
+```
+
+### Stop
+
+```bash
+systemctl stop ganeti-metad.service
+systemctl stop ganeti-kvmd.service
+systemctl stop ganeti.target
+```
+
 ## Setting up and managing virtual instances
 
 **Mandatory** on master node.
 
 ### Setting up virtual instances
 
-- Setting up RHEL/CentOS/Scientific Linux
+- Setting up RHEL/CentOS/others
 
 We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image).
 
@@ -396,7 +411,7 @@ We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-ins
 
 Installation will be successful, but gnt-instance console doesn't work.
 
-```
+```bash
 gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
 ```
 

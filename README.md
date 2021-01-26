@@ -1,10 +1,11 @@
 # Ganeti RPM Packaging
 
-Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux.
+Ganeti RPM Packaging for RHEL/CentOS/others.
 
 ## Packaging status
 
-- RHEL/CentOS/Scientific Linux 7.x: 2.16.2-1
+- RHEL/CentOS/others 8.x: 3.0.0.rc1-2
+- RHEL/CentOS/others 7.x: 3.0.0.rc1-2
 
 ## Documentation
 
@@ -132,7 +133,6 @@ Run the container with bash:
 ```
 BUILD_HOSTNAME=ganeti-rpm-build.integ.jp
 docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg ganeti-rpmbuild-centos7 bash
-cd /pkg
 
 # Set your gpg name
 echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
