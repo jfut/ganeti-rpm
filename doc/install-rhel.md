@@ -492,7 +492,7 @@ systemctl stop ganeti.target
 
 - Setting up RHEL/CentOS/others
 
-We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image).
+We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image) ([yum repository](http://ftp.osuosl.org/pub/osl/ganeti-instance-image/yum/)).
 
 - Setting up Debian (require ganeti-instance-debootstrap)
 
