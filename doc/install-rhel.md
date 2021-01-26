@@ -333,6 +333,93 @@ Enable use_bootloader for using VM's boot loader.
 gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
 ```
 
+## Optional cluster configurations
+
+The settings using the `gnt-cluster` command are global settings that are reflected in all instances. You can override the setting values for individual instance using the `gnt-instance` command.
+
+### Enable user shutdown: --user-shutdown
+
+The `--user-shutdown` option enables or disables user shutdown detection at the cluster level. User shutdown detection allows users to initiate instance poweroff from inside the instance, and Ganeti will report the instance status as `USER_down` (as opposed, to `ERROR_down`) and the watcher will not restart these instances, thus preserving their instance status.
+
+```bash
+gnt-cluster modify --user-shutdown yes
+```
+
+### Optimizing DRBD performance: -D drbd
+
+This optimizes the DRBD performance.
+
+- [Optimizing DRBD performance section in The DRBD User's Guide](https://docs.linbit.com/docs/users-guide-8.4/#p-performance)
+
+```bash
+# For example with 1 Gbps NIC
+gnt-cluster modify -D drbd:c-min-rate=10240,c-max-rate=81920,resync-rate=81920
+gnt-cluster modify -D drbd:disk-custom='--al-extents 3833',net-custom='--max-buffers 8000 --max-epoch-size 8000'
+```
+
+### Change the CPU type: cpu_type
+
+This parameter determines the emulated cpu for the instance.
+
+```bash
+# For clusters with the same CPU, it is possible to use the 'host' cpu type:
+gnt-cluster modify -H kvm:cpu_type=host
+
+# For example on a cluster using IvyBridge-IBRS generation or later CPUs, the following command can be used:
+gnt-cluster modify -H kvm:cpu_type='IvyBridge-IBRS\,+pcid\,+ssbd\,+md-clear'
+
+# Show available CPU types:
+/usr/libexec/qemu-kvm -cpu help
+```
+
+### Change the CPU topology: cpu_sockets
+
+Number of emulated CPU sockets.
+
+```bash
+gnt-cluster modify -H kvm:cpu_sockets=1
+```
+
+### Change the NIC type: nic_type
+
+This parameter determines the way the network cards are presented to the instance.
+
+```bash
+# Use paravirtual
+gnt-cluster modify -H kvm:nic_type=paravirtual
+
+# Use e1000
+gnt-cluster modify -H kvm:nic_type=e1000
+```
+
+### Change the VGA type: vga
+
+Emulated vga mode, passed the the kvm -vga option.
+
+```bash
+gnt-cluster modify -H kvm:vga="std"
+```
+
+### Change the keymap: keymap
+
+This option specifies the keyboard mapping to be used. It is only needed when using the VNC console.
+
+```
+gnt-cluster modify -H kvm:keymap=ja
+```
+
+### Extra option for KVM: kvm_extra
+
+Any other option to the KVM hypervisor.
+
+```bash
+# For example:
+# - Enable KVM: -enable-kvm
+# - Add virtio-rng device: -device virtio-rng-pci\,bus=pci.0\,addr=0x1e\,max-bytes=1024\,period=1000
+# - Set video memory(MB): -global VGA.vgamem_mb=64
+gnt-cluster modify -H kvm:kvm_extra="-enable-kvm -device virtio-rng-pci\,bus=pci.0\,addr=0x1e\,max-bytes=1024\,period=1000 -global VGA.vgamem_mb=64"
+```
+
 ## Verifying the cluster
 
 **Mandatory** on master node.
