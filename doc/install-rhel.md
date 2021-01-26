@@ -500,5 +500,25 @@ Installation will be successful, but gnt-instance console doesn't work.
 
 ```bash
 gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
+
+# With no check, no start, and no install
+gnt-instance add -t drbd -n node2:node1 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance3 --no-ip-check --no-name-check --no-start --no-install instance3.example.com
 ```
+
+### Install custom OS using ISO file
+
+Check the VNC port of the created instance:
+
+```bash
+# gnt-instance info instance3.exmaple.com | grep "console connection"
+  console connection: vnc to node2.exmaple.com:11001 (display 5101)
+```
+
+Start the instance with ISO image:
+
+```bash
+gnt-instance start -H cdrom_image_path=/path/to/install.iso,boot_order=cdrom instance3.example.com
+```
+
+Connect to `node2.exmaple.com:11001` using a VNC client and follow the on-screen instructions to complete the installation.
 
