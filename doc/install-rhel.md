@@ -452,7 +452,8 @@ gnt-node add node3
 ```
 Node daemon on node2.example.com didn't answer queries within 10.0 seconds
 ```
-Make sure that you have port 1811 open (`lokkit -p 1811:tcp`)
+
+Make sure that you have port 1811 open (`ss -anpt | grep 1811`)
 
 - `gnt-cluster verify` on master returns an error after `Verifying node status`:
 
