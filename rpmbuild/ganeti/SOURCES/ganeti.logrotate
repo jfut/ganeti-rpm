@@ -3,6 +3,8 @@
     notifempty
     sharedscripts
     delaycompress
+    su root root
+    create 640
     postrotate
         /usr/lib64/ganeti/daemon-util rotate-all-logs > /dev/null 2>&1 || true
     endscript
