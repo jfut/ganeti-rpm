@@ -4,8 +4,10 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 
 ## Packaging status
 
-- RHEL/CentOS/others 8.x: 3.0.0.rc1-2
-- RHEL/CentOS/others 7.x: 3.0.0.rc1-2
+- RHEL/CentOS/others 8.x: 2.16.2-1
+    - testing: 3.0.0.rc1-2
+- RHEL/CentOS/others 7.x: 2.16.2-1
+    - testing: 3.0.0.rc1-2
 
 ## Documentation
 
