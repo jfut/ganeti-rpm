@@ -1,0 +1,481 @@
+#!/bin/bash
+#
+# Build RPMs for Ganeti and Tools
+
+set -euo pipefail
+
+export LC_ALL=C
+
+# RPM macros
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
+
+# python3_pkgversion for define option
+PYTHON3_PKGVERSION_OPTION_EL8=3
+PYTHON3_PKGVERSION_OPTION_EL7=36
+
+# integ-ganeti repo
+INTEG_GANETI_REPO_PACKAGES_EL8="integ-ganeti-release-8"
+INTEG_GANETI_REPO_PACKAGES_EL7="integ-ganeti-release-7"
+
+# single packages
+GANETI_DEPENDS_PACKAGES=()
+GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
+GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
+
+if [[ "${RPM_DIST}" = ".el8" ]]; then
+    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL8}"
+    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
+elif [[ "${RPM_DIST}" = ".el7" ]]; then
+    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL7}"
+    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
+fi
+GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
+
+# all packages
+PACKAGES="${GANETI_DEPENDS_PACKAGES} ${GANETI_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
+
+# Directories
+PACKAGER="$(basename "${0}")"
+PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
+PACKAGER_RPM_DIR="${PACKAGER_DIR}/rpmbuild"
+
+# Usage
+usage() {
+    cat << _EOF_
+
+Usage:
+    ${PACKAGER} [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
+
+    Target Options:
+        -a all packages (ganeti and its dependencies and integ-ganeti repo).
+        -d ganeti dependencies packages only.
+        -p the specified package(s) only. Available packages are:
+            ganeti dependencies (el8 only):
+                ${GANETI_DEPENDS_PACKAGES_EL8}
+            ganeti dependencies (el7 only):
+                ${GANETI_DEPENDS_PACKAGES_EL7}
+            ganeti:
+                ${GANETI_PACKAGES}
+            integ-ganeti-repo:
+                ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
+
+    Task Options:
+        -c Clean clean the rpmbuild directory, but preserve downloaded archives.
+        -C Completely clean the rpmbuild directory.
+
+        -b Build packages
+        -o Overwrite built package: yes|no (Default: manual)
+
+        -s Sign built packages.
+
+        -i Install built packages.
+        -u Uninstall installed packages.
+
+        Task Execution Order:
+            Uninstall -> Clean -> Build -> Sign -> Install
+
+        If the build (-b) and install (-i) options are specified at the same time,
+        the installation will be done immediately after the individual packages are built.
+        This is to resolve dependencies needed to build the next package.
+
+_EOF_
+}
+
+# PACKAGE_OPTION
+# - package: example
+# - spec_file: /pkg/rpmbuild/exmaple/SPEC/exmaple.spec
+# - package_prefix: example36
+# - python3_pkgversion_option: --define "python3_pkgversion 36"
+setup_package_option() {
+    eval "declare -A PACKAGE_OPTION="${1#*=}
+
+    local PACKAGE="${PACKAGE_OPTION[package]}"
+
+    # spec_file
+    PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
+    # package_prefix
+    PACKAGE_OPTION[package_prefix]="${PACKAGE}"
+    # python3_pkgversion_option
+    PACKAGE_OPTION[python3_pkgversion_option]=""
+
+    # integ-ganeti-release package
+    if [[ "${PACKAGE}" =~ ^integ-ganeti-release ]]; then
+        local PACKAGE_PREFIX="integ-ganeti-release"
+        PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE_PREFIX}.spec"
+        PACKAGE_OPTION[package_prefix]="${PACKAGE_PREFIX}"
+    fi
+
+    # python packages
+    if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
+        # el8 only
+        PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
+        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
+        if [[ "${RPM_DIST}" != ".el8" ]]; then
+            echo "Skip ${PACKAGE} because it is for el8 only"
+        fi
+    elif [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
+        # el7 only
+        PACKAGE_OPTION[package_prefix]=${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
+        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
+        if [[ "${RPM_DIST}" != ".el7" ]]; then
+            echo "Skip ${PACKAGE} because it is for el7 only"
+            return
+        fi
+    fi
+
+    RET=$(declare -p PACKAGE_OPTION)
+    echo "${RET#*=}"
+}
+
+# Clean rpmbuild directory
+clean_rpmbuild_directory() {
+    local CLEAN_TASK="${1}"
+    shift
+    echo "Clean rpmbuild directory(${CLEAN_TASK})..."
+
+    local PACKAGE=""
+    for PACKAGE in ${@}; do
+        echo "- ${PACKAGE}"
+        if [[ "${CLEAN_TASK}" = "full" ]]; then
+            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}"/{BUILD,BUILDROOT,RPMS,SRPMS}
+            rm -f "${PACKAGER_RPM_DIR}/${PACKAGE}"/SOURCES/*.{gz,bz2}
+        else
+            rm -rf "${PACKAGER_RPM_DIR}/${PACKAGE}"/{BUILD,BUILDROOT,RPMS,SRPMS}
+        fi
+    done
+}
+
+# Get package list
+package_list() {
+    local SPEC_FILE="${1}"
+    local PACKAGE="${2}"
+    local PACKAGE_PREFIX="${3}"
+
+    local RPMBILD_BASE_DIR=$(dirname $(dirname "${SPEC_FILE}"))
+    local RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
+    local RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+
+    PACKAGE_LIST=()
+    set +o pipefail
+    # RPM
+    PACKAGE_LIST+=( $(find "${RPMBILD_BASE_DIR}" -type f -regextype posix-basic \
+        -regex ".*/RPMS/.*/${PACKAGE_PREFIX}-.*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.*.rpm") )
+    # SRPM
+    PACKAGE_LIST+=( $(find "${RPMBILD_BASE_DIR}" -type f -regextype posix-basic \
+        -regex ".*/SRPMS/${PACKAGE}-.*${RPM_VERSION}-${RPM_RELEASE}${RPM_DIST}.*.rpm") )
+    set -o pipefail
+
+    if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+        echo ${PACKAGE_LIST[@]}
+    fi
+}
+
+# Check old package
+check_oldpackage() {
+    local PACKAGE_LIST=(${@})
+    local is_first=0
+
+    if [[ ${#PACKAGE_LIST[@]} -eq 0 ]]; then
+        return
+    fi
+
+    RPM_FILE=${PACKAGE_LIST[0]}
+    if [[ -f "${RPM_FILE}" ]]; then
+        if [[ "${OVERWRITE_MODE}" = "yes" ]]; then
+            is_overwrite="y"
+            return
+        elif [[ "${OVERWRITE_MODE}" = "no" ]]; then
+            is_overwrite="n"
+            return
+        fi
+
+        echo "Found current version packages:"
+        local i=""
+        for i in ${PACKAGE_LIST[@]}; do
+            echo "- ${i}"
+        done
+
+        while [[ "${is_overwrite}" != "y" ]] && [[ "${is_overwrite}" != "n" ]];
+        do
+            if [[ "${is_first}" -ne 0 ]]; then
+                echo "-> BAD INPUT: Invalid charactor."
+            fi
+            echo -n "Do you want to rebuild and overwrite it? [y/n]: "
+            read is_overwrite < /dev/tty
+            is_first=1
+        done
+    else
+        is_overwrite="y"
+    fi
+}
+
+# Build package
+build_package() {
+    echo "Build packages..."
+
+    local PACKAGE=""
+    for PACKAGE in ${@}; do
+        echo "- ${PACKAGE}"
+
+        # setup option
+        declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
+        eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
+
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
+        is_overwrite="default"
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            check_oldpackage "${PACKAGE_LIST[@]}"
+        fi
+
+        if [[ "${is_overwrite}" = "default" ]] || [[ "${is_overwrite}" = "y" ]]; then
+            # Install build dependencies
+            eval sudo yum-builddep -y ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\""
+
+            # Download source and patch files
+            local PACKAGE_SOURCES="${PACKAGER_RPM_DIR}/${PACKAGE}/SOURCES"
+            if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
+                mkdir "${PACKAGE_SOURCES}"
+            fi
+            eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
+
+            # Build package
+            eval rpmbuild \
+                --define "\"%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}\"" \
+                --define "\"%dist ${RPM_DIST}\"" \
+                ${PACKAGE_OPTION[python3_pkgversion_option]} \
+                -ba "\"${PACKAGE_OPTION[spec_file]}\""
+        fi
+
+        # Install packages
+        if [[ "${INSTALL_TASK}" = "yes" ]]; then
+            install_package "${PACKAGE}"
+        fi
+
+        echo
+    done
+}
+
+# Check sign key
+check_signkey() {
+    set +o pipefail
+    SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
+    set -o pipefail
+    if [[ "${SIGNKEY}" -lt 1 ]]; then
+        echo "Error: Ganeti RPM Packages sign key not found."
+        exit 1
+    fi
+}
+
+# Sign package
+sign_package() {
+    echo "Sign packages..."
+
+    local SIGN_PACKAGES=""
+    local PACKAGE=""
+    for PACKAGE in ${@}; do
+        echo "- ${PACKAGE}"
+
+        # setup option
+        declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
+        eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
+
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            for PACKAGE_PATH in ${PACKAGE_LIST[@]}; do
+                echo "  - ${PACKAGE_PATH}"
+                local IS_SIGNED=$(rpm -K "${PACKAGE_PATH}" | grep -i "(md5) pgp" | wc -l)
+                if [[ "${IS_SIGNED}" -eq 0 ]]; then
+                    SIGN_PACKAGES="${SIGN_PACKAGES} ${PACKAGE_PATH}"
+                else
+                    echo "    Skip sign: ${PACKAGE_PATH} is already signed."
+                fi
+            done
+        fi
+
+    done
+
+    if [[ ! -z "${SIGN_PACKAGES}" ]]; then
+        rpmsign --addsign ${SIGN_PACKAGES}
+    fi
+}
+
+# Install package
+install_package() {
+    echo "Install packages..."
+
+    local INSTALL_PACKAGES=""
+    local PACKAGE=""
+    for PACKAGE in ${@}; do
+        echo "- ${PACKAGE}"
+
+        # setup option
+        declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
+        eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
+
+        set +e
+        sudo yum list installed "${PACKAGE_OPTION[package_prefix]}" > /dev/null 2>&1
+        RET=$?
+        set -e
+        if [[ "${RET}" -eq 0 ]]; then
+            return
+        fi
+
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            local PACKAGE_PATH=""
+            for PACKAGE_PATH in ${PACKAGE_LIST[@]}; do
+                if [[ "${PACKAGE_PATH}" =~ \.src\.rpm$ ]]; then
+                    echo "  - Skip ${PACKAGE_PATH} (source RPM)"
+                else
+                    echo "  - ${PACKAGE_PATH}"
+                    INSTALL_PACKAGES="${INSTALL_PACKAGES} ${PACKAGE_PATH}"
+                fi
+            done
+        fi
+    done
+
+    if [[ ! -z "${INSTALL_PACKAGES}" ]]; then
+        sudo yum -y install ${INSTALL_PACKAGES}
+    fi
+}
+
+# Uninstall package
+uninstall_package() {
+    echo "Uninstall packages..."
+
+    local REMOVE_PACKAGES=""
+    local PACKAGE=""
+    for PACKAGE in ${@}; do
+        echo "- ${PACKAGE}"
+
+        # setup option
+        declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
+        eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
+        if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
+            echo "Not found: ${PACKAGE}"
+            continue
+        fi
+
+        local PACKAGE_LIST=( $(package_list "${PACKAGE_OPTION[spec_file]}" "${PACKAGE}" "${PACKAGE_OPTION[package_prefix]}") )
+        if [[ ${#PACKAGE_LIST[@]} -ne 0 ]]; then
+            local PACKAGE_NAME=""
+            for PACKAGE_NAME in ${PACKAGE_LIST[@]}; do
+                # /path/to/example-1.0.0.rpm -> example-1.0.0.rpm
+                PACKAGE_NAME="${PACKAGE_NAME##*/}"
+                # example-1.0.0.rpm -> example-1.0.0
+                PACKAGE_NAME="${PACKAGE_NAME%.*}"
+                echo "  - ${PACKAGE_NAME}"
+                REMOVE_PACKAGES="${REMOVE_PACKAGES} ${PACKAGE_NAME}"
+            done
+        fi
+    done
+
+    if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
+        sudo yum -y remove ${REMOVE_PACKAGES}
+        echo
+    fi
+}
+
+# Main
+main() {
+    [[ $# -lt 1 ]] && usage && exit 1
+
+    # See how we're called.
+    TARGET_ALL="no"
+    TARGET_PACKAGES="no"
+    TARGET_DEPENDS_PACKAGES="no"
+    CLEAN_TASK="no"
+    BUILD_TASK="no"
+    SIGN_TASK="no"
+    INSTALL_TASK="no"
+    UNINSTALL_TASK="no"
+    OVERWRITE_MODE="manual"
+    while getopts adpcCbsiuo: OPT; do
+        case "${OPT}" in
+            "a" )
+                TARGET_ALL="yes" ;;
+            "d" )
+                TARGET_DEPENDS_PACKAGES="yes" ;;
+            "p" )
+                TARGET_PACKAGES="yes" ;;
+            "c" )
+                CLEAN_TASK="minimal" ;;
+            "C" )
+                CLEAN_TASK="full" ;;
+            "b" )
+                BUILD_TASK="yes" ;;
+            "s" )
+                SIGN_TASK="yes"
+                check_signkey ;;
+            "i" )
+                INSTALL_TASK="yes" ;;
+            "u" )
+                UNINSTALL_TASK="yes" ;;
+            "o" )
+                OVERWRITE_MODE="${OPTARG}" ;;
+            * )
+                usage
+                exit 1
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    # Target package
+    local TARGET=""
+    if [[ "${TARGET_ALL}" = "yes" ]]; then
+        TARGET="${PACKAGES}"
+    elif [[ "${TARGET_DEPENDS_PACKAGES}" = "yes" ]]; then
+        TARGET="${GANETI_DEPENDS_PACKAGES}"
+    elif [[ "${TARGET_PACKAGES}" = "yes" ]]; then
+        TARGET="${@}"
+    else
+        echo "Error: no target package. Use -a or -d or -p package..."
+        exit 1
+    fi
+
+    # Uninstall task
+    if [[ "${UNINSTALL_TASK}" = "yes" ]]; then
+        uninstall_package "${TARGET[@]}"
+    fi
+
+    # Clean task
+    if [[ "${CLEAN_TASK}" != "no" ]]; then
+        clean_rpmbuild_directory "${CLEAN_TASK}" "${TARGET[@]}"
+    fi
+
+    # Build task
+    if [[ "${BUILD_TASK}" = "yes" ]]; then
+        build_package "${TARGET[@]}"
+    fi
+
+    # Sign task
+    if [[ "${SIGN_TASK}" = "yes" ]]; then
+        sign_package "${TARGET[@]}"
+    fi
+
+    # Install task
+    if [[ "${UNINSTALL_TASK}" = "no" ]]; then
+        if [[ "${INSTALL_TASK}" = "yes" ]]; then
+            install_package "${TARGET[@]}"
+        fi
+    fi
+
+    echo
+    echo "# Success: (${SECONDS} seconds)"
+}
+
+[[ ${#BASH_SOURCE[@]} = 1 ]] && main "${@}"
+

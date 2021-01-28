@@ -1,4 +1,19 @@
-%{!?os_ver: %define os_ver %(Z=`rpm -q --whatprovides /etc/redhat-release`;rpm -q --qf '%{V}' $Z | sed 's/\\.[0-9]*//')}
+# el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
+%if 0%{?rhel} == 7
+%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+%endif
+
+# without debuginfo
+%global debug_package %{nil}
+
+# python version
+%define python3_pkgversion 3
+%if 0%{?rhel} == 7
+%define python3_pkgversion 36
+%endif
+
+# man version
+%define _man_version 3.0
 
 # search path
 %define _search_sharedir /usr/share
@@ -11,12 +26,9 @@
 %define iallocator_search_path %{_search_libdir}/%{name}/iallocators,%{_search_lib64dir}/%{name}/iallocators,%{_search_local_libdir}/%{name}/iallocators,%{_search_local_lib64dir}/%{name}/iallocators
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
-# man version
-%define _man_version 2.16
-
 Name: ganeti
-Version: 2.16.2
-Release: 1%{?dist}
+Version: 3.0.0.rc1
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -29,78 +41,63 @@ Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-2.16.0-systemd-sshd.patch
-Patch2: ganeti-2.15.0-avoid-systemd-request-repeated.patch
-Patch3: ganeti-2.16.1-systemd-onetime-args.patch
-Patch4: ganeti-2.16.1-semigroups-downgrade.patch
-Patch5: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
-Patch6: ganeti-2.16.1-default-kvmd-args.patch
-Patch7: ganeti-2.16.1-rapi-require-authentication.patch
-Patch8: ganeti-2.16.1-systemd-ambient-capabilities.patch
-Patch9: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
-Patch10: ganeti-2.16.2-vlan_aware_bridge-1395.patch
+Patch1: ganeti-3.0.0-disable-start-rate-limit.patch
+Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
+Patch3: ganeti-3.0.0-systemd-ambient-capabilities.patch
+Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
+Patch5: ganeti-3.0.0-ghc-json-version.patch
+Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
+Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
+Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
+Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
 
-BuildRequires: python
-BuildRequires: pyOpenSSL
-BuildRequires: pyparsing
-BuildRequires: python-bitarray
-BuildRequires: python-docutils
-BuildRequires: python-inotify
-BuildRequires: python-ipaddr
-BuildRequires: python-paramiko
-BuildRequires: python-psutil
-BuildRequires: python-pycurl
-BuildRequires: python-simplejson
-BuildRequires: python-sphinx
+BuildRequires: python%{python3_pkgversion}
+BuildRequires: python%{python3_pkgversion}-bitarray
+BuildRequires: python%{python3_pkgversion}-docutils
+BuildRequires: python%{python3_pkgversion}-inotify
+BuildRequires: python%{python3_pkgversion}-paramiko
+BuildRequires: python%{python3_pkgversion}-psutil
+BuildRequires: python%{python3_pkgversion}-pycurl
+BuildRequires: python%{python3_pkgversion}-pyOpenSSL
+BuildRequires: python%{python3_pkgversion}-pyparsing
+BuildRequires: python%{python3_pkgversion}-simplejson
+BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
-BuildRequires: ghc
-BuildRequires: ghc-attoparsec-devel
-BuildRequires: ghc-base64-bytestring-devel
-BuildRequires: ghc-case-insensitive-devel
-BuildRequires: ghc-Crypto-devel
-BuildRequires: ghc-curl-devel
-BuildRequires: ghc-hinotify-devel
-BuildRequires: ghc-hslogger-devel
-BuildRequires: ghc-HUnit-devel
-BuildRequires: ghc-json-devel
-BuildRequires: ghc-lens-devel
-BuildRequires: ghc-lifted-base-devel
-BuildRequires: ghc-network-devel
-BuildRequires: ghc-parallel-devel
-BuildRequires: ghc-PSQueue-devel
-BuildRequires: ghc-QuickCheck-devel
-BuildRequires: ghc-regex-pcre-devel
-BuildRequires: ghc-snap-server-devel
-BuildRequires: ghc-temporary-devel
-BuildRequires: ghc-text-devel
-BuildRequires: ghc-utf8-string-devel
-BuildRequires: ghc-vector-devel
-BuildRequires: ghc-zlib-devel
-BuildRequires: cabal-install
 BuildRequires: iproute
 BuildRequires: libcurl-devel
+
+# doc
 BuildRequires: pandoc
 BuildRequires: graphviz
 BuildRequires: m4
+BuildRequires: man-db
 
-Requires: bridge-utils
+# unittests
+BuildRequires: fakeroot
+%if 0%{?rhel} == 7
+BuildRequires: python%{python3_pkgversion}-PyYAML
+%else
+BuildRequires: python%{python3_pkgversion}-pyyaml
+%endif
+BuildRequires: python%{python3_pkgversion}-mock
+
 Requires: iproute
 Requires: iputils
 Requires: libcap
 Requires: logrotate
 Requires: lvm2
 Requires: openssh
-Requires: python
-Requires: pyOpenSSL
-Requires: pyparsing
-Requires: python-bitarray
-Requires: python-inotify
-Requires: python-ipaddr
-Requires: python-simplejson
-Requires: python-paramiko
-Requires: python-psutil
-Requires: python-pycurl
+Requires: python%{python3_pkgversion}
+Requires: python%{python3_pkgversion}-bitarray
+Requires: python%{python3_pkgversion}-docutils
+Requires: python%{python3_pkgversion}-inotify
+Requires: python%{python3_pkgversion}-paramiko
+Requires: python%{python3_pkgversion}-psutil
+Requires: python%{python3_pkgversion}-pycurl
+Requires: python%{python3_pkgversion}-pyOpenSSL
+Requires: python%{python3_pkgversion}-pyparsing
+Requires: python%{python3_pkgversion}-simplejson
 Requires: socat
 
 Requires(post):   systemd-units
@@ -148,23 +145,29 @@ It is not required when the init system used is systemd.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 %build
+# https://github.com/haskell-crypto/cryptonite/issues/326
+cabal install cryptonite -f -use_target_attributes
+cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond metad htest network_bsd"
+
 %configure \
   --prefix=%{_prefix} \
   --sysconfdir=%{_sysconfdir} \
   --libdir=%{_libdir} \
   --enable-symlinks \
-  --with-ssh-initscript=%{_initrddir}/sshd \
+  --with-sshd-restart-command="systemctl restart sshd.service" \
   --with-export-dir=%{_localstatedir}/lib/%{name}/export \
   --with-os-search-path=%{os_search_path} \
   --with-extstorage-search-path=%{extstorage_search_path} \
   --with-iallocator-search-path=%{iallocator_search_path} \
   --with-xen-bootloader=/usr/bin/pygrub \
   --with-kvm-path=/usr/libexec/qemu-kvm \
+  --with-user-prefix=gnt- \
+  --with-group-prefix=gnt- \
   --enable-monitoring \
   --enable-metadata \
+  --enable-haskell-tests \
   $@
 make
 
@@ -202,14 +205,63 @@ install -m 644 doc/examples/systemd/ganeti-node.target ${RPM_BUILD_ROOT}/%{_unit
 install -m 644 doc/examples/systemd/ganeti.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
 install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
+# remove document source files
+rm -f doc/examples/*.in
+rm -f doc/examples/hooks/*.in
+rm -rf doc/examples/systemd
+
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
 RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
+%if 0%{?rhel} == 7
 /usr/lib/rpm/redhat/brp-compress
+%else
+/usr/lib/rpm/brp-compress
+%endif
 RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
+
+%check
+while read GROUP
+do
+    getent group ${GROUP} > /dev/null || sudo groupadd -f -r ${GROUP}
+done < doc/users/groups
+
+while read USER GROUP
+do
+    getent passwd ${USER} > /dev/null || sudo useradd -r -g ${GROUP} -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M ${USER}
+done < doc/users/users
+
+while read USER GROUP
+do
+    getent passwd ${USER} > /dev/null && sudo usermod -aG ${GROUP} ${USER}
+done < doc/users/groupmemberships
+
+sudo make py-tests
+make hs-tests
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
+
+%pre
+getent group gnt-admin > /dev/null   || groupadd -f -r gnt-admin
+getent group gnt-confd  > /dev/null  || groupadd -f -r gnt-confd
+getent group gnt-daemons > /dev/null || groupadd -f -r gnt-daemons
+getent group gnt-luxid > /dev/null   || groupadd -f -r gnt-luxid
+getent group gnt-masterd > /dev/null || groupadd -f -r gnt-masterd
+getent group gnt-metad > /dev/null   || groupadd -f -r gnt-metad
+getent group gnt-rapi > /dev/null    || groupadd -f -r gnt-rapi
+getent passwd gnt-confd > /dev/null   || useradd -r -g gnt-confd -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-confd
+getent passwd gnt-masterd > /dev/null || useradd -r -g gnt-confd -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-masterd
+getent passwd gnt-metad > /dev/null   || useradd -r -g gnt-metad -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-metad
+getent passwd gnt-rapi > /dev/null    || useradd -r -g gnt-rapi -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -M gnt-rapi
+usermod -aG gnt-daemons gnt-confd
+usermod -aG gnt-admin gnt-masterd
+usermod -aG gnt-confd gnt-masterd
+usermod -aG gnt-daemons gnt-masterd
+usermod -aG gnt-masterd gnt-masterd
+usermod -aG gnt-daemons gnt-metad
+usermod -aG gnt-admin gnt-rapi
+usermod -aG gnt-daemons gnt-rapi
 
 %post
 %systemd_post ganeti.target ganeti-master.target ganeti-node.target
@@ -241,7 +293,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config %{_unitdir}/*.service
 %config %{_unitdir}/*.target
-%doc COPYING INSTALL NEWS README UPGRADE doc/
+%doc COPYING INSTALL NEWS README UPGRADE doc/examples doc/html
 %{_bindir}/h*
 %{_sbindir}/g*
 %{_libdir}/%{name}
@@ -249,8 +301,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man*/g*
 %{_mandir}/man*/h*
 %{_mandir}/man*/mon-collector*
-%attr(750,root,root) %dir /var/lib/%{name}
-%attr(750,root,root) %dir /var/log/%{name}
+%attr(755,gnt-masterd,gnt-daemons) %dir /var/lib/%{name}
+%attr(770,gnt-masterd,gnt-daemons) %dir /var/log/%{name}
 
 %files sysvinit
 %defattr(-,root,root)
@@ -258,6 +310,22 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Jan 19 2021 Jun Futagawa <jfut@integ.jp> - 3.0.0-1
+- Update to 3.0.0
+- Remove BuildRequires: python-ipaddr
+- Remove Requires: python-ipaddr
+- Remove Requires: bridge-utils
+- Use ghc binary package instead of RPMs
+- Add %{python3_pkgversion}
+- Add the --with-sshd-restart-command option instead of the --with-ssh-initscript option
+- Add %global debug_package %{nil}
+- Add a check by python unittests(make py-tests) in %check
+- Add a check by haskell unittests(make hs-tests) in %check
+- Add ganeti-3.0.0-ghc-json-version.patch
+- Remove document source files
+- Add ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch (#34)
+- Add --with-user-prefix and --with-group-prefix options (#20)
+
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)
 

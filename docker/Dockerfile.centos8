@@ -1,12 +1,14 @@
-FROM centos:7
+FROM centos:8
 
 MAINTAINER Jun Futagawa <jfut@integ.jp>
 LABEL maintainer="Jun Futagawa <jfut@integ.jp>"
 
-RUN yum -y update && \
-    yum -y groupinstall "Development Tools" && \
-    yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release && \
-    yum clean all && \
+RUN dnf -y update && \
+    dnf -y groupinstall "Development Tools" && \
+    dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release && \
+    dnf -y install pinentry && \
+    dnf config-manager --enable powertools && \
+    dnf clean all && \
     useradd -G wheel rpmbuild && \
     echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/wheel && \
     mkdir -p ~rpmbuild/bin && \
