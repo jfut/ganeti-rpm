@@ -1,5 +1,7 @@
 # Ganeti RPM Packaging
 
+[![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=master)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
+
 Ganeti RPM Packaging for RHEL/CentOS/others.
 
 ## Packaging status
