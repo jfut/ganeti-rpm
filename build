@@ -23,7 +23,7 @@ Usage:
     ${PACKAGER} [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
 
     Options:
-        -d Debug mode.
+        -d Debug mode
 
     Build for CentOS 8:
         ${PACKAGER} centos:8

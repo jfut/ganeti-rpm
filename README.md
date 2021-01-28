@@ -55,7 +55,7 @@ Usage:
     build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
 
     Options:
-        -d Debug mode.
+        -d Debug mode
 
     Build for CentOS 8:
         build centos:8
@@ -73,8 +73,8 @@ Usage:
     build-rpm [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
 
     Target Options:
-        -a all packages (ganeti and its dependencies and integ-ganeti repo, snf-image).
-        -d ganeti dependencies packages only.
+        -a all packages (ganeti and its dependencies and integ-ganeti repo, snf-image)
+        -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
             ganeti dependencies (el8 only):
                 python-bitarray
@@ -88,16 +88,16 @@ Usage:
                 integ-ganeti-release
 
     Task Options:
-        -c Clean clean the rpmbuild directory, but preserve downloaded archives.
-        -C Completely clean the rpmbuild directory.
+        -c Clean clean the rpmbuild directory, but preserve downloaded archives
+        -C Completely clean the rpmbuild directory
 
         -b Build packages
         -o Overwrite built package: yes|no (Default: manual)
 
-        -s Sign built packages.
+        -s Sign built packages
 
-        -i Install built packages.
-        -u Uninstall installed packages.
+        -i Install built packages
+        -u Uninstall installed packages
 
         Task Execution Order:
             Uninstall -> Clean -> Build -> Sign -> Install

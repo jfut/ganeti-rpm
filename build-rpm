@@ -47,8 +47,8 @@ Usage:
     ${PACKAGER} [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
 
     Target Options:
-        -a all packages (ganeti and its dependencies and integ-ganeti repo).
-        -d ganeti dependencies packages only.
+        -a all packages (ganeti and its dependencies and integ-ganeti repo)
+        -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
             ganeti dependencies (el8 only):
                 ${GANETI_DEPENDS_PACKAGES_EL8}
@@ -60,16 +60,16 @@ Usage:
                 ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
 
     Task Options:
-        -c Clean clean the rpmbuild directory, but preserve downloaded archives.
-        -C Completely clean the rpmbuild directory.
+        -c Clean clean the rpmbuild directory, but preserve downloaded archives
+        -C Completely clean the rpmbuild directory
 
         -b Build packages
         -o Overwrite built package: yes|no (Default: manual)
 
-        -s Sign built packages.
+        -s Sign built packages
 
-        -i Install built packages.
-        -u Uninstall installed packages.
+        -i Install built packages
+        -u Uninstall installed packages
 
         Task Execution Order:
             Uninstall -> Clean -> Build -> Sign -> Install
