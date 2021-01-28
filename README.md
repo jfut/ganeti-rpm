@@ -152,15 +152,15 @@ Run the container with bash:
 
 ```
 # CentOS 8
-BUILD_HOSTNAME=rpmbuild.centos7.docker
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg centos:8 bash
+BUILD_HOSTNAME=centos-8.github.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg centos:8 bash
 
 # CentOS 7
-BUILD_HOSTNAME=rpmbuild.centos8.docker
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg centos:7 bash
+BUILD_HOSTNAME=centos-7.github.integ.jp
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg.el7:/root/.gnupg centos:7 bash
 
 # Setup
-yum -y install rpm-sign
+yum -y install rpm-sign pinentry
 
 # Set your gpg name
 echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
