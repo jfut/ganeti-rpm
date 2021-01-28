@@ -25,6 +25,7 @@ jobs:
 
     env:
       BUILD_IMAGE: ${{ matrix.image }}
+      BUILD_HOSTNAME: ${{ matrix.image }}.github.integ.jp
 
     steps:
       - name: Checkout
