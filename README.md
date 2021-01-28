@@ -21,39 +21,52 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 
 You can build RPM packages in Docker.
 
-### CentOS 8
+```
+# CentOS 8
+./build centos:8
 
-```bash
-docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 .
-
-# pull the latest base image + no cache
-docker build -t ganeti-rpmbuild-centos8 -f docker/Dockerfile.centos8 . --pull=true --no-cache
+# CentOS 7
+./build centos:7
 ```
 
-Run the container with bash:
+Debug and manual mode:
 
-```bash
-BUILD_HOSTNAME=ganeti-rpmbuild-centos8.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos8 bash
+```
+# CentOS 8
+./build -d centos:8
+
+# CentOS 7
+./build -d centos:7
+
+# Setup
+cd /pkg
+./setup
+
+# Build
+./build-rpm ...
 ```
 
-### CentOS 7
+## Usage: build
 
-```bash
-docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 .
+Run on host.
 
-# pull the latest base image + no cache
-docker build -t ganeti-rpmbuild-centos7 -f docker/Dockerfile.centos7 . --pull=true --no-cache
 ```
+Usage:
+    build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
 
-Run the container with bash:
+    Options:
+        -d Debug mode.
 
-```bash
-BUILD_HOSTNAME=ganeti-rpmbuild-centos7.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg ganeti-rpmbuild-centos7 bash
+    Build for CentOS 8:
+        build centos:8
+
+    Build for CentOS 7:
+        build centos:7
 ```
 
 ## Usage: build-rpm
+
+Run in a container.
 
 ```
 Usage:
@@ -133,8 +146,16 @@ yum-config-manager --enable integ-ganeti
 Run the container with bash:
 
 ```
-BUILD_HOSTNAME=ganeti-rpm-build.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg ganeti-rpmbuild-centos7 bash
+# CentOS 8
+BUILD_HOSTNAME=rpmbuild.centos7.docker
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg centos:8 bash
+
+# CentOS 7
+BUILD_HOSTNAME=rpmbuild.centos8.docker
+docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg:/root/.gnupg centos:7 bash
+
+# Setup
+yum -y install rpm-sign
 
 # Set your gpg name
 echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
@@ -143,6 +164,7 @@ echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
 Sign all packages:
 
 ```
+cd /pkg
 ./build-rpm -a -s
 ```
 
