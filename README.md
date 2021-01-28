@@ -57,6 +57,9 @@ Usage:
     Options:
         -d Debug mode
 
+    Environment variables:
+        BUILD_HOSTNAME: container host name
+
     Build for CentOS 8:
         build centos:8
 

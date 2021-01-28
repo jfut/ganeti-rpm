@@ -25,6 +25,9 @@ Usage:
     Options:
         -d Debug mode
 
+    Environment variables:
+        BUILD_HOSTNAME: container host name
+
     Build for CentOS 8:
         ${PACKAGER} centos:8
 
@@ -43,7 +46,7 @@ build() {
     local MODULE_VERSION=$(echo ${BUILD_IMAGE} | cut -d':' -f 3)
 
     local BUILD_IMAGE="${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG}"
-    local BUILD_HOSTNAME="rpmbuild.${BUILD_IMAGE_NAME}${BUILD_IMAGE_TAG}.docker"
+    local BUILD_HOSTNAME="${BUILD_HOSTNAME:-${HOSTNAME}}"
 
     local DOCKER_OPTIONS=""
     local BUILD_CMD="${DOCKER_PKG_DIR}/setup && ${DOCKER_PKG_DIR}/build-rpm ${BUILD_RPM_ARGS}"
