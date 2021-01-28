@@ -1,0 +1,43 @@
+name: Build Test
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+    paths-ignore:
+      - 'doc/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
+
+jobs:
+  test:
+    name: Build on ${{ matrix.image }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        image:
+          - centos-7
+          - centos-8
+
+    env:
+      BUILD_IMAGE: ${{ matrix.image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Build RPM
+        id: build_rpm
+        run: |
+          ./build $(echo ${BUILD_IMAGE} | sed 's/-/:/g') -a -bi
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.image }}
+          path: rpmbuild/**/*.rpm
+

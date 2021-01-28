@@ -1,10 +1,13 @@
 # el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
 %if 0%{?rhel} == 7
-%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's|/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$||g')
 %endif
 
 # without debuginfo
 %global debug_package %{nil}
+
+# rc version
+%global rc_version %(echo '%{version}' | sed -e 's|.*rc.*|rc|g')
 
 # python version
 %define python3_pkgversion 3
@@ -34,7 +37,11 @@ Summary: Cluster virtual server management software
 License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
+%if "%{rc_version}" == "rc"
+Source0: https://jfut.integ.jp/linux/ganeti-test/ganeti-%{version}.tar.gz
+%else
 Source0: https://github.com/ganeti/ganeti/releases/download/v%{version}/ganeti-%{version}.tar.gz
+%endif
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
@@ -325,6 +332,7 @@ usermod -aG gnt-daemons gnt-rapi
 - Remove document source files
 - Add ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch (#34)
 - Add --with-user-prefix and --with-group-prefix options (#20)
+- Add source url for rc version
 
 * Sat Oct  3 2020 Jun Futagawa <jfut@integ.jp> - 2.16.2-1
 - Add backport patch from the upstream for VLAN aware bridging (#28, #29, thanks @alfonso-escribano)

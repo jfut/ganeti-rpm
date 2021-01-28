@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# Build RPMs with docker
+
+set -euo pipefail
+
+export LC_ALL=C
+
+DOCKER_PKG_DIR="/pkg"
+DOCKER_RPMBUILD_DIR="${DOCKER_PKG_DIR}/rpmbuild"
+
+SCRIPT_DIR=$(dirname $(readlink -f $0))
+HOST_RPMBUILD_DIR="${SCRIPT_DIR}/rpmbuild"
+
+PACKAGER="$(basename "${0}")"
+
+DEBUG="no"
+
+# Usage
+usage() {
+    cat << _EOF_
+Usage:
+    ${PACKAGER} [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
+
+    Options:
+        -d Debug mode.
+
+    Build for CentOS 8:
+        ${PACKAGER} centos:8
+
+    Build for CentOS 7:
+        ${PACKAGER} centos:7
+_EOF_
+}
+
+build() {
+    local BUILD_IMAGE="${1}"
+    shift
+    local BUILD_RPM_ARGS="${@}"
+
+    local BUILD_IMAGE_NAME=$(echo ${BUILD_IMAGE} | cut -d':' -f 1)
+    local BUILD_IMAGE_TAG=$(echo ${BUILD_IMAGE} | cut -d':' -f 2)
+    local MODULE_VERSION=$(echo ${BUILD_IMAGE} | cut -d':' -f 3)
+
+    local BUILD_IMAGE="${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG}"
+    local BUILD_HOSTNAME="rpmbuild.${BUILD_IMAGE_NAME}${BUILD_IMAGE_TAG}.docker"
+
+    local DOCKER_OPTIONS=""
+    local BUILD_CMD="${DOCKER_PKG_DIR}/setup && ${DOCKER_PKG_DIR}/build-rpm ${BUILD_RPM_ARGS}"
+    if [[ "${DEBUG}" = "yes" ]]; then
+        echo "# Manual Build: ${BUILD_CMD}"
+        DOCKER_OPTIONS="-it"
+        BUILD_CMD="/bin/bash"
+    fi
+
+    # Update build image
+    docker pull ${BUILD_IMAGE}
+
+    # Build
+    docker run \
+        --name ${BUILD_HOSTNAME} \
+        -h "${BUILD_HOSTNAME}" \
+        -v "${SCRIPT_DIR}":$(dirname ${DOCKER_RPMBUILD_DIR}) \
+        --rm=true \
+        ${DOCKER_OPTIONS} \
+        ${BUILD_IMAGE} \
+        /bin/bash -c "${BUILD_CMD}"
+}
+
+# Main
+main() {
+    [[ $# -lt 1 ]] && usage && exit 1
+
+    while getopts dh OPT; do
+        case "${OPT}" in
+            "d" )
+                DEBUG="yes" ;;
+            "h" )
+                usage
+                exit 0
+                ;;
+            * )
+                usage
+                exit 1
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    build "${@}"
+}
+
+[[ ${#BASH_SOURCE[@]} = 1 ]] && main "${@}"
+

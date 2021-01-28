@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Setup environment to build RPM
+
+set -euo pipefail
+
+export LC_ALL=C
+
+PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
+
+# RPM macros
+RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
+
+# Setup build tools
+echo
+echo "Setup build tools"
+PACKAGE_MANAGER=""
+if [[ "${RPM_DIST}" = ".el8" ]]; then
+    dnf -y groupinstall "Development Tools"
+    dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
+    dnf -y install pinentry
+    dnf config-manager --enable powertools
+elif [[ "${RPM_DIST}" = ".el7" ]]; then
+    yum -y groupinstall "Development Tools"
+    yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
+    yum clean all
+fi
+
+# Setup GHC environment
+echo
+echo "Setup GHC environment"
+${PACKAGER_DIR}/setup-ghc
+
