@@ -2,7 +2,7 @@
 
 This documentation is the short version for RHEL/CentOS/others 7.x and 8.x.
 
-**The DRBD disk template cannot be used with el8 because kmod-drbd84 and drbd84-utils for ELRepo el8 have not been released.**
+**DRBD 8.4 does not support Kernel 4.18.x on el8, so the DRBD disk template cannot be used on el8.**
 
 Official full version:
 
