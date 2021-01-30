@@ -1,7 +1,7 @@
 Summary: Ganeti RPM Package Repository release file
 Name: integ-ganeti-release
 Version: 7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Base
 URL: http://jfut.integ.jp/linux/ganeti/
