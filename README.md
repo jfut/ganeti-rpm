@@ -18,6 +18,7 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 ## YUM repository and binary RPM files
 
 - http://jfut.integ.jp/linux/ganeti/
+- https://ftp.osuosl.org/pub/ganeti-rpm/ (mirror, thanks to the OSU Open Source Lab)
 
 ## Building RPM Packages with Docker
 

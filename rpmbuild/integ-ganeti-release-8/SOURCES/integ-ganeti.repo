@@ -1,6 +1,7 @@
 [integ-ganeti]
 name=Integ Ganeti Packages $releasever - $basearch
 baseurl=http://jfut.integ.jp/linux/ganeti/8/$basearch
+    https://ftp.osuosl.org/pub/ganeti-rpm/8/$basearch
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
@@ -10,6 +11,7 @@ protect=0
 [integ-ganeti-testing]
 name=Integ Ganeti Packages $releasever - Testing
 baseurl=http://jfut.integ.jp/linux/ganeti/8/testing
+    https://ftp.osuosl.org/pub/ganeti-rpm/8/testing
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
@@ -19,6 +21,7 @@ protect=0
 [integ-ganeti-source]
 name=Integ Ganeti Packages $releasever - Source
 baseurl=http://jfut.integ.jp/linux/ganeti/8/SRPMS
+    https://ftp.osuosl.org/pub/ganeti-rpm/8/SRPMS
 enabled=0
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
