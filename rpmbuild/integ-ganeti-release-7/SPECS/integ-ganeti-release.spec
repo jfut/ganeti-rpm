@@ -38,6 +38,9 @@ Repository, as well as the public GPG keys used to sign packages.
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
 
 %changelog
+* Sat Jan 30 2021 Jun Futagawa <jfut@integ.jp> - 7-3
+- Add OSU Open Source Lab mirror (#38, thanks @ramereth)
+
 * Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 7-2
 - Fixed Release version
 
