@@ -10,7 +10,7 @@ Official full version:
 
 Upgrade / update to the latest version:
 
-* [Upgrade guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc/)
+* [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc)
 
 ## Installing the base system
 

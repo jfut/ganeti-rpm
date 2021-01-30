@@ -13,11 +13,12 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 
 ## Documentation
 
-- [Installation and Upgrade guides](https://github.com/jfut/ganeti-rpm/tree/master/doc)
+- [Installation tutorial](https://github.com/jfut/ganeti-rpm/blob/master/doc/install-rhel.md)
+- [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc)
 
-## YUM repository and binary RPM files
+## YUM/DNF repository and binary RPM files
 
-- http://jfut.integ.jp/linux/ganeti/
+- https://jfut.integ.jp/linux/ganeti/
 - https://ftp.osuosl.org/pub/ganeti-rpm/ (mirror, thanks to the OSU Open Source Lab)
 
 ## Building RPM Packages with Docker
