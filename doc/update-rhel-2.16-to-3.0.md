@@ -30,8 +30,10 @@ chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 
 **Mandatory** on all nodes.
 
+`yum update` will fail to resolve the python3 dependencies, so please update using the URL only this time.
+
 ```bash
-yum --enablerepo=epel,integ-ganeti update ganeti
+yum --enablerepo=epel,integ-ganeti update https://jfut.integ.jp/linux/ganeti/7/x86_64/ganeti-3.0.0-1.el7.x86_64.rpm
 ```
 
 ## Important changes
@@ -50,14 +52,6 @@ However, to modify the permissions of files in `/var/lib/ganeti/queue/archive/`,
 ```
 
 Once you run it, you can just start it normally.
-
-```
-systemctl start ganeti.target
-
-# Optional
-systemctl start ganeti-kvmd.service
-systemctl start ganeti-metad.service
-```
 
 ### Migrate qemu-kvm to qmue-kvm-ev
 
