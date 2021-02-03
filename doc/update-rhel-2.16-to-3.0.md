@@ -31,7 +31,8 @@ chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 **Mandatory** on all nodes.
 
 ```bash
-yum --enablerepo=epel,integ-ganeti update
+yum --enablerepo=integ-ganeti update integ-ganeti-release
+yum --enablerepo=epel,integ-ganeti update ganeti
 ```
 
 ## Important changes
