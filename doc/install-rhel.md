@@ -294,7 +294,6 @@ systemctl enable ganeti-kvmd.service
 systemctl enable ganeti-mond.service
 
 # Optional: ganeti-metad is the daemon providing the metadata service.
-# If you want to disable ganeti-metad:
 systemctl enable ganeti-metad.service
 ```
 
