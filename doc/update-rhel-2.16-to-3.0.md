@@ -63,7 +63,7 @@ yum update qemu-*
 
 ## Start ganeti services
 
-**Mandatory** on member nodes only.
+**Mandatory** on **member** nodes only.
 
 ```
 systemctl start ganeti.target
@@ -75,7 +75,7 @@ systemctl start ganeti-metad.service
 
 ## Update configuration files and start ganeti services
 
-**Mandatory** on master node only.
+**Mandatory** on **master** node only.
 
 ```bash
 systemctl stop ganeti-metad.service
