@@ -79,7 +79,7 @@ This is Python 3 version.
 
 
 %changelog
-* Mon Jan 18 2021 Jun Futagawa <jfut@integ.jp> - 0.8.3-3
+* Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 0.8.3-3
 - Fork from https://src.fedoraproject.org/rpms/python-bitarray/tree/epel7
 - Add %{python3_pkgversion} for python36
 - Remove python2 build

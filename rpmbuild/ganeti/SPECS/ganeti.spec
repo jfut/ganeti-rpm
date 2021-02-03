@@ -317,7 +317,7 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Tue Jan 19 2021 Jun Futagawa <jfut@integ.jp> - 3.0.0-1
+* Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 3.0.0-1
 - Update to 3.0.0
 - Remove BuildRequires: python-ipaddr
 - Remove Requires: python-ipaddr

@@ -56,7 +56,7 @@ popd
 %{python3_sitelib}/__pycache__/%{oname}*
 
 %changelog
-* Mon Jan 18 2021 Jun Futagawa <jfut@integ.jp> - 0.9.6-14
+* Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 0.9.6-14
 - Fork from https://git.centos.org/rpms/python-inotify/tree/c8
 - Add %{python3_pkgversion} for python36
 - Rename /usr/bin/pyinotify to /usr/bin/pyinotify36
