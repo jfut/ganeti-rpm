@@ -62,11 +62,25 @@ yum install centos-release-qemu-ev
 yum update qemu-*
 ```
 
+## Upgrade configuration files on master node
+
+**Mandatory** on **master** node only.
+
+Upgrade the configuration files(/var/lib/ganeti).
+
+```bash
+# dry run
+/usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
+
+# upgrade
+/usr/lib64/ganeti/tools/cfgupgrade --verbose
+```
+
 ## Start ganeti services
 
-**Mandatory** on **member** nodes only.
+**Mandatory** on **member** nodes.
 
-```
+```bash
 systemctl start ganeti.target
 systemctl start ganeti-kvmd.service
 
@@ -74,24 +88,15 @@ systemctl start ganeti-kvmd.service
 systemctl start ganeti-metad.service
 ```
 
-## Update configuration files and start ganeti services
-
 **Mandatory** on **master** node only.
 
 ```bash
-systemctl stop ganeti-metad.service
-systemctl stop ganeti-kvmd.service
-systemctl stop ganeti.target
-
-# Upgrade the configuration files(/var/lib/ganeti).
-/usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
-/usr/lib64/ganeti/tools/cfgupgrade --verbose
-
 systemctl start ganeti.target
 gnt-cluster redist-conf
 
 systemctl restart ganeti.target
 systemctl start ganeti-kvmd.service
+
 # Optional: ganeti-metad is the daemon providing the metadata service.
 systemctl start ganeti-metad.service
 
