@@ -141,7 +141,13 @@ Build all packages with no overwrite and install:
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
 ```
-yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
+# CentOS 8
+dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
+dnf config-manager --enable integ-ganeti
+./build-rpm -p -bi ganeti
+
+# CentOS 7
+yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-3.el7.noarch.rpm
 yum-config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
 ```
