@@ -43,7 +43,7 @@ Now, ganeti daemons work with the privileges of gnt-* users and gnt-* groups.
 
 Directories and files in `/var/lib/ganeti` and `/var/log/ganeti` are automatically modified to the appropriate permissions by the `/usr/lib64/ganeti/ensure-dirs` script at startup.
 
-However, to modify the permissions of files in `/var/lib/ganeti/queue/archive/`, you need to manually execute the following command only once after installing the new package.
+However, to modify the permissions of files in `/var/lib/ganeti/queue/archive/`, you need to manually execute the following command only once after updating to the new package.
 
 ```bash
 # -f, --full-run  Make a full run and set permissions on archived jobs (time consuming)
