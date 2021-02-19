@@ -49,13 +49,13 @@ The oldest version of qemu supported by Ganeti is `qemu-2.11`. Therefore, it is 
 ```bash
 # centos-release-qemu-ev - QEMU Enterprise Virtualization packages from the CentOS Virtualization SIG repository
 yum install centos-release-qemu-ev
-yum install qemu-kvm-ev libvirt python-virtinst virt-install bridge-utils
+yum install qemu-kvm-ev libvirt python-virtinst virt-install
 ```
 
 - KVM on RHEL/CentOS/others **8.x**
 
 ```bash
-dnf install qemu-kvm libvirt python-virtinst virt-install bridge-utils
+dnf install qemu-kvm libvirt virt-install
 ```
 
 ### KVM settings
@@ -88,21 +88,24 @@ Create bridge interface:
 `br0` is an example of bridge interface.
 
 - Using NetworkManager
+  - physical interface: eno1
+  - bridge interface: br0
+  - ipv4.addresses: 192.168.1.11/24
+  - ipv4.gateway 192.168.1.254
+  - ipv4.dns "192.168.1.1,192.168.1.2"
 
 ```bash
-nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.method ignore bridge.stp no bridge.forward-delay 0 con-name "br0" ifname "br0"
-nmcli connection modify "eno1" connection.slave-type bridge connection.master "br0"
-nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24 192.168.1.254" ipv4.dns "192.168.1.1,"192.168.1.2"
-nmcli connection up br0
-nmcli connection down eno1
-nmcli connection up bridge-slave-eno1
+nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.method ignore bridge.stp no bridge.forward-delay 0 con-name br0 ifname br0
+nmcli connection modify eno1 connection.slave-type bridge connection.master br0
+nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24"
+nmcli connection modify br0 ipv4.gateway "192.168.1.254" ipv4.dns "192.168.1.1,192.168.1.2"
+nmcli connection up br0; nmcli connection down eno1; nmcli connection up bridge-slave-eno1 &
 
 # VLAN filter support on bridge(VLAN aware bridge)
 # Require ganeti-2.16.2-1 RPM or later
 # set VLAN 100: gnt-instance modify --net 0:modify,vlan=100 instance1
 nmcli connection modify br0 bridge.vlan-filtering yes
-nmcli connection down br0
-nmcli connection up br0
+nmcli connection down br0; nmcli connection up br0 &
 ```
 
 You can setup it easily by using [nmcli-cli](https://github.com/jfut/nmcli-cli).
@@ -127,7 +130,17 @@ Edit `/etc/sysconfig/iptables`:
 *filter
 ...
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
-## FORWARD
+# FORWARD
+-A FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+COMMIT
+```
+
+Edit `/etc/sysconfig/ip6tables`:
+
+```
+...
+-A INPUT -j REJECT --reject-with icmp6-adm-prohibited
+# FORWARD
 -A FORWARD -m physdev --physdev-is-bridged -j ACCEPT
 COMMIT
 ```
@@ -136,6 +149,7 @@ Apply firewall rules:
 
 ```bash
 iptables-restore < /etc/sysconfig/iptables
+ip6tables-restore < /etc/sysconfig/ip6tables
 ```
 
 ## Setting up yum/dnf repositories
@@ -174,7 +188,7 @@ yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2
 yum-config-manager --disable integ-ganeti
 
 # RHEL/CentOS/others **8.x**
-dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el7.noarch.rpm
+dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
 ```
 
@@ -190,7 +204,11 @@ Install DRBD package:
 yum --enablerepo=elrepo install kmod-drbd84 drbd84-utils
 ```
 
-- RHEL/CentOS/others **7.x and later**
+Enable `drbd.service`:
+
+```bash
+systemctl enable drbd.service
+```
 
 Create `/etc/modules-load.d/drbd.conf`:
 
@@ -262,10 +280,10 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 yum --enablerepo=epel,integ-ganeti install ganeti
 ```
 
-- (Optional) Install Ganeti Instance Debootstrap and snf-image:
+- (Optional) Install Ganeti Instance Debootstrap:
 
 ```bash
-yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap snf-image
+yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 ```
 
 Required ports(default):
