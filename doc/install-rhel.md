@@ -520,7 +520,7 @@ Installation will be successful, but gnt-instance console doesn't work.
 gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
 
 # With no check, no start, and no install
-gnt-instance add -t drbd -n node2:node1 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance3 --no-ip-check --no-name-check --no-start --no-install instance3.example.com
+gnt-instance add -t drbd -n node2:node1 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 --no-ip-check --no-name-check --no-start --no-install instance3.example.com
 ```
 
 ### Install custom OS using ISO file
