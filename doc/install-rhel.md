@@ -2,8 +2,6 @@
 
 This documentation is the short version for RHEL/CentOS/others 7.x and 8.x.
 
-**DRBD 8.4 does not support Kernel 4.18.x on el8, so the DRBD disk template cannot be used on el8.**
-
 Official full version:
 
 - [Ganeti's documentation](http://docs.ganeti.org/ganeti/current/html/) > [Ganeti installation tutorial](http://docs.ganeti.org/ganeti/current/html/install.html)
@@ -193,8 +191,6 @@ dnf config-manager --disable integ-ganeti
 ```
 
 ## Installing DRBD
-
-**kmod-drbd84 and drbd84-utils for el8 in ELRepo have not been released.**
 
 **Mandatory** on all nodes.
 
