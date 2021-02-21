@@ -2,8 +2,8 @@
 
 Summary: Bidirectional data relay between two data channels ('netcat++')
 Name: socat
-Version: 1.7.3.3
-Release: 2%{?dist}
+Version: 1.7.3.4
+Release: 1%{?dist}
 License: GPLv2
 Url:  http://www.dest-unreach.org/socat/
 Source: http://www.dest-unreach.org/socat/download/%{name}-%{version}.tar.gz
@@ -68,6 +68,10 @@ export OD_C=/usr/bin/od
 %doc %{_mandir}/man1/*
 
 %changelog
+* Sun Feb 21 2021 Jun Futagawa <jfut@integ.jp> - 1.7.3.4-1
+- Fork from https://git.centos.org/rpms/socat/tree/c8
+- Update to 1.7.3.4 (#40)
+
 * Sun Dec 01 2019 Paul Wouters <pwouters@redhat.com> - 1.7.3.3-2
 - Resolves: rhbz#1682464 socat changes blocked until gating tests are added
 
