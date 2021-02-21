@@ -1,0 +1,43 @@
+diff -Naur socat-1.7.3.3-orig/sysutils.c socat-1.7.3.3/sysutils.c
+--- socat-1.7.3.3-orig/sysutils.c	2017-01-08 05:38:53.000000000 -0500
++++ socat-1.7.3.3/sysutils.c	2019-06-24 17:02:56.693056583 -0400
+@@ -614,7 +614,7 @@
+       return -1;
+    }
+ 
+-   strncpy(ifr.ifr_name, ifname, IFNAMSIZ);	/* ok */
++   strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);	/* ok */
+    if (Ioctl(s, SIOCGIFINDEX, &ifr) < 0) {
+       Info3("ioctl(%d, SIOCGIFINDEX, {\"%s\"}): %s",
+ 	     s, ifr.ifr_name, strerror(errno));
+diff -Naur socat-1.7.3.3-orig/xio-socket.c socat-1.7.3.3/xio-socket.c
+--- socat-1.7.3.3-orig/xio-socket.c	2017-01-08 04:56:00.000000000 -0500
++++ socat-1.7.3.3/xio-socket.c	2019-06-24 17:04:48.684491835 -0400
+@@ -1710,7 +1710,6 @@
+ int xiocheckpeer(xiosingle_t *xfd,
+ 		 union sockaddr_union *pa, union sockaddr_union *la) {
+    char infobuff[256];
+-   int result;
+ 
+ #if WITH_IP4
+    if (xfd->para.socket.dorange) {
+@@ -1778,6 +1777,7 @@
+ #endif /* WITH_TCP || WITH_UDP */
+ 
+ #if (WITH_TCP || WITH_UDP) && WITH_LIBWRAP
++   int result;
+    result = xio_tcpwrap_check(xfd, la, pa);
+    if (result < 0) {
+       char infobuff[256];
+diff -Naur socat-1.7.3.3-orig/xio-tun.c socat-1.7.3.3/xio-tun.c
+--- socat-1.7.3.3-orig/xio-tun.c	2017-01-06 15:58:40.000000000 -0500
++++ socat-1.7.3.3/xio-tun.c	2019-06-24 17:03:55.276797729 -0400
+@@ -106,7 +106,7 @@
+    memset(&ifr, 0,sizeof(ifr));
+ 
+    if (retropt_string(opts, OPT_TUN_NAME, &tunname) == 0) {
+-      strncpy(ifr.ifr_name, tunname, IFNAMSIZ);	/* ok */
++      strncpy(ifr.ifr_name, tunname, IFNAMSIZ - 1);	/* ok */
+       free(tunname);
+    } else {
+       ifr.ifr_name[0] = '\0';
