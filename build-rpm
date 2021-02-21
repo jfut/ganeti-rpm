@@ -19,7 +19,7 @@ INTEG_GANETI_REPO_PACKAGES_EL7="integ-ganeti-release-7"
 
 # single packages
 GANETI_DEPENDS_PACKAGES=()
-GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
+GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray" "socat")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
 
 if [[ "${RPM_DIST}" = ".el8" ]]; then
@@ -51,9 +51,9 @@ Usage:
         -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
             ganeti dependencies (el8 only):
-                ${GANETI_DEPENDS_PACKAGES_EL8}
+                ${GANETI_DEPENDS_PACKAGES_EL8[@]}
             ganeti dependencies (el7 only):
-                ${GANETI_DEPENDS_PACKAGES_EL7}
+                ${GANETI_DEPENDS_PACKAGES_EL7[@]}
             ganeti:
                 ${GANETI_PACKAGES}
             integ-ganeti-repo:
