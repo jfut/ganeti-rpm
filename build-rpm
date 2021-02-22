@@ -14,8 +14,9 @@ PYTHON3_PKGVERSION_OPTION_EL8=3
 PYTHON3_PKGVERSION_OPTION_EL7=36
 
 # integ-ganeti repo
-INTEG_GANETI_REPO_PACKAGES_EL8="integ-ganeti-release-8"
-INTEG_GANETI_REPO_PACKAGES_EL7="integ-ganeti-release-7"
+INTEG_GANETI_REPO_PACKAGES=()
+INTEG_GANETI_REPO_PACKAGES_EL8=("integ-ganeti-release-8")
+INTEG_GANETI_REPO_PACKAGES_EL7=("integ-ganeti-release-7")
 
 # single packages
 GANETI_DEPENDS_PACKAGES=()
@@ -23,16 +24,16 @@ GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray" "socat")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
 
 if [[ "${RPM_DIST}" = ".el8" ]]; then
-    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL8}"
-    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL8}"
+    INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL8[@]}")
+    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL8[@]}")
 elif [[ "${RPM_DIST}" = ".el7" ]]; then
-    INTEG_GANETI_REPO_PACKAGES="${INTEG_GANETI_REPO_PACKAGES_EL7}"
-    GANETI_DEPENDS_PACKAGES="${GANETI_DEPENDS_PACKAGES_EL7}"
+    INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL7[@]}")
+    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL7[@]}")
 fi
-GANETI_PACKAGES="ganeti ganeti-instance-debootstrap"
+GANETI_PACKAGES=("ganeti" "ganeti-instance-debootstrap")
 
 # all packages
-PACKAGES="${GANETI_DEPENDS_PACKAGES} ${GANETI_PACKAGES} ${INTEG_GANETI_REPO_PACKAGES}"
+PACKAGES=(${GANETI_DEPENDS_PACKAGES[@]} ${GANETI_PACKAGES[@]} ${INTEG_GANETI_REPO_PACKAGES[@]})
 
 # Directories
 PACKAGER="$(basename "${0}")"
@@ -55,7 +56,7 @@ Usage:
             ganeti dependencies (el7 only):
                 ${GANETI_DEPENDS_PACKAGES_EL7[@]}
             ganeti:
-                ${GANETI_PACKAGES}
+                ${GANETI_PACKAGES[@]}
             integ-ganeti-repo:
                 ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
 
@@ -436,9 +437,9 @@ main() {
     # Target package
     local TARGET=""
     if [[ "${TARGET_ALL}" = "yes" ]]; then
-        TARGET="${PACKAGES}"
+        TARGET="${PACKAGES[@]}"
     elif [[ "${TARGET_DEPENDS_PACKAGES}" = "yes" ]]; then
-        TARGET="${GANETI_DEPENDS_PACKAGES}"
+        TARGET="${GANETI_DEPENDS_PACKAGES[@]}"
     elif [[ "${TARGET_PACKAGES}" = "yes" ]]; then
         TARGET="${@}"
     else
