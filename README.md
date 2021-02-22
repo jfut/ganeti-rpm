@@ -159,11 +159,11 @@ Run the container with bash:
 ```
 # CentOS 8
 BUILD_HOSTNAME=centos-8.github.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg centos:8 bash
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg centos:8 bash
 
 # CentOS 7
 BUILD_HOSTNAME=centos-7.github.integ.jp
-docker run -h ${BUILD_HOSTNAME} --rm -it -v $PWD:/pkg -v ~/.gnupg.el7:/root/.gnupg centos:7 bash
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el7:/root/.gnupg centos:7 bash
 
 # Setup
 yum -y install rpm-sign pinentry
