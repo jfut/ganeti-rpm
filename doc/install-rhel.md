@@ -36,7 +36,7 @@ e.g. DNS or `/etc/hosts`:
 
 ## Installing The Hypervisor
 
-Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/CentOS/Scientific CentOS.
+Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/CentOS/Rocky Linux/others.
 
 **Mandatory** on all nodes.
 
@@ -264,6 +264,20 @@ devices for physical volumes. This can be accomplished by editing
 
 ```bash
 filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
+```
+
+## Configuring SELinux
+
+**Mandatory** on all nodes.
+
+Configure SE Linux parameters for Ganeti cluster operations to work properly.
+
+- RHEL/CentOS/others 8.x
+
+```bash
+setsebool -P nis_enabled on
+setsebool -P domain_can_mmap_files on
+setsebool -P use_virtualbox on
 ```
 
 ## Installing Ganeti
