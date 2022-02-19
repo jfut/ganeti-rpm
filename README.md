@@ -24,8 +24,8 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 You can build RPM packages in Docker.
 
 ```
-# CentOS 8
-./build centos:8
+# Rocky Linux 8
+./build rockylinux:8
 
 # CentOS 7
 ./build centos:7
@@ -34,8 +34,8 @@ You can build RPM packages in Docker.
 Debug and manual mode:
 
 ```
-# CentOS 8
-./build -d centos:8
+# Rocky Linux 8
+./build -d rockylinux:8
 
 # CentOS 7
 ./build -d centos:7
@@ -54,16 +54,19 @@ Run on host.
 
 ```
 Usage:
-    build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
+    build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG [BUILD_RPM_ARGS]
 
     Options:
         -d Debug mode
 
+        BUILD_RPM_ARGS
+            build-rpm options (default: -a -bi -o yes)
+
     Environment variables:
         BUILD_HOSTNAME: container host name
 
-    Build for CentOS 8:
-        build centos:8
+    Build for Rocky Linux 8:
+        build rockylinux:8
 
     Build for CentOS 7:
         build centos:7
@@ -158,8 +161,8 @@ Run the container with bash:
 
 ```
 # CentOS 8
-BUILD_HOSTNAME=centos-8.github.integ.jp
-docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg centos:8 bash
+BUILD_HOSTNAME=rockylinux-8.github.integ.jp
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg rockylinux:8 bash
 
 # CentOS 7
 BUILD_HOSTNAME=centos-7.github.integ.jp
