@@ -31,7 +31,7 @@
 
 Name: ganeti
 Version: 3.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause

@@ -6,8 +6,8 @@ Ganeti RPM Packaging for RHEL/CentOS/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/CentOS/Rocky Linux/others 8.x: 3.0.1-1
-- RHEL/CentOS/others 7.x: 3.0.1-1
+- RHEL/CentOS/Rocky Linux/others 8.x: 3.0.1-2
+- RHEL/CentOS/others 7.x: 3.0.1-2
 
 ## Documentation
 
@@ -23,7 +23,7 @@ Ganeti RPM Packaging for RHEL/CentOS/Rocky Linux/others.
 
 You can build RPM packages in Docker.
 
-```
+```bash
 # Rocky Linux 8
 ./build rockylinux:8
 
@@ -33,7 +33,7 @@ You can build RPM packages in Docker.
 
 Debug and manual mode:
 
-```
+```bash
 # Rocky Linux 8
 ./build -d rockylinux:8
 
@@ -52,7 +52,7 @@ cd /pkg
 
 Run on host.
 
-```
+```bash
 Usage:
     build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG [BUILD_RPM_ARGS]
 
@@ -76,7 +76,7 @@ Usage:
 
 Run in a container.
 
-```
+```bash
 Usage:
     build-rpm [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
 
@@ -119,31 +119,31 @@ Usage:
 
 All packages + uninstall, clean, build, and install:
 
-```
+```bash
 ./build-rpm -a -ucbi
 ```
 
 Ganeti dependencies packages + uninstall, clean, build, and install:
 
-```
+```bash
 ./build-rpm -d -ucbi
 ```
 
 The specified package(s) + uninstall, clean, build, and install:
 
-```
+```bash
 ./build-rpm -p -ucbi PACKAGE
 ```
 
 Build all packages with no overwrite and install:
 
-```
+```bash
 ./build-rpm -a -bi -o no
 ```
 
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
-```
+```bash
 # Rocky Linux 8
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --enable integ-ganeti
@@ -159,7 +159,7 @@ yum-config-manager --enable integ-ganeti
 
 Run the container with bash:
 
-```
+```bash
 # Rocky Linux 8
 BUILD_HOSTNAME=rockylinux-8.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg rockylinux:8 bash
@@ -177,14 +177,14 @@ echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
 
 Sign all packages:
 
-```
+```bash
 cd /pkg
 ./build-rpm -a -s
 ```
 
 Sign the specified package(s) only:
 
-```
+```bash
 ./build-rpm -p -s PACAKGE
 ```
 
@@ -201,4 +201,13 @@ Sign the specified package(s) only:
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
 5. Create new Pull Request
+
+## Release tag
+
+e.g.:
+
+```bash
+git tag -a v3.0.1-2 -m "v3.0.1-2"
+git push origin refs/tags/v3.0.1-2
+```
 
