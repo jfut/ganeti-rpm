@@ -2,11 +2,11 @@
 
 [![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=master)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
 
-Ganeti RPM Packaging for RHEL/CentOS/others.
+Ganeti RPM Packaging for RHEL/CentOS/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/CentOS/others 8.x: 3.0.1-1
+- RHEL/CentOS/Rocky Linux/others 8.x: 3.0.1-1
 - RHEL/CentOS/others 7.x: 3.0.1-1
 
 ## Documentation
@@ -144,7 +144,7 @@ Build all packages with no overwrite and install:
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
 ```
-# CentOS 8
+# Rocky Linux 8
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
@@ -160,7 +160,7 @@ yum-config-manager --enable integ-ganeti
 Run the container with bash:
 
 ```
-# CentOS 8
+# Rocky Linux 8
 BUILD_HOSTNAME=rockylinux-8.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg rockylinux:8 bash
 
