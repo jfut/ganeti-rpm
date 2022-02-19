@@ -20,16 +20,19 @@ DEBUG="no"
 usage() {
     cat << _EOF_
 Usage:
-    ${PACKAGER} [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
+    ${PACKAGER} [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG [BUILD_RPM_OPTIONS]
 
     Options:
         -d Debug mode
 
+        BUILD_RPM_OPTIONS
+            build-rpm options (default: -a -bi -o yes)
+
     Environment variables:
         BUILD_HOSTNAME: container host name
 
-    Build for CentOS 8:
-        ${PACKAGER} centos:8
+    Build for Rocky Linux 8:
+        ${PACKAGER} rockylinux:8
 
     Build for CentOS 7:
         ${PACKAGER} centos:7
@@ -39,7 +42,7 @@ _EOF_
 build() {
     local BUILD_IMAGE="${1}"
     shift
-    local BUILD_RPM_ARGS="${@}"
+    local BUILD_RPM_OPTIONS="${@:--a -bi -o yes}"
 
     local BUILD_IMAGE_NAME=$(echo ${BUILD_IMAGE} | cut -d':' -f 1)
     local BUILD_IMAGE_TAG=$(echo ${BUILD_IMAGE} | cut -d':' -f 2)
@@ -49,7 +52,7 @@ build() {
     local BUILD_HOSTNAME="${BUILD_HOSTNAME:-${HOSTNAME}}"
 
     local DOCKER_OPTIONS=""
-    local BUILD_CMD="${DOCKER_PKG_DIR}/setup && ${DOCKER_PKG_DIR}/build-rpm ${BUILD_RPM_ARGS}"
+    local BUILD_CMD="${DOCKER_PKG_DIR}/setup && ${DOCKER_PKG_DIR}/build-rpm ${BUILD_RPM_OPTIONS}"
     if [[ "${DEBUG}" = "yes" ]]; then
         echo "# Manual Build: ${BUILD_CMD}"
         DOCKER_OPTIONS="-it"

@@ -2,11 +2,11 @@
 
 [![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=master)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
 
-Ganeti RPM Packaging for RHEL/CentOS/others.
+Ganeti RPM Packaging for RHEL/CentOS/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/CentOS/others 8.x: 3.0.1-1
+- RHEL/CentOS/Rocky Linux/others 8.x: 3.0.1-1
 - RHEL/CentOS/others 7.x: 3.0.1-1
 
 ## Documentation
@@ -24,8 +24,8 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 You can build RPM packages in Docker.
 
 ```
-# CentOS 8
-./build centos:8
+# Rocky Linux 8
+./build rockylinux:8
 
 # CentOS 7
 ./build centos:7
@@ -34,8 +34,8 @@ You can build RPM packages in Docker.
 Debug and manual mode:
 
 ```
-# CentOS 8
-./build -d centos:8
+# Rocky Linux 8
+./build -d rockylinux:8
 
 # CentOS 7
 ./build -d centos:7
@@ -54,16 +54,19 @@ Run on host.
 
 ```
 Usage:
-    build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG
+    build [-d] BUILD_IMAGE_NAME:BUILD_IMAGE_TAG [BUILD_RPM_ARGS]
 
     Options:
         -d Debug mode
 
+        BUILD_RPM_ARGS
+            build-rpm options (default: -a -bi -o yes)
+
     Environment variables:
         BUILD_HOSTNAME: container host name
 
-    Build for CentOS 8:
-        build centos:8
+    Build for Rocky Linux 8:
+        build rockylinux:8
 
     Build for CentOS 7:
         build centos:7
@@ -141,7 +144,7 @@ Build all packages with no overwrite and install:
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
 ```
-# CentOS 8
+# Rocky Linux 8
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
@@ -157,9 +160,9 @@ yum-config-manager --enable integ-ganeti
 Run the container with bash:
 
 ```
-# CentOS 8
-BUILD_HOSTNAME=centos-8.github.integ.jp
-docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg centos:8 bash
+# Rocky Linux 8
+BUILD_HOSTNAME=rockylinux-8.github.integ.jp
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg rockylinux:8 bash
 
 # CentOS 7
 BUILD_HOSTNAME=centos-7.github.integ.jp

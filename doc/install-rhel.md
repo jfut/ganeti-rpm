@@ -1,6 +1,6 @@
-# Ganeti installation tutorial for RHEL/CentOS/others
+# Ganeti installation tutorial for RHEL/CentOS/Rocky Linux/others
 
-This documentation is the short version for RHEL/CentOS/others 7.x and 8.x.
+This documentation is the short version for RHEL/CentOS/Rocky Linux/others 7.x and 8.x.
 
 Official full version:
 
@@ -50,7 +50,7 @@ yum install centos-release-qemu-ev
 yum install qemu-kvm-ev libvirt python-virtinst virt-install
 ```
 
-- KVM on RHEL/CentOS/others **8.x**
+- KVM on RHEL/CentOS/Rocky Linux/others **8.x**
 
 ```bash
 dnf install qemu-kvm libvirt virt-install
@@ -161,7 +161,7 @@ Install ELRepo repository for DRBD packages:
 yum install elrepo-release
 yum-config-manager --disable elrepo
 
-# RHEL/CentOS/others **8.x**
+# RHEL/CentOS/Rocky Linux/others **8.x**
 dnf install elrepo-release
 dnf config-manager --disable elrepo
 ```
@@ -173,7 +173,7 @@ Install EPEL repository for dependency packages:
 yum install epel-release
 yum-config-manager --disable epel
 
-# RHEL/CentOS/others **8.x**
+# RHEL/CentOS/Rocky Linux/others **8.x**
 dnf install epel-release
 dnf config-manager --disable epel
 ```
@@ -185,7 +185,7 @@ Install Integ Ganeti repository:
 yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
 yum-config-manager --disable integ-ganeti
 
-# RHEL/CentOS/others **8.x**
+# RHEL/CentOS/Rocky Linux/others **8.x**
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
 ```
