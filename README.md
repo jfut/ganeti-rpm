@@ -169,7 +169,7 @@ BUILD_HOSTNAME=centos-7.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el7:/root/.gnupg centos:7 bash
 
 # Setup
-yum -y install rpm-sign pinentry
+yum -y install findutils rpm-sign pinentry
 
 # Set your gpg name
 echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros
