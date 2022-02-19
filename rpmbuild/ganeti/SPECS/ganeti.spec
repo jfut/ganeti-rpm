@@ -89,11 +89,15 @@ BuildRequires: python%{python3_pkgversion}-pyyaml
 %endif
 BuildRequires: python%{python3_pkgversion}-mock
 
+Requires: fping
 Requires: iproute
 Requires: iputils
 Requires: libcap
 Requires: logrotate
 Requires: lvm2
+%if 0%{?rhel} == 7
+Requires: ndisc6
+%endif
 Requires: openssh
 Requires: python%{python3_pkgversion}
 Requires: python%{python3_pkgversion}-bitarray
@@ -317,6 +321,9 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sat Feb 19 2022 Jun Futagawa <jfut@integ.jp> - 3.0.1-2
+- Add Requires: fping and ndisc6(el8 not yet provided by EPEL) (#43, thanks @rowlap)
+
 * Thu Feb  4 2021 Jun Futagawa <jfut@integ.jp> - 3.0.1-1
 - Update to 3.0.1
 
