@@ -13,14 +13,16 @@ RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|
 
 # Setup build tools
 echo
-echo "Setup build tools"
+echo "# Setup build tools"
 PACKAGE_MANAGER=""
 if [[ "${RPM_DIST}" = ".el8" ]]; then
+    echo "# - Install build tools for el8"
     dnf -y groupinstall "Development Tools"
     dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
     dnf -y install pinentry
     dnf config-manager --enable powertools
 elif [[ "${RPM_DIST}" = ".el7" ]]; then
+    echo "# - Install build tools for el7"
     yum -y groupinstall "Development Tools"
     yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
     yum clean all
@@ -28,6 +30,6 @@ fi
 
 # Setup GHC environment
 echo
-echo "Setup GHC environment"
+echo "# Setup GHC environment"
 ${PACKAGER_DIR}/setup-ghc
 

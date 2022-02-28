@@ -112,14 +112,14 @@ setup_package_option() {
         PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
         PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
         if [[ "${RPM_DIST}" != ".el8" ]]; then
-            echo "Skip ${PACKAGE} because it is for el8 only"
+            echo "- Skip ${PACKAGE} because it is for el8 only"
         fi
     elif [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
         # el7 only
         PACKAGE_OPTION[package_prefix]=${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
         PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
         if [[ "${RPM_DIST}" != ".el7" ]]; then
-            echo "Skip ${PACKAGE} because it is for el7 only"
+            echo "- Skip ${PACKAGE} because it is for el7 only"
             return
         fi
     fi
@@ -132,7 +132,7 @@ setup_package_option() {
 clean_rpmbuild_directory() {
     local CLEAN_TASK="${1}"
     shift
-    echo "Clean rpmbuild directory(${CLEAN_TASK})..."
+    echo "# Clean rpmbuild directory(${CLEAN_TASK})..."
 
     local PACKAGE=""
     for PACKAGE in ${@}; do
@@ -180,6 +180,7 @@ check_oldpackage() {
         return
     fi
 
+    echo "# Check old pacakges"
     RPM_FILE=${PACKAGE_LIST[0]}
     if [[ -f "${RPM_FILE}" ]]; then
         if [[ "${OVERWRITE_MODE}" = "yes" ]]; then
@@ -190,7 +191,7 @@ check_oldpackage() {
             return
         fi
 
-        echo "Found current version packages:"
+        echo "- Found current version packages:"
         local i=""
         for i in ${PACKAGE_LIST[@]}; do
             echo "- ${i}"
@@ -212,17 +213,17 @@ check_oldpackage() {
 
 # Build package
 build_package() {
-    echo "Build packages..."
+    echo "# Build packages..."
 
     local PACKAGE=""
     for PACKAGE in ${@}; do
-        echo "- ${PACKAGE}"
+        echo "# Build package: ${PACKAGE}"
 
         # setup option
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
         if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
-            echo "Not found: ${PACKAGE}"
+            echo "- Not found: ${PACKAGE}"
             continue
         fi
 
@@ -234,6 +235,7 @@ build_package() {
 
         if [[ "${is_overwrite}" = "default" ]] || [[ "${is_overwrite}" = "y" ]]; then
             # Install build dependencies
+            echo "- sudo yum-builddep -y ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\""
             eval sudo yum-builddep -y ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\""
 
             # Download source and patch files
@@ -241,9 +243,11 @@ build_package() {
             if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
                 mkdir "${PACKAGE_SOURCES}"
             fi
+            echo "- eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
             eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
 
             # Build package
+            echo "- rpmbuild ..."
             eval rpmbuild \
                 --define "\"%_topdir ${PACKAGER_RPM_DIR}/${PACKAGE}\"" \
                 --define "\"%dist ${RPM_DIST}\"" \
@@ -266,14 +270,14 @@ check_signkey() {
     SIGNKEY=$(gpg --list-keys | grep "Ganeti RPM Packages" | wc -l)
     set -o pipefail
     if [[ "${SIGNKEY}" -lt 1 ]]; then
-        echo "Error: Ganeti RPM Packages sign key not found."
+        echo "# Error: Ganeti RPM Packages sign key not found."
         exit 1
     fi
 }
 
 # Sign package
 sign_package() {
-    echo "Sign packages..."
+    echo "# Sign packages..."
 
     local SIGN_PACKAGES=""
     local PACKAGE=""
@@ -284,7 +288,7 @@ sign_package() {
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
         if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
-            echo "Not found: ${PACKAGE}"
+            echo "- Not found: ${PACKAGE}"
             continue
         fi
 
@@ -296,7 +300,7 @@ sign_package() {
                 if [[ "${IS_SIGNED}" -eq 0 ]]; then
                     SIGN_PACKAGES="${SIGN_PACKAGES} ${PACKAGE_PATH}"
                 else
-                    echo "    Skip sign: ${PACKAGE_PATH} is already signed."
+                    echo "    - Skip sign: ${PACKAGE_PATH} is already signed."
                 fi
             done
         fi
@@ -310,7 +314,7 @@ sign_package() {
 
 # Install package
 install_package() {
-    echo "Install packages..."
+    echo "# Install packages..."
 
     local INSTALL_PACKAGES=""
     local PACKAGE=""
@@ -321,7 +325,7 @@ install_package() {
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
         if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
-            echo "Not found: ${PACKAGE}"
+            echo "- Not found: ${PACKAGE}"
             continue
         fi
 
@@ -348,13 +352,14 @@ install_package() {
     done
 
     if [[ ! -z "${INSTALL_PACKAGES}" ]]; then
+        echo "- sudo yum -y install ${INSTALL_PACKAGES}"
         sudo yum -y install ${INSTALL_PACKAGES}
     fi
 }
 
 # Uninstall package
 uninstall_package() {
-    echo "Uninstall packages..."
+    echo "# Uninstall packages..."
 
     local REMOVE_PACKAGES=""
     local PACKAGE=""
@@ -365,7 +370,7 @@ uninstall_package() {
         declare -A PACKAGE_OPTION=(["package"]=${PACKAGE})
         eval declare -A PACKAGE_OPTION=$(setup_package_option "$(declare -p PACKAGE_OPTION)")
         if [[ ! -f "${PACKAGE_OPTION[spec_file]}" ]]; then
-            echo "Not found: ${PACKAGE}"
+            echo "- Not found: ${PACKAGE}"
             continue
         fi
 
@@ -384,6 +389,7 @@ uninstall_package() {
     done
 
     if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
+        echo "- sudo yum -y remove ${REMOVE_PACKAGES}"
         sudo yum -y remove ${REMOVE_PACKAGES}
         echo
     fi
