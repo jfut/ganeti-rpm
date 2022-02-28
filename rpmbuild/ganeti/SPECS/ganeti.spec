@@ -30,8 +30,8 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 3.0.1
-Release: 2%{?dist}
+Version: 3.0.2
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -321,6 +321,9 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Mar  1 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-1
+- Update to 3.0.2
+
 * Sat Feb 19 2022 Jun Futagawa <jfut@integ.jp> - 3.0.1-2
 - Add Requires: fping and ndisc6(el8 not yet provided by EPEL) (#43, thanks @rowlap)
 
