@@ -22,6 +22,11 @@ if [[ "${RPM_DIST}" = ".el8" ]]; then
     dnf -y install pinentry
     dnf config-manager --enable powertools
 elif [[ "${RPM_DIST}" = ".el7" ]]; then
+    echo "# - Remove centos vault repository"
+    if [[ -f /etc/yum.repos.d/CentOS-Vault.repo ]]; then
+        rm -f /etc/yum.repos.d/CentOS-Vault.repo /etc/yum.repos.d/CentOS-Sources.repo
+    fi
+
     echo "# - Install build tools for el7"
     yum -y groupinstall "Development Tools"
     yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
