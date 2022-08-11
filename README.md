@@ -37,7 +37,7 @@ You can build RPM packages in Docker.
 Debug and manual mode:
 
 ```bash
-# AlmaLinux Linux 8
+# AlmaLinux 8
 ./build -d almalinux:8
 # or ./build -d rockylinux:8
 
