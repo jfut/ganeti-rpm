@@ -57,6 +57,7 @@ Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
 Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
 Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
 Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
+Patch10: ganeti-3.0.2-cryptonite-version.patch
 
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
@@ -156,10 +157,13 @@ It is not required when the init system used is systemd.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
+%if 0%{?rhel} == 7
 # https://github.com/haskell-crypto/cryptonite/issues/326
-cabal install cryptonite -f -use_target_attributes
+cabal install cryptonite-0.29 -f -use_target_attributes
+%endif
 cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond metad htest network_bsd"
 
 %configure \
