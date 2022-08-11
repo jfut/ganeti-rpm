@@ -21,7 +21,7 @@ jobs:
       matrix:
         image:
           - centos-7
-          - rockylinux-8
+          - almalinux-8
 
     env:
       BUILD_IMAGE: ${{ matrix.image }}

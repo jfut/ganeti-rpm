@@ -1,6 +1,6 @@
-# Ganeti installation tutorial for RHEL/CentOS/Rocky Linux/others
+# Ganeti installation tutorial for RHEL/AlmaLinux/CentOS/Rocky Linux/others
 
-This documentation is the short version for RHEL/CentOS/Rocky Linux/others 7.x and 8.x.
+This documentation is the short version for RHEL/AlmaLinux/CentOS/Rocky Linux/others 7.x and 8.x.
 
 Official full version:
 
@@ -36,7 +36,7 @@ e.g. DNS or `/etc/hosts`:
 
 ## Installing The Hypervisor
 
-Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/CentOS/Rocky Linux/others.
+Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/AlmaLinux/CentOS/Rocky Linux/others.
 
 **Mandatory** on all nodes.
 
@@ -50,7 +50,7 @@ yum install centos-release-qemu-ev
 yum install qemu-kvm-ev libvirt python-virtinst virt-install
 ```
 
-- KVM on RHEL/CentOS/Rocky Linux/others **8.x**
+- KVM on RHEL/AlmaLinux/Rocky Linux/others **8.x**
 
 ```bash
 dnf install qemu-kvm libvirt virt-install
@@ -58,7 +58,7 @@ dnf install qemu-kvm libvirt virt-install
 
 ### KVM settings
 
-- KVM on RHEL/CentOS/others
+- KVM on RHEL/AlmaLinux/CentOS/Rock Linux/others
 
 **Mandatory** on all nodes.
 
@@ -161,7 +161,7 @@ Install ELRepo repository for DRBD packages:
 yum install elrepo-release
 yum-config-manager --disable elrepo
 
-# RHEL/CentOS/Rocky Linux/others **8.x**
+# RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install elrepo-release
 dnf config-manager --disable elrepo
 ```
@@ -173,7 +173,7 @@ Install EPEL repository for dependency packages:
 yum install epel-release
 yum-config-manager --disable epel
 
-# RHEL/CentOS/Rocky Linux/others **8.x**
+# RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install epel-release
 dnf config-manager --disable epel
 ```
@@ -185,7 +185,7 @@ Install Integ Ganeti repository:
 yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
 yum-config-manager --disable integ-ganeti
 
-# RHEL/CentOS/Rocky Linux/others **8.x**
+# RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
 ```
@@ -272,7 +272,7 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 
 Configure SE Linux parameters for Ganeti cluster operations to work properly.
 
-- RHEL/CentOS/others 8.x
+- RHEL/AlmaLinux/Rocky Linux/others 8.x
 
 ```bash
 setsebool -P nis_enabled on
@@ -518,7 +518,7 @@ systemctl stop ganeti.target
 
 ### Setting up virtual instances
 
-- Setting up RHEL/CentOS/others
+- Setting up RHEL/AlmaLinux/CentOS/Rocky Linux/others
 
 We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image) ([yum repository](http://ftp.osuosl.org/pub/osl/ganeti-instance-image/yum/)).
 

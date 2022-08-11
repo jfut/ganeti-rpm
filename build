@@ -31,8 +31,8 @@ Usage:
     Environment variables:
         BUILD_HOSTNAME: container host name
 
-    Build for Rocky Linux 8:
-        ${PACKAGER} rockylinux:8
+    Build for AlmaLinux 8:
+        ${PACKAGER} almalinux:8
 
     Build for CentOS 7:
         ${PACKAGER} centos:7

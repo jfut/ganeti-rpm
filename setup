@@ -9,7 +9,8 @@ export LC_ALL=C
 PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 
 # RPM macros
-RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
+RPM_MACROS=/etc/rpm/macros.dist
+RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
 
 # Setup build tools
 echo
