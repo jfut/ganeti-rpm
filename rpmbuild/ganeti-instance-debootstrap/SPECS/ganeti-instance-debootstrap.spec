@@ -47,7 +47,7 @@ It will install a minimal version of Debian or Ubuntu via debootstrap
   --localstatedir=/var \
   --with-os-dir=%{with_os_dir}
 
-make
+%make_build
 
 %install
 rm -rf ${RPM_BUILD_ROOT}

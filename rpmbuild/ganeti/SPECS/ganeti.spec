@@ -184,7 +184,7 @@ cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond meta
   --enable-metadata \
   --enable-haskell-tests \
   $@
-make
+%make_build
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
