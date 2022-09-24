@@ -58,6 +58,7 @@ Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
 Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
 Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
 Patch10: ganeti-3.0.2-cryptonite-version.patch
+Patch11: ganeti-3.0.2-kvm-qmp-timeout.patch
 
 BuildRequires: iproute
 BuildRequires: libcurl-devel
@@ -156,6 +157,7 @@ It is not required when the init system used is systemd.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 %if 0%{?rhel} == 7
@@ -333,6 +335,7 @@ usermod -aG gnt-daemons gnt-rapi
 - Add BuildRequires: restore (for el9)
 - Add Requires: procps-ng
 - Add Requires: restore (for el9)
+- Add ganeti-3.0.2-kvm-qmp-timeout.patch (#50)
 
 * Tue Mar  1 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-1
 - Update to 3.0.2
