@@ -7,23 +7,35 @@ set -euo pipefail
 export LC_ALL=C
 
 # RPM macros
-RPM_DIST=$(egrep "\%dist" /etc/rpm/macros.dist | awk '{ print $2 }' | sed -E 's|^(\..*)\..*|\1|')
+RPM_MACROS=/usr/lib/rpm/macros.d/macros.dist
+if [[ -f /etc/rpm/macros.dist ]]; then
+    # el7 and el8
+    RPM_MACROS=/etc/rpm/macros.dist
+fi
+RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
+echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
 # python3_pkgversion for define option
+PYTHON3_PKGVERSION_OPTION_EL9=3
 PYTHON3_PKGVERSION_OPTION_EL8=3
 PYTHON3_PKGVERSION_OPTION_EL7=36
 
 # integ-ganeti repo
 INTEG_GANETI_REPO_PACKAGES=()
+INTEG_GANETI_REPO_PACKAGES_EL9=("integ-ganeti-release-9")
 INTEG_GANETI_REPO_PACKAGES_EL8=("integ-ganeti-release-8")
 INTEG_GANETI_REPO_PACKAGES_EL7=("integ-ganeti-release-7")
 
 # single packages
 GANETI_DEPENDS_PACKAGES=()
+GANETI_DEPENDS_PACKAGES_EL9=("python-bitarray")
 GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray" "socat")
 GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
 
-if [[ "${RPM_DIST}" = ".el8" ]]; then
+if [[ "${RPM_DIST}" = ".el9" ]]; then
+    INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL9[@]}")
+    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL9[@]}")
+elif [[ "${RPM_DIST}" = ".el8" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL8[@]}")
     GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL8[@]}")
 elif [[ "${RPM_DIST}" = ".el7" ]]; then
@@ -51,14 +63,16 @@ Usage:
         -a all packages (ganeti and its dependencies and integ-ganeti repo)
         -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
-            ganeti dependencies (el8 only):
+            ganeti dependencies (el9 only):
+                ${GANETI_DEPENDS_PACKAGES_EL9[@]}
+            ganeti dependencies (el9 only):
                 ${GANETI_DEPENDS_PACKAGES_EL8[@]}
             ganeti dependencies (el7 only):
                 ${GANETI_DEPENDS_PACKAGES_EL7[@]}
             ganeti:
                 ${GANETI_PACKAGES[@]}
             integ-ganeti-repo:
-                ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
+                ${INTEG_GANETI_REPO_PACKAGES_EL9} ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
 
     Task Options:
         -c Clean clean the rpmbuild directory, but preserve downloaded archives
@@ -107,13 +121,14 @@ setup_package_option() {
     fi
 
     # python packages
-    if [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
+    if [[ " ${GANETI_DEPENDS_PACKAGES_EL9[@]} " =~ " ${PACKAGE} " ]]; then
+        # el9 only
+        PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL9}}"
+        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL9}\""
+    elif [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
         # el8 only
         PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
         PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
-        if [[ "${RPM_DIST}" != ".el8" ]]; then
-            echo "- Skip ${PACKAGE} because it is for el8 only"
-        fi
     elif [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
         # el7 only
         PACKAGE_OPTION[package_prefix]=${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
@@ -243,8 +258,15 @@ build_package() {
             if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
                 mkdir "${PACKAGE_SOURCES}"
             fi
-            echo "- eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
-            eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
+            if [[ "${RPM_DIST}" = ".el9" ]]; then
+                # el9 or later
+                echo "- eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
+                eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
+            else
+                # el7 or el8
+                echo "- eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
+                eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
+            fi
 
             # Build package
             echo "- rpmbuild ..."

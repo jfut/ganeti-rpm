@@ -12,6 +12,15 @@ if [[ ${EUID:-${UID}} = 0 ]]; then
     GHC_PREFIX="/usr/local"
 fi
 
+# RPM macros
+RPM_MACROS=/usr/lib/rpm/macros.d/macros.dist
+if [[ -f /etc/rpm/macros.dist ]]; then
+    # el7 and el8
+    RPM_MACROS=/etc/rpm/macros.dist
+fi
+RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
+echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
+
 # Setup cache directory
 if [[ ! -d "${CACHE_DIR}" ]]; then
     mkdir -p "${CACHE_DIR}"
@@ -20,13 +29,21 @@ fi
 # Install dependencies
 echo "# Install dependencies for GHC"
 if [[ -f /usr/bin/dnf ]]; then
-    # el8 or later
-    sudo dnf -y install libcurl-devel pcre-devel zlib-devel gmp-devel ncurses-compat-libs
+    if [[ "${RPM_DIST}" = ".el8" ]]; then
+        # el8
+        sudo dnf -y install libcurl-devel pcre-devel zlib-devel gmp-devel ncurses-compat-libs
+    else
+        # el9 or later
+        sudo dnf -y install libcurl-devel pcre-devel zlib-devel gmp-devel
+        # for GHC
+        ln -sf /usr/lib64/libtinfo.so.6 /usr/lib64/libtinfo.so.5
+    fi
 else
     sudo yum -y install libcurl-devel pcre-devel zlib-devel gmp-devel
 fi
 
 TMP_DIR=$(mktemp -d "${HOME}/tmp.XXXXXXXXXX")
+pushd "${TMP_DIR}"
 
 # Install ghc
 # Ubuntu 20.04.01 LTS + initial: 8.6.5
@@ -42,16 +59,23 @@ GHC_VERSION=8.6.5
 echo "# Install GHC version ${GHC_VERSION}"
 if ! type ghc > /dev/null 2>&1; then
     GHC_BINARY_PACKAGE="ghc-${GHC_VERSION}-x86_64-centos7-linux.tar.xz"
-    if [[ ! -f "${CACHE_DIR}/${GHC_BINARY_PACKAGE}" ]]; then
-        curl -L "https://downloads.haskell.org/~ghc/${GHC_VERSION}/{${GHC_BINARY_PACKAGE}}" -o "${CACHE_DIR}/#1"
+    GHC_URL="https://downloads.haskell.org/~ghc/${GHC_VERSION}/${GHC_BINARY_PACKAGE}"
+    CACHE_FILE="${CACHE_DIR}/${GHC_BINARY_PACKAGE}"
+    echo "- Check cache file: ${CACHE_FILE}"
+    if [[ ! -f "${CACHE_FILE}" ]]; then
+        echo "- Downlod URL: ${GHC_URL}"
+        curl -fsSL "${GHC_URL}" -O
+        cp -a "${GHC_BINARY_PACKAGE}" "${CACHE_FILE}"
+    else
+        echo "- Use cache file: ${CACHE_FILE}"
+        cp -a "${CACHE_FILE}" .
     fi
-    cp -a "${CACHE_DIR}/${GHC_BINARY_PACKAGE}" "${TMP_DIR}/"
-    pushd "${TMP_DIR}"
     tar xf "${GHC_BINARY_PACKAGE}"
     cd "ghc-${GHC_VERSION}"
     ./configure --prefix="${GHC_PREFIX}"
     make install
-    popd
+else
+    echo "- Skip: ghc found. $(ghc --version)"
 fi
 
 # Install cabal-install
@@ -61,17 +85,26 @@ if ! type cabal > /dev/null 2>&1; then
     CABAL_VERSION=$(ghc-pkg list Cabal | grep Cabal- | head -1 | egrep -o "\-[0-9].[0-9]" | cut -d'-' -f 2).0.0
     echo "- Install Cabal version ${CABAL_VERSION}"
     CABAL_BINARY_PACKAGE="cabal-install-${CABAL_VERSION}-x86_64-unknown-linux.tar.gz"
-    if [[ ! -f "${CACHE_DIR}/${CABAL_BINARY_PACKAGE}" ]]; then
-        curl -L "https://downloads.haskell.org/~cabal/cabal-install-${CABAL_VERSION}/{${CABAL_BINARY_PACKAGE}}" -o "${CACHE_DIR}/#1"
+    CABAL_URL="https://downloads.haskell.org/~cabal/cabal-install-${CABAL_VERSION}/${CABAL_BINARY_PACKAGE}"
+    CACHE_FILE="${CACHE_DIR}/${CABAL_BINARY_PACKAGE}"
+    echo "- Check cache file: ${CACHE_FILE}"
+    if [[ ! -f "${CACHE_FILE}" ]]; then
+        echo "- Downlod URL: ${CABAL_URL}"
+        curl -fsSL "${CABAL_URL}" -O
+        cp -a "${CABAL_BINARY_PACKAGE}" "${CACHE_FILE}"
+    else
+        echo "- Use cache file: ${CACHE_FILE}"
+        cp -a "${CACHE_FILE}" .
     fi
-    cp -a "${CACHE_DIR}/${CABAL_BINARY_PACKAGE}" "${TMP_DIR}/" 
-    pushd "${TMP_DIR}"
     tar xf "${CABAL_BINARY_PACKAGE}"
     rm -f cabal.sig
     mkdir -p "${GHC_PREFIX}/bin"
     mv cabal "${GHC_PREFIX}/bin/"
     echo "- Cabal update"
     cabal update
-    popd
+else
+    echo "- Skip: cabal found. $(cabal --version)"
 fi
+
+popd
 

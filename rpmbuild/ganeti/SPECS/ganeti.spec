@@ -59,6 +59,10 @@ Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
 Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
 Patch10: ganeti-3.0.2-cryptonite-version.patch
 
+BuildRequires: iproute
+BuildRequires: libcurl-devel
+BuildRequires: m4
+BuildRequires: procps-ng
 BuildRequires: python%{python3_pkgversion}
 BuildRequires: python%{python3_pkgversion}-bitarray
 BuildRequires: python%{python3_pkgversion}-docutils
@@ -72,14 +76,6 @@ BuildRequires: python%{python3_pkgversion}-simplejson
 BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
-BuildRequires: iproute
-BuildRequires: libcurl-devel
-
-# doc
-BuildRequires: pandoc
-BuildRequires: graphviz
-BuildRequires: m4
-BuildRequires: man-db
 
 # unittests
 BuildRequires: fakeroot
@@ -88,6 +84,8 @@ BuildRequires: python%{python3_pkgversion}-PyYAML
 %else
 BuildRequires: python%{python3_pkgversion}-pyyaml
 %endif
+# el9 requires the pre-installed python3-mock package
+# https://github.com/jfut/ganeti-rpm/issues/50
 BuildRequires: python%{python3_pkgversion}-mock
 
 Requires: fping
@@ -100,9 +98,9 @@ Requires: lvm2
 Requires: ndisc6
 %endif
 Requires: openssh
+Requires: procps-ng
 Requires: python%{python3_pkgversion}
 Requires: python%{python3_pkgversion}-bitarray
-Requires: python%{python3_pkgversion}-docutils
 Requires: python%{python3_pkgversion}-inotify
 Requires: python%{python3_pkgversion}-paramiko
 Requires: python%{python3_pkgversion}-psutil
@@ -188,7 +186,7 @@ cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond meta
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
-make DESTDIR=${RPM_BUILD_ROOT} install
+%make_install DESTDIR=${RPM_BUILD_ROOT}
 
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_initrddir}
 install -d -m 755 ${RPM_BUILD_ROOT}/%{_sysconfdir}/bash_completion.d
@@ -325,6 +323,17 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sat Sep 24 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2
+- Add support for RHEL/AlmaLinux/Rocky Linux 9 (#50)
+- Remove BuildRequires: pandoc
+- Remove BuildRequires: graphviz
+- Remove BuildRequires: man-db
+- Remove Requires: python%{python3_pkgversion}-docutils
+- Add BuildRequires: procps-ng
+- Add BuildRequires: restore (for el9)
+- Add Requires: procps-ng
+- Add Requires: restore (for el9)
+
 * Tue Mar  1 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-1
 - Update to 3.0.2
 
@@ -382,7 +391,7 @@ usermod -aG gnt-daemons gnt-rapi
 - Added BuildRequires: iproute
 - Added BuildRequires: pandoc
 - Added BuildRequires: graphviz
-- Added ganeti-kvmd.service in %systemd_post, %systemd_preun, and %systemd_postun_with_restart
+- Added ganeti-kvmd.service in % systemd_post, % systemd_preun, and % systemd_postun_with_restart
 
 * Thu Jan 28 2016 Jun Futagawa <jfut@integ.jp> - 2.15.2-2
 - Added DRBD release version patch

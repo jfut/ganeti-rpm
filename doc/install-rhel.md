@@ -1,6 +1,6 @@
 # Ganeti installation tutorial for RHEL/AlmaLinux/CentOS/Rocky Linux/others
 
-This documentation is the short version for RHEL/AlmaLinux/CentOS/Rocky Linux/others 7.x and 8.x.
+This documentation is the short version for RHEL/AlmaLinux/CentOS/Rocky Linux/others 7.x, 8.x and 9.x.
 
 Official full version:
 
@@ -56,6 +56,12 @@ yum install qemu-kvm-ev libvirt python-virtinst virt-install
 dnf install qemu-kvm libvirt virt-install
 ```
 
+- KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x**
+
+```bash
+dnf install qemu-kvm libvirt virt-install ksmtuned
+```
+
 ### KVM settings
 
 - KVM on RHEL/AlmaLinux/CentOS/Rock Linux/others
@@ -97,7 +103,7 @@ nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.metho
 nmcli connection modify eno1 connection.slave-type bridge connection.master br0
 nmcli connection modify br0 ipv4.method manual ipv4.addresses "192.168.1.11/24"
 nmcli connection modify br0 ipv4.gateway "192.168.1.254" ipv4.dns "192.168.1.1,192.168.1.2"
-nmcli connection up br0; nmcli connection down eno1; nmcli connection up bridge-slave-eno1 &
+nmcli connection up br0; nmcli connection down eno1; nmcli connection up eno1 &
 
 # VLAN filter support on bridge(VLAN aware bridge)
 # Require ganeti-2.16.2-1 RPM or later
@@ -115,7 +121,7 @@ nmcli connection modify br0 bridge.vlan-filtering yes
 
 nmcli connection up br0
 nmcli connection down eno1
-nmcli connection up bridge-slave-eno1
+nmcli connection up eno1
 ```
 
 Allow to bridge interface access.
@@ -161,7 +167,7 @@ Install ELRepo repository for DRBD packages:
 yum install elrepo-release
 yum-config-manager --disable elrepo
 
-# RHEL/AlmaLinux/Rocky Linux/others **8.x**
+# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf install elrepo-release
 dnf config-manager --disable elrepo
 ```
@@ -173,7 +179,7 @@ Install EPEL repository for dependency packages:
 yum install epel-release
 yum-config-manager --disable epel
 
-# RHEL/AlmaLinux/Rocky Linux/others **8.x**
+# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf install epel-release
 dnf config-manager --disable epel
 ```
@@ -188,6 +194,10 @@ yum-config-manager --disable integ-ganeti
 # RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
+
+# RHEL/AlmaLinux/Rocky Linux/others **9.x**
+dnf install https://jfut.integ.jp/linux/ganeti/9/x86_64/integ-ganeti-release-9-1.el9.noarch.rpm
+dnf config-manager --disable integ-ganeti
 ```
 
 ## Installing DRBD
@@ -197,7 +207,11 @@ dnf config-manager --disable integ-ganeti
 Install DRBD package:
 
 ```bash
+# RHEL/CentOS/others **7.x**
 yum --enablerepo=elrepo install kmod-drbd84 drbd84-utils
+
+# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
+dnf --enablerepo=elrepo install kmod-drbd84 drbd84-utils
 ```
 
 Enable `drbd.service`:
@@ -222,6 +236,7 @@ Load DRBD kernel module:
 
 ```bash
 systemctl start systemd-modules-load
+systemctl start drbd.service
 ```
 
 ## Configuring LVM
@@ -272,7 +287,7 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 
 Configure SE Linux parameters for Ganeti cluster operations to work properly.
 
-- RHEL/AlmaLinux/Rocky Linux/others 8.x
+- RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 
 ```bash
 setsebool -P nis_enabled on
@@ -287,13 +302,21 @@ setsebool -P use_virtualbox on
 - Install Ganeti:
 
 ```bash
+# RHEL/CentOS/others **7.x**
 yum --enablerepo=epel,integ-ganeti install ganeti
+
+# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
+dnf --enablerepo=epel,integ-ganeti install ganeti
 ```
 
 - (Optional) Install Ganeti Instance Debootstrap:
 
 ```bash
+# RHEL/CentOS/others **7.x**
 yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
+
+# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
+dnf --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 ```
 
 Required ports(default):
@@ -465,11 +488,14 @@ node.
 
 ```bash
 gnt-node add <NODENAME>
+
+# Example of adding node02
 gnt-node add node2
 
+# Example of adding node03
 gnt-node add node3
 
-... and more node.
+... and more nodes.
 ```
 
 **Troubleshooting**
