@@ -9,14 +9,25 @@ export LC_ALL=C
 PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 
 # RPM macros
-RPM_MACROS=/etc/rpm/macros.dist
+RPM_MACROS=/usr/lib/rpm/macros.d/macros.dist
+if [[ -f /etc/rpm/macros.dist ]]; then
+    # el7 and el8
+    RPM_MACROS=/etc/rpm/macros.dist
+fi
 RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
+echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
 # Setup build tools
 echo
 echo "# Setup build tools"
 PACKAGE_MANAGER=""
-if [[ "${RPM_DIST}" = ".el8" ]]; then
+if [[ "${RPM_DIST}" = ".el9" ]]; then
+    echo "# - Install build tools for el9"
+    dnf -y groupinstall "Development Tools"
+    dnf -y install sudo wget git-core rpm-build rpmdevtools yum-utils createrepo epel-release
+    dnf -y install pinentry
+    dnf config-manager --enable crb
+elif [[ "${RPM_DIST}" = ".el8" ]]; then
     echo "# - Install build tools for el8"
     dnf -y groupinstall "Development Tools"
     dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
@@ -32,6 +43,12 @@ elif [[ "${RPM_DIST}" = ".el7" ]]; then
     yum -y groupinstall "Development Tools"
     yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
     yum clean all
+fi
+
+if [[ "${RPM_DIST}" = ".el9" ]]; then
+    echo "# - Install python3-mock for el9"
+    echo "# https://github.com/jfut/ganeti-rpm/issues/50"
+    dnf -y install https://buildlogs.cdn.centos.org/centos/9-stream/cloud/x86_64/openstack-zed/Packages/p/python3-mock-4.0.3-5.el9s.noarch.rpm
 fi
 
 # Setup GHC environment

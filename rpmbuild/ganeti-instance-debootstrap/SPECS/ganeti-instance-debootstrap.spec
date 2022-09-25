@@ -21,12 +21,18 @@ BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: debootstrap
 BuildRequires: dump
 BuildRequires: kpartx
+%if 0%{?rhel} == 9
+BuildRequires: restore
+%endif
 BuildRequires: util-linux
 
 Requires: ganeti
 Requires: debootstrap
 Requires: dump
 Requires: kpartx
+%if 0%{?rhel} == 9
+Requires: restore
+%endif
 Requires: util-linux
 
 %description
