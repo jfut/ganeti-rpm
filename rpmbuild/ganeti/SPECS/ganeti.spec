@@ -31,7 +31,7 @@
 
 Name: ganeti
 Version: 3.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -325,7 +325,7 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Sat Sep 24 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2
+* Sun Sep 25 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2
 - Add support for RHEL/AlmaLinux/Rocky Linux 9 (#50)
 - Remove BuildRequires: pandoc
 - Remove BuildRequires: graphviz

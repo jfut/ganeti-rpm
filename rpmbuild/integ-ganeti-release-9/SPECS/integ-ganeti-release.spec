@@ -38,5 +38,5 @@ Repository, as well as the public GPG keys used to sign packages.
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
 
 %changelog
-* Sat Sep 24 2022 Jun Futagawa <jfut@integ.jp> - 9-1
+* Sun Sep 25 2022 Jun Futagawa <jfut@integ.jp> - 9-1
 - Initial integ-ganeti-release package for el9.
