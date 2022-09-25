@@ -25,11 +25,13 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/CentOS/Rocky Linux/others.
 You can build RPM packages in Docker.
 
 ```bash
+# AlmaLinux 9
+./build almalinux:9
+# or ./build rockylinux:9
+
 # AlmaLinux 8
 ./build almalinux:8
-
-# Rocky Linux 8
-./build rockylinux:8
+# or ./build rockylinux:8
 
 # CentOS 7
 ./build centos:7
@@ -38,6 +40,10 @@ You can build RPM packages in Docker.
 Debug and manual mode:
 
 ```bash
+# AlmaLinux 9
+./build -d almalinux:9
+# or ./build -d rockylinux:9
+
 # AlmaLinux 8
 ./build -d almalinux:8
 # or ./build -d rockylinux:8
