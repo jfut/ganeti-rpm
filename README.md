@@ -70,6 +70,9 @@ Usage:
     Environment variables:
         BUILD_HOSTNAME: container host name
 
+    Build for AlmaLinux 9:
+        build almalinux:9
+
     Build for AlmaLinux 8:
         build almalinux:8
 
@@ -149,13 +152,18 @@ Build all packages with no overwrite and install:
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
 ```bash
+# AlmaLinux 9 or Rocky Linux 9
+dnf install https://jfut.integ.jp/linux/ganeti/9/x86_64/integ-ganeti-release-9-1.el9.noarch.rpm
+dnf config-manager --enable integ-ganeti
+./build-rpm -p -bi ganeti
+
 # AlmaLinux 8 or Rocky Linux 8
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
 
 # CentOS 7
-yum install http://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-3.el7.noarch.rpm
+yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-3.el7.noarch.rpm
 yum-config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
 ```
@@ -165,6 +173,10 @@ yum-config-manager --enable integ-ganeti
 Run the container with bash:
 
 ```bash
+# AlmaLinux 9
+BUILD_HOSTNAME=almalinux-9.github.integ.jp
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el9:/root/.gnupg almalinux:9 bash
+
 # AlmaLinux 8
 BUILD_HOSTNAME=almalinux-8.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg almalinux:8 bash
