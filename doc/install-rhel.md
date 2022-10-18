@@ -561,9 +561,11 @@ gnt-instance add -t drbd -n node2:node1 -o debootstrap+default --disk 0:size=8G 
 
 ### Install custom OS using ISO file
 
-Check the VNC port of the created instance:
+Enable VNC and check the VNC port of the created instance:
 
 ```bash
+# gnt-cluster modify -H kvm:vnc_bind_address=0.0.0.0
+
 # gnt-instance info instance3.exmaple.com | grep "console connection"
   console connection: vnc to node2.exmaple.com:11001 (display 5101)
 ```
@@ -571,7 +573,7 @@ Check the VNC port of the created instance:
 Start the instance with ISO image:
 
 ```bash
-gnt-instance start -H cdrom_image_path=/path/to/install.iso,boot_order=cdrom instance3.example.com
+gnt-instance start -H boot_order=cdrom,cdrom_image_path=/path/to/install.iso instance3.example.com
 ```
 
 Connect to `node2.exmaple.com:11001` using a VNC client and follow the on-screen instructions to complete the installation.
