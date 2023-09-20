@@ -399,12 +399,17 @@ gnt-cluster modify --user-shutdown yes
 
 This optimizes the DRBD performance.
 
-- [Optimizing DRBD performance section in The DRBD User's Guide](https://docs.linbit.com/docs/users-guide-8.4/#p-performance)
+- [Optimizing DRBD performance section in The DRBD User's Guide](https://linbit.com/drbd-user-guide/users-guide-drbd-8-4/#p-performance)
+- [DRBD 8.4 sync does got over 100 MB/s on 10 Gbit/s network](https://github.com/ganeti/ganeti/issues/1229)
 
 ```bash
-# For example with 1 Gbps NIC
-gnt-cluster modify -D drbd:c-min-rate=10240,c-max-rate=81920,resync-rate=81920
-gnt-cluster modify -D drbd:disk-custom='--al-extents 3833',net-custom='--max-buffers 8000 --max-epoch-size 8000'
+# For example with 1 Gbps NIC: min: 64 MB/sec, max 96 MB/sec
+gnt-cluster modify -D drbd:dynamic-resync=True,c-plan-ahead=20,c-fill-target=20480,c-min-rate=65536,c-max-rate=98304,resync-rate=98304
+gnt-cluster modify -D drbd:disk-custom='--al-extents 3833',net-custom='--max-buffers 8192 --max-epoch-size 8192'
+
+# For example with 10 Gbps NIC: min: 300 MB/sec, max 400 MB/sec
+gnt-cluster modify -D drbd:dynamic-resync=True,c-plan-ahead=20,c-fill-target=20480,c-min-rate=307200,c-max-rate=409600,resync-rate=409600
+gnt-cluster modify -D drbd:disk-custom='--al-extents 3833',net-custom='--max-buffers 8192 --max-epoch-size 8192'
 ```
 
 ### Change the CPU type: cpu_type
