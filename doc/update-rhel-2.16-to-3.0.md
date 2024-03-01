@@ -110,7 +110,7 @@ gnt-cluster verify
 You can ignore the 'Can't find node' messages and continue.
 
 ```bash
-# /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
+$ /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
 Please make sure you have read the upgrade notes for Ganeti 3.0.0
 (available in the UPGRADE file and included in other documentation
 formats). Continue with upgrading configuration?
@@ -147,3 +147,35 @@ systemctl start ganeti-kvmd.service
 systemctl start ganeti-metad.service
 ```
 
+## Considerations when migrating from EL7 to EL8/EL9
+
+From EL8 onwards, SSH DSA keys are not supported. Therefore, if your Ganeti cluster is using DSA keys, you must first migrate to RSA keys on an EL7 cluster before you can add new EL8 or later Ganeti nodes to the cluster.
+
+```bash
+# Before
+[root@node01.example.org ~] $ gnt-cluster info | grep -E "rsa|dss|ssh"
+  modify ssh setup: True
+  ssh_key_type: dsa
+  ssh_key_bits: 1024
+  ssh_port: 22
+
+# Renew SSH keys
+[root@node01.example.org ~] $ gnt-cluster renew-crypto --new-ssh-keys --ssh-key-type=rsa --ssh-key-bits=4096
+The authenticity of host 'node02.example.org (192.168.3.112)' can't be established.
+ED25519 key fingerprint is SHA256:AIQZfo/id99meiNTjR35coqOxNiy68prbM+OAz2reX4.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Updating certificates now. Running "gnt-cluster verify"  is recommended after this operation.
+This requires all daemons on all nodes to be restarted and may take
+some time. Continue?
+y/[n]/?: y
+Fri Mar  1 09:36:27 2024 Renewing SSH keys
+All requested certificates and keys have been replaced. Running "gnt-cluster verify" now is recommended.
+
+# After
+[root@node01.example.org ~] $ gnt-cluster info | grep -E "rsa|dss|ssh"
+  modify ssh setup: True
+  ssh_key_type: rsa
+  ssh_key_bits: 4096
+  ssh_port: 22
+```
