@@ -27,7 +27,7 @@ INTEG_GANETI_REPO_PACKAGES_EL8=("integ-ganeti-release-8")
 # single packages
 GANETI_DEPENDS_PACKAGES=()
 GANETI_DEPENDS_PACKAGES_EL9=("python-bitarray")
-GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray" "socat")
+GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
 
 if [[ "${RPM_DIST}" = ".el9" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL9[@]}")
