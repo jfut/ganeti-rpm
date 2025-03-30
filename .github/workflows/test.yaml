@@ -15,12 +15,12 @@ on:
 jobs:
   test:
     name: Build on ${{ matrix.image }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     strategy:
+      max-parallel: 20
       matrix:
         image:
-          - centos-7
           - almalinux-8
           - almalinux-9
 
@@ -30,16 +30,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Build RPM
         id: build_rpm
         run: |
           ./build $(echo ${BUILD_IMAGE} | sed 's/-/:/g') -a -bi
+
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.2 # v4.6.2
         with:
           name: ${{ matrix.image }}
           path: rpmbuild/**/*.rpm
-
