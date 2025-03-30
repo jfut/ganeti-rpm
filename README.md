@@ -2,13 +2,12 @@
 
 [![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=master)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
 
-Ganeti RPM Packaging for RHEL/AlmaLinux/CentOS/Rocky Linux/others.
+Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/AlmaLinux/CentOS/Rocky Linux/others 9.x: 3.0.2-2
-- RHEL/AlmaLinux/CentOS/Rocky Linux/others 8.x: 3.0.2-2
-- RHEL/CentOS/others 7.x: 3.0.2-2
+- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.0.2-2
+- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.0.2-2
 
 ## Documentation
 
@@ -19,6 +18,8 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/CentOS/Rocky Linux/others.
 
 - https://jfut.integ.jp/linux/ganeti/
 - https://ftp.osuosl.org/pub/ganeti-rpm/ (mirror, thanks to the OSU Open Source Lab)
+
+Support for CentOS 5, 6, 7 has ended, but older version packages can still be downloaded.
 
 ## Building RPM Packages with Docker
 
@@ -32,9 +33,6 @@ You can build RPM packages in Docker.
 # AlmaLinux 8
 ./build almalinux:8
 # or ./build rockylinux:8
-
-# CentOS 7
-./build centos:7
 ```
 
 Debug and manual mode:
@@ -47,9 +45,6 @@ Debug and manual mode:
 # AlmaLinux 8
 ./build -d almalinux:8
 # or ./build -d rockylinux:8
-
-# CentOS 7
-./build -d centos:7
 
 # Setup
 cd /pkg
@@ -81,9 +76,6 @@ Usage:
 
     Build for AlmaLinux 8:
         build almalinux:8
-
-    Build for CentOS 7:
-        build centos:7
 ```
 
 ## Usage: build-rpm
@@ -165,11 +157,6 @@ dnf config-manager --enable integ-ganeti
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --enable integ-ganeti
 ./build-rpm -p -bi ganeti
-
-# CentOS 7
-yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-3.el7.noarch.rpm
-yum-config-manager --enable integ-ganeti
-./build-rpm -p -bi ganeti
 ```
 
 ## Signing RPM Packages
@@ -184,10 +171,6 @@ docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el9:/root/.g
 # AlmaLinux 8
 BUILD_HOSTNAME=almalinux-8.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg almalinux:8 bash
-
-# CentOS 7
-BUILD_HOSTNAME=centos-7.github.integ.jp
-docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el7:/root/.gnupg centos:7 bash
 
 # Setup
 yum -y install findutils rpm-sign pinentry
