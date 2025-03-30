@@ -5,31 +5,20 @@ on:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+-*
 
+permissions:
+  contents: read
+
 jobs:
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-
   release:
     name: Release on ${{ matrix.image }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
 
     strategy:
+      max-parallel: 20
       matrix:
         image:
-          - centos-7
           - almalinux-8
           - almalinux-9
 
@@ -39,18 +28,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Build RPM
         id: build_rpm
         run: |
           ./build $(echo ${BUILD_IMAGE} | sed 's/-/:/g') -a -bi
           echo "##[set-output name=release-tag;]$(echo ${{ github.ref }} | sed -e 's|refs/tags/||g')"
+
       - name: Upload Assets
-        uses: AButler/upload-release-assets@v2.0
+        uses: AButler/upload-release-assets@3d6774fae0ed91407dc5ae29d576b166536d1777 # v3.0
         with:
           files: "rpmbuild/*/SRPMS/*.rpm;rpmbuild/*/RPMS/*/*.rpm"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: ${{ steps.build_rpm.outputs.release-tag }}
-
+          release-tag: ${{ github.ref_name }}
