@@ -1,8 +1,3 @@
-# el7 only, remove /usr/lib/rpm/brp-python-bytecompile /usr/bin/python 1
-%if 0%{?rhel} == 7
-%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's|/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$||g')
-%endif
-
 # without debuginfo
 %global debug_package %{nil}
 
@@ -11,12 +6,9 @@
 
 # python version
 %define python3_pkgversion 3
-%if 0%{?rhel} == 7
-%define python3_pkgversion 36
-%endif
 
 # man version
-%define _man_version 3.0
+%define _man_version 3.1
 
 # search path
 %define _search_sharedir /usr/share
@@ -30,8 +22,8 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 3.0.2
-Release: 2%{?dist}
+Version: 3.1.0.rc2
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -48,17 +40,15 @@ Source3: ganeti.sysconfig
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-Patch1: ganeti-3.0.0-disable-start-rate-limit.patch
 Patch2: ganeti-2.16.1-fix-new-cluster-node-certificates.patch
-Patch3: ganeti-3.0.0-systemd-ambient-capabilities.patch
 Patch4: ganeti-2.16.1-ask-whether-upgrade-without-rpm.patch
-Patch5: ganeti-3.0.0-ghc-json-version.patch
-Patch6: ganeti-3.0.0-qemu-migrate-set-parameters-version-check.patch
-Patch7: ganeti-3.0.0-py-tests-with-user-privileges.patch
-Patch8: ganeti-3.0.0-ensure-dirs-fix-missing-log-files.patch
-Patch9: ganeti-3.0.0-ensure-dirs-add-lock-status-files.patch
-Patch10: ganeti-3.0.2-cryptonite-version.patch
-Patch11: ganeti-3.0.2-kvm-qmp-timeout.patch
+# https://github.com/jfut/ganeti-rpm/issues/50
+Patch11: ganeti-3.1.0-kvm-qmp-timeout.patch
+# ignore tests that take an extremely long time to complete
+Patch12: ganeti-3.1.0-ignore-test-start-daemon.patch
+# ignore tests with AssertionError: ResolverError not raised by <lambda>
+Patch13: ganeti-3.1.0-ignore-test-hostname-resolution-error.patch
+Patch14: ganeti-3.1.0-python36.patch
 
 BuildRequires: iproute
 BuildRequires: libcurl-devel
@@ -73,21 +63,14 @@ BuildRequires: python%{python3_pkgversion}-psutil
 BuildRequires: python%{python3_pkgversion}-pycurl
 BuildRequires: python%{python3_pkgversion}-pyOpenSSL
 BuildRequires: python%{python3_pkgversion}-pyparsing
-BuildRequires: python%{python3_pkgversion}-simplejson
+BuildRequires: python%{python3_pkgversion}-pytest
 BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
 BuildRequires: socat
 
 # unittests
 BuildRequires: fakeroot
-%if 0%{?rhel} == 7
-BuildRequires: python%{python3_pkgversion}-PyYAML
-%else
 BuildRequires: python%{python3_pkgversion}-pyyaml
-%endif
-# el9 requires the pre-installed python3-mock package
-# https://github.com/jfut/ganeti-rpm/issues/50
-BuildRequires: python%{python3_pkgversion}-mock
 
 Requires: fping
 Requires: iproute
@@ -95,9 +78,6 @@ Requires: iputils
 Requires: libcap
 Requires: logrotate
 Requires: lvm2
-%if 0%{?rhel} == 7
-Requires: ndisc6
-%endif
 Requires: openssh
 Requires: procps-ng
 Requires: python%{python3_pkgversion}
@@ -108,8 +88,14 @@ Requires: python%{python3_pkgversion}-psutil
 Requires: python%{python3_pkgversion}-pycurl
 Requires: python%{python3_pkgversion}-pyOpenSSL
 Requires: python%{python3_pkgversion}-pyparsing
-Requires: python%{python3_pkgversion}-simplejson
 Requires: socat
+
+# doc
+# /usr/bin/sh: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+BuildRequires: glibc-langpack-en
+BuildRequires: graphviz
+BuildRequires: man-db
+BuildRequires: pandoc
 
 Requires(post):   systemd-units
 Requires(preun):  systemd-units
@@ -147,24 +133,22 @@ It is not required when the init system used is systemd.
 %prep
 %setup -q
 
-%patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 %patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
 
 %build
-%if 0%{?rhel} == 7
-# https://github.com/haskell-crypto/cryptonite/issues/326
-cabal install cryptonite-0.29 -f -use_target_attributes
-%endif
-cabal install --only-dependencies cabal/ganeti.template.cabal --flags="mond metad htest network_bsd"
+cabal install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd"
+
+# fix for el8: error: version mismatch.
+# configure.ac:15: error: version mismatch.  This is Automake 1.16.1,
+# configure.ac:15: but the definition used by this AM_INIT_AUTOMAKE
+# configure.ac:15: comes from Automake 1.16.5.  You should recreate
+# configure.ac:15: aclocal.m4 with aclocal and run automake again.
+autoreconf -i
 
 %configure \
   --prefix=%{_prefix} \
@@ -220,19 +204,10 @@ install -m 644 doc/examples/systemd/ganeti-node.target ${RPM_BUILD_ROOT}/%{_unit
 install -m 644 doc/examples/systemd/ganeti.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
 install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
 
-# remove document source files
-rm -f doc/examples/*.in
-rm -f doc/examples/hooks/*.in
-rm -rf doc/examples/systemd
-
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
 RPM_BUILD_ROOT=${RPM_BUILD_ROOT}/usr/share/ganeti/%{_man_version}/root
-%if 0%{?rhel} == 7
-/usr/lib/rpm/redhat/brp-compress
-%else
 /usr/lib/rpm/brp-compress
-%endif
 RPM_BUILD_ROOT=${TMP_RPM_BUILD_ROOT}
 
 %check
@@ -251,7 +226,22 @@ do
     getent passwd ${USER} > /dev/null && sudo usermod -aG ${GROUP} ${USER}
 done < doc/users/groupmemberships
 
-sudo make py-tests
+# check
+# https://github.com/ganeti/ganeti/blob/master/.github/workflows/ci.yml
+# LC_ALL=C %make check-local: Invalid locale ('en_US', 'UTF-8')
+LC_ALL=C make check-local
+
+# remove document source files
+rm -f doc/examples/*.in
+rm -f doc/examples/hooks/*.in
+rm -rf doc/examples/systemd
+
+# tests
+# %make: fg: no job control
+make py-tests-unit
+make py-tests-integration
+# PYTHONPATH=$(pwd) python3 test/py/legacy/ganeti.storage.gluster_unittest.py -v
+make py-tests-legacy
 make hs-tests
 
 %clean
@@ -308,7 +298,7 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config %{_unitdir}/*.service
 %config %{_unitdir}/*.target
-%doc COPYING INSTALL NEWS README UPGRADE doc/examples doc/html
+%doc COPYING INSTALL NEWS README.md UPGRADE doc/examples doc/html
 %{_bindir}/h*
 %{_sbindir}/g*
 %{_libdir}/%{name}
@@ -325,6 +315,16 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sat Mar 29 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0.rc2-1
+- Update to 3.1.0 (#53)
+- Drop support for RHEL/CentOS 7
+- Add BuildRequires: graphviz
+- Add BuildRequires: man-db
+- Add BuildRequires: pandoc
+- Remove Requires: python%{python3_pkgversion}-simplejson
+- Remove BuildRequires: python%{python3_pkgversion}-simplejson
+- Remove BuildRequires: python%{python3_pkgversion}-mock
+
 * Sun Sep 25 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2
 - Add support for RHEL/AlmaLinux/Rocky Linux 9 (#50)
 - Remove BuildRequires: pandoc

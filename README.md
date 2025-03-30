@@ -100,8 +100,6 @@ Usage:
         -p the specified package(s) only. Available packages are:
             ganeti dependencies (el8 only):
                 python-bitarray
-            ganeti dependencies (el7 only):
-                python-inotify
             ganeti:
                 ganeti ganeti-instance-debootstrap
             snf-image:
@@ -233,4 +231,3 @@ e.g.:
 git tag -a v3.0.2-2 -m "v3.0.2-2"
 git push origin refs/tags/v3.0.2-2
 ```
-

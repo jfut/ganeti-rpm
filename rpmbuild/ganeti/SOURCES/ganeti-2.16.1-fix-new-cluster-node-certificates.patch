@@ -1,7 +1,7 @@
-diff -urN ganeti-2.16.1.default/lib/client/gnt_cluster.py ganeti-2.16.1/lib/client/gnt_cluster.py
---- ganeti-2.16.1.default/lib/client/gnt_cluster.py	2019-04-01 15:29:37.000000000 +0900
-+++ ganeti-2.16.1/lib/client/gnt_cluster.py	2019-04-17 15:28:17.705714498 +0900
-@@ -1163,12 +1163,6 @@
+diff -urN ganeti-3.1.0.rc2.default/lib/client/gnt_cluster.py ganeti-3.1.0.rc2/lib/client/gnt_cluster.py
+--- ganeti-3.1.0.rc2.default/lib/client/gnt_cluster.py	2025-02-12 22:18:44.000000000 +0900
++++ ganeti-3.1.0.rc2/lib/client/gnt_cluster.py	2025-03-30 01:07:11.930870314 +0900
+@@ -1172,12 +1172,6 @@
        ctx.ssh.CopyFileToNode(node_name, port,
                               ssconf_master_candidate_certs_filename)
  
