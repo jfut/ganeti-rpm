@@ -11,10 +11,10 @@ PACKAGER_DIR="$(cd "$(dirname "${0}")" && echo "${PWD}")"
 # RPM macros
 RPM_MACROS=/usr/lib/rpm/macros.d/macros.dist
 if [[ -f /etc/rpm/macros.dist ]]; then
-    # el7 and el8
+    # el8
     RPM_MACROS=/etc/rpm/macros.dist
 fi
-RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
+RPM_DIST=.$(grep -o -E "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
 echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
 # Setup build tools
@@ -33,26 +33,12 @@ elif [[ "${RPM_DIST}" = ".el8" ]]; then
     dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
     dnf -y install pinentry
     dnf config-manager --enable powertools
-elif [[ "${RPM_DIST}" = ".el7" ]]; then
-    echo "# - Remove centos vault repository"
-    if [[ -f /etc/yum.repos.d/CentOS-Vault.repo ]]; then
-        rm -f /etc/yum.repos.d/CentOS-Vault.repo /etc/yum.repos.d/CentOS-Sources.repo
-    fi
-
-    echo "# - Install build tools for el7"
-    yum -y groupinstall "Development Tools"
-    yum -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
-    yum clean all
-fi
-
-if [[ "${RPM_DIST}" = ".el9" ]]; then
-    echo "# - Install python3-mock for el9"
-    echo "# https://github.com/jfut/ganeti-rpm/issues/50"
-    dnf -y install https://buildlogs.cdn.centos.org/centos/9-stream/cloud/x86_64/openstack-zed/Packages/p/python3-mock-4.0.3-5.el9s.noarch.rpm
+else
+    echo "Error: ${RPM_DIST} is not supported yet."
+    exit 1
 fi
 
 # Setup GHC environment
 echo
 echo "# Setup GHC environment"
 ${PACKAGER_DIR}/setup-ghc
-

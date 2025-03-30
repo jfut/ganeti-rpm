@@ -9,28 +9,25 @@ export LC_ALL=C
 # RPM macros
 RPM_MACROS=/usr/lib/rpm/macros.d/macros.dist
 if [[ -f /etc/rpm/macros.dist ]]; then
-    # el7 and el8
+    # el8
     RPM_MACROS=/etc/rpm/macros.dist
 fi
-RPM_DIST=.$(egrep -o "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
+RPM_DIST=.$(grep -o -E "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
 echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
 # python3_pkgversion for define option
 PYTHON3_PKGVERSION_OPTION_EL9=3
 PYTHON3_PKGVERSION_OPTION_EL8=3
-PYTHON3_PKGVERSION_OPTION_EL7=36
 
 # integ-ganeti repo
 INTEG_GANETI_REPO_PACKAGES=()
 INTEG_GANETI_REPO_PACKAGES_EL9=("integ-ganeti-release-9")
 INTEG_GANETI_REPO_PACKAGES_EL8=("integ-ganeti-release-8")
-INTEG_GANETI_REPO_PACKAGES_EL7=("integ-ganeti-release-7")
 
 # single packages
 GANETI_DEPENDS_PACKAGES=()
 GANETI_DEPENDS_PACKAGES_EL9=("python-bitarray")
-GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray" "socat")
-GANETI_DEPENDS_PACKAGES_EL7=("python-inotify")
+GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
 
 if [[ "${RPM_DIST}" = ".el9" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL9[@]}")
@@ -38,9 +35,6 @@ if [[ "${RPM_DIST}" = ".el9" ]]; then
 elif [[ "${RPM_DIST}" = ".el8" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL8[@]}")
     GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL8[@]}")
-elif [[ "${RPM_DIST}" = ".el7" ]]; then
-    INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL7[@]}")
-    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL7[@]}")
 fi
 GANETI_PACKAGES=("ganeti" "ganeti-instance-debootstrap")
 
@@ -67,12 +61,10 @@ Usage:
                 ${GANETI_DEPENDS_PACKAGES_EL9[@]}
             ganeti dependencies (el9 only):
                 ${GANETI_DEPENDS_PACKAGES_EL8[@]}
-            ganeti dependencies (el7 only):
-                ${GANETI_DEPENDS_PACKAGES_EL7[@]}
             ganeti:
                 ${GANETI_PACKAGES[@]}
             integ-ganeti-repo:
-                ${INTEG_GANETI_REPO_PACKAGES_EL9} ${INTEG_GANETI_REPO_PACKAGES_EL8} ${INTEG_GANETI_REPO_PACKAGES_EL7}
+                ${INTEG_GANETI_REPO_PACKAGES_EL9} ${INTEG_GANETI_REPO_PACKAGES_EL8}
 
     Task Options:
         -c Clean clean the rpmbuild directory, but preserve downloaded archives
@@ -129,14 +121,6 @@ setup_package_option() {
         # el8 only
         PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
         PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
-    elif [[ " ${GANETI_DEPENDS_PACKAGES_EL7[@]} " =~ " ${PACKAGE} " ]]; then
-        # el7 only
-        PACKAGE_OPTION[package_prefix]=${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL7}}
-        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL7}\""
-        if [[ "${RPM_DIST}" != ".el7" ]]; then
-            echo "- Skip ${PACKAGE} because it is for el7 only"
-            return
-        fi
     fi
 
     RET=$(declare -p PACKAGE_OPTION)
@@ -168,8 +152,8 @@ package_list() {
     local PACKAGE_PREFIX="${3}"
 
     local RPMBILD_BASE_DIR=$(dirname $(dirname "${SPEC_FILE}"))
-    local RPM_VERSION=$(egrep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
-    local RPM_RELEASE=$(egrep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
+    local RPM_VERSION=$(grep -i "^Version:" "${SPEC_FILE}" | awk '{ print $2 }')
+    local RPM_RELEASE=$(grep -i "^Release:" "${SPEC_FILE}" | awk '{ print $2 }' | cut -d'%' -f 1)
 
     PACKAGE_LIST=()
     set +o pipefail
@@ -263,7 +247,7 @@ build_package() {
                 echo "- eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
                 eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
             else
-                # el7 or el8
+                # el8
                 echo "- eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
                 eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
             fi
@@ -507,4 +491,3 @@ main() {
 }
 
 [[ ${#BASH_SOURCE[@]} = 1 ]] && main "${@}"
-

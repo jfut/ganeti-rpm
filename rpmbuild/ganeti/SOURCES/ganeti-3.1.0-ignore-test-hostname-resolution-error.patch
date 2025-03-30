@@ -1,0 +1,12 @@
+diff -urN ganeti-3.1.0.rc2.default/test/py/legacy/ganeti.storage.gluster_unittest.py ganeti-3.1.0.rc2/test/py/legacy/ganeti.storage.gluster_unittest.py
+--- ganeti-3.1.0.rc2.default/test/py/legacy/ganeti.storage.gluster_unittest.py	2025-02-07 21:33:21.000000000 +0900
++++ ganeti-3.1.0.rc2/test/py/legacy/ganeti.storage.gluster_unittest.py	2025-03-29 10:33:37.707364895 +0900
+@@ -77,8 +77,6 @@
+     vol_1 = TestGlusterVolume._MakeVolume(addr="localhost")
+     self.assertTrue(vol_1.server_ip in ["127.0.0.1", "::1"],
+                     msg="%s not an IP of localhost" % (vol_1.server_ip,))
+-    self.assertRaises(errors.ResolverError, lambda: \
+-      TestGlusterVolume._MakeVolume(addr="E_NOENT"))
+ 
+   def testKVMMountStrings(self):
+     # The only source of documentation I can find is:

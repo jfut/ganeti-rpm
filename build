@@ -36,9 +36,6 @@ Usage:
 
     Build for AlmaLinux 8:
         ${PACKAGER} almalinux:8
-
-    Build for CentOS 7:
-        ${PACKAGER} centos:7
 _EOF_
 }
 
@@ -100,4 +97,3 @@ main() {
 }
 
 [[ ${#BASH_SOURCE[@]} = 1 ]] && main "${@}"
-
