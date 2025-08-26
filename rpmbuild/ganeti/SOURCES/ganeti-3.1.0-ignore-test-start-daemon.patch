@@ -1,6 +1,6 @@
-diff -urN ganeti-3.1.0.rc2.default/test/py/legacy/ganeti.utils.process_unittest.py ganeti-3.1.0.rc2/test/py/legacy/ganeti.utils.process_unittest.py
---- ganeti-3.1.0.rc2.default/test/py/legacy/ganeti.utils.process_unittest.py	2025-02-07 21:33:21.000000000 +0900
-+++ ganeti-3.1.0.rc2/test/py/legacy/ganeti.utils.process_unittest.py	2025-03-29 10:00:19.605072681 +0900
+diff -urN ganeti-3.1.0.default/test/py/legacy/ganeti.utils.process_unittest.py ganeti-3.1.0/test/py/legacy/ganeti.utils.process_unittest.py
+--- ganeti-3.1.0.default/test/py/legacy/ganeti.utils.process_unittest.py	2025-08-23 06:50:27.000000000 +0900
++++ ganeti-3.1.0/test/py/legacy/ganeti.utils.process_unittest.py	2025-08-26 19:06:41.170401543 +0900
 @@ -591,123 +591,6 @@
      self.assertEqual(utils.RunParts(nosuchdir), [])
  

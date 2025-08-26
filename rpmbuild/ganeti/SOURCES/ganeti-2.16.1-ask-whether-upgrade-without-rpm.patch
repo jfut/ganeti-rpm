@@ -1,6 +1,6 @@
-diff -urN ganeti-3.1.0.rc2.default/lib/client/gnt_cluster.py ganeti-3.1.0.rc2/lib/client/gnt_cluster.py
---- ganeti-3.1.0.rc2.default/lib/client/gnt_cluster.py	2025-02-12 22:18:44.000000000 +0900
-+++ ganeti-3.1.0.rc2/lib/client/gnt_cluster.py	2025-03-30 01:08:14.304997657 +0900
+diff -urN ganeti-3.1.0.default/lib/client/gnt_cluster.py ganeti-3.1.0/lib/client/gnt_cluster.py
+--- ganeti-3.1.0.default/lib/client/gnt_cluster.py	2025-08-23 06:50:27.000000000 +0900
++++ ganeti-3.1.0/lib/client/gnt_cluster.py	2025-08-26 19:04:43.322911250 +0900
 @@ -2395,6 +2395,11 @@
               " has to be given")
      return 1
