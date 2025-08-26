@@ -1,6 +1,6 @@
-# Ganeti installation tutorial for RHEL/AlmaLinux/CentOS/Rocky Linux/others
+# Ganeti installation tutorial for RHEL/AlmaLinux/Rocky Linux/others
 
-This documentation is the short version for RHEL/AlmaLinux/CentOS/Rocky Linux/others 7.x, 8.x and 9.x.
+This documentation is the short version for RHEL/AlmaLinux/Rocky Linux/others 8.x and 9.x.
 
 Official full version:
 
@@ -40,25 +40,11 @@ Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used 
 
 **Mandatory** on all nodes.
 
-- KVM on RHEL/CentOS/others **7.x**
-
-The oldest version of qemu supported by Ganeti is `qemu-2.11`. Therefore, it is recommended to install `qemu-kvm-ev`(version `2.12.x`) instead of `qemu-kvm`(version `1.5.x`) on `el7`.
-
 ```bash
-# centos-release-qemu-ev - QEMU Enterprise Virtualization packages from the CentOS Virtualization SIG repository
-yum install centos-release-qemu-ev
-yum install qemu-kvm-ev libvirt python-virtinst virt-install
-```
-
-- KVM on RHEL/AlmaLinux/Rocky Linux/others **8.x**
-
-```bash
+# KVM on RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install qemu-kvm libvirt virt-install
-```
 
-- KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x**
-
-```bash
+# KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x**
 dnf install qemu-kvm libvirt virt-install ksmtuned
 ```
 
@@ -163,11 +149,6 @@ ip6tables-restore < /etc/sysconfig/ip6tables
 Install ELRepo repository for DRBD packages:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum install elrepo-release
-yum-config-manager --disable elrepo
-
-# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf install elrepo-release
 dnf config-manager --disable elrepo
 ```
@@ -175,11 +156,6 @@ dnf config-manager --disable elrepo
 Install EPEL repository for dependency packages:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum install epel-release
-yum-config-manager --disable epel
-
-# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf install epel-release
 dnf config-manager --disable epel
 ```
@@ -187,10 +163,6 @@ dnf config-manager --disable epel
 Install Integ Ganeti repository:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum install https://jfut.integ.jp/linux/ganeti/7/x86_64/integ-ganeti-release-7-2.el7.noarch.rpm
-yum-config-manager --disable integ-ganeti
-
 # RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
@@ -207,10 +179,6 @@ dnf config-manager --disable integ-ganeti
 Install DRBD package:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum --enablerepo=elrepo install kmod-drbd84 drbd84-utils
-
-# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf --enablerepo=elrepo install kmod-drbd84 drbd84-utils
 ```
 
@@ -287,8 +255,6 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 
 Configure SE Linux parameters for Ganeti cluster operations to work properly.
 
-- RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
-
 ```bash
 setsebool -P nis_enabled on
 setsebool -P domain_can_mmap_files on
@@ -302,20 +268,12 @@ setsebool -P use_virtualbox on
 - Install Ganeti:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum --enablerepo=epel,integ-ganeti install ganeti
-
-# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf --enablerepo=epel,integ-ganeti install ganeti
 ```
 
 - (Optional) Install Ganeti Instance Debootstrap:
 
 ```bash
-# RHEL/CentOS/others **7.x**
-yum --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
-
-# RHEL/AlmaLinux/Rocky Linux/others **8.x or later**
 dnf --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 ```
 

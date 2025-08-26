@@ -1,0 +1,12 @@
+diff -urN ganeti-3.1.0.default/lib/hypervisor/hv_kvm/monitor.py ganeti-3.1.0/lib/hypervisor/hv_kvm/monitor.py
+--- ganeti-3.1.0.default/lib/hypervisor/hv_kvm/monitor.py	2025-08-23 06:50:27.000000000 +0900
++++ ganeti-3.1.0/lib/hypervisor/hv_kvm/monitor.py	2025-08-26 19:05:26.359646631 +0900
+@@ -349,7 +349,7 @@
+   """Connection to the QEMU Monitor using the QEMU Monitor Protocol (QMP).
+ 
+   """
+-  _QMP_TIMEOUT = 5
++  _QMP_TIMEOUT = 15
+   _FIRST_MESSAGE_KEY = "QMP"
+   _RETURN_KEY = "return"
+   _ACTUAL_KEY = ACTUAL_KEY = "actual"
