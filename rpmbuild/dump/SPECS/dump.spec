@@ -3,13 +3,8 @@
 
 %define _legacy_common_support 1
 
-%if 0%{?rhel}
-Summary:       Program for restoring ext2/ext3 filesystems
-Name:          restore
-%else
 Summary:       Programs for backing up and restoring ext2/ext3/ext4 filesystems
 Name:          dump
-%endif
 Epoch:         1
 Version:       0.4
 Release:       0.59.%{PREVER}%{?dist}
@@ -34,19 +29,9 @@ Patch0:        dump-buildfix.patch
 Patch1:        dump-remove-lzo.patch
 Patch2:        dump-apath.patch
 
-# No dump package in RHEL (restore remains)
-Patch101:      dump-replacement.patch
+# No restore command
+Patch102:      dump-restore-replacement.patch
 
-%if 0%{?rhel}
-%description
-The restore command performs the inverse function of dump; it can
-restore a full backup of a filesystem. Subsequent incremental backups
-can then be layered on top of the full backup. Single files and
-directory subtrees may also be restored from full or partial backups.
-
-Install restore if you need restoring filesystems after backups
-made by dump.
-%else
 %description
 The dump package contains both dump and restore. Dump examines files
 in a filesystem, determines which ones need to be backed up, and
@@ -58,7 +43,6 @@ directory subtrees may also be restored from full or partial backups.
 
 Install dump if you need a system for both backing up filesystems and
 restoring filesystems after backups.
-%endif
 
 %prep
 %setup -q -n dump-%{DUMP_VERSION}
@@ -67,10 +51,8 @@ restoring filesystems after backups.
 %patch 1 -p1 -b .remove-lzo
 %patch 2 -p1 -b .apath
 
-%if 0%{?rhel}
-rm -rf dump/*.c
-%patch 101 -p1
-%endif
+rm -rf restore/*.c
+%patch 102 -p1
 
 %build
 autoreconf -fiv
@@ -107,30 +89,25 @@ mkdir -p %{buildroot}%{_mandir}/man8
     MANGRP=$(id -gn)
 
 pushd %{buildroot}
-%if 0%{?fedora}
-    ln -sf dump .%{_sbindir}/rdump
-%endif
-    ln -sf restore .%{_sbindir}/rrestore
-    mkdir -p .%{_sysconfdir}
-    > .%{_sysconfdir}/dumpdates
+ln -sf dump .%{_sbindir}/rdump
+mkdir -p .%{_sysconfdir}
+> .%{_sysconfdir}/dumpdates
 popd
 
 %files
 %doc AUTHORS COPYING INSTALL KNOWNBUGS MAINTAINERS NEWS README REPORTING-BUGS TODO
 %doc dump.lsm
 %attr(0664,root,disk) %config(noreplace) %{_sysconfdir}/dumpdates
-%if 0%{?fedora}
 %{_sbindir}/dump
 %{_sbindir}/rdump
 %{_mandir}/man8/dump.8*
 %{_mandir}/man8/rdump.8*
-%endif
-%{_sbindir}/restore
-%{_sbindir}/rrestore
-%{_mandir}/man8/restore.8*
-%{_mandir}/man8/rrestore.8*
 
 %changelog
+* Wed Aug 27 2025 Jun Futagawa <jfut@integ.jp> - 1:0.4-0.59.b47
+- Fork from https://git.almalinux.org/rpms/restore/src/branch/c10s
+- Remove restore command and build only the dump command (#58)
+
 * Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 1:0.4-0.59.b47
 - Bump release for October 2024 mass rebuild:
   Resolves: RHEL-64018
