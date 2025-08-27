@@ -1,0 +1,35 @@
+diff --git a/common/legacy_indexer.c b/common/legacy_indexer.c
+index c60830c..e4aa16d 100644
+--- a/common/legacy_indexer.c
++++ b/common/legacy_indexer.c
+@@ -41,8 +41,7 @@ extern int tapeno;
+ extern int Afile; /* archive file descriptor */
+ static int AfileActive = 1;/* Afile flag */
+ 
+-//extern char *Apath;
+-char *Apath;
++extern char *Apath;
+ 
+ #ifdef USE_QFA
+ static int GetTapePos (long long *);
+diff --git a/dump/main.c b/dump/main.c
+index 98c2333..a42182f 100644
+--- a/dump/main.c
++++ b/dump/main.c
+@@ -104,6 +104,7 @@ char	*dumpdates;	/* name of the file containing dump date information*/
+ char	lastlevel[NUM_STR_SIZE];/* dump level of previous dump */
+ char	level[NUM_STR_SIZE];/* dump level of this dump */
+ int	zipflag;	/* which compression method */
++char	*Apath;		/* archive file name */
+ int	Afile = -1;	/* archive file descriptor */
+ int	uflag;		/* update flag */
+ int	mflag;		/* dump metadata only if possible */
+@@ -211,7 +212,7 @@ main(int argc, char *argv[])
+ #endif
+ 	time_t tnow;
+ 	char *diskparam;
+-	char *Apath = NULL;
++	Apath = NULL;
+ 
+ 	spcl.c_label[0] = '\0';
+ 	spcl.c_date = time(NULL);

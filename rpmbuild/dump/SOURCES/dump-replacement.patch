@@ -1,0 +1,43 @@
+diff -urNp a/common/dumprmt.c b/common/dumprmt.c
+--- a/common/dumprmt.c	2021-02-08 13:23:33.366826516 +0100
++++ b/common/dumprmt.c	2021-02-08 13:26:13.725243819 +0100
+@@ -150,7 +149,7 @@ rmtconnaborted(UNUSED(int signo))
+ 		}
+ 	}
+ 	if (abortifconnerr)
+-		exit(X_ABORT);
++		exit(3);
+ }
+ 
+ static int
+@@ -196,7 +195,7 @@ rmtgetconn(void)
+ 		*cp = '\0';
+ 		if (!okname(tuser)) {
+ 			if (abortifconnerr) {
+-				exit(X_STARTUP);
++				exit(1);
+ 			} else {
+ 				return 0;
+ 			}
+diff -urNp a/configure.ac b/configure.ac
+--- a/configure.ac	2021-02-08 13:23:33.353826407 +0100
++++ b/configure.ac	2021-02-08 14:44:18.373749348 +0100
+@@ -479,7 +479,6 @@ AC_CONFIG_FILES(m4_flatten([
+ 	Makefile
+ 	common/Makefile
+ 	compat/lib/Makefile
+-	dump/Makefile
+ 	restore/Makefile
+ 	rmt/Makefile
+ ]))
+diff -urNp a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2021-02-08 13:23:33.355826423 +0100
++++ b/Makefile.am	2021-02-08 13:45:19.619244125 +0100
+@@ -1,6 +1,6 @@
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = compat/lib common dump restore
++SUBDIRS = compat/lib common restore
+ if BUILD_RMT
+ SUBDIRS += rmt
+ endif
