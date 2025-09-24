@@ -44,7 +44,7 @@ Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used 
 # KVM on RHEL/AlmaLinux/Rocky Linux/others **8.x**
 dnf install qemu-kvm libvirt virt-install
 
-# KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x**
+# KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x or later**
 dnf install qemu-kvm libvirt virt-install ksmtuned
 ```
 
@@ -169,6 +169,10 @@ dnf config-manager --disable integ-ganeti
 
 # RHEL/AlmaLinux/Rocky Linux/others **9.x**
 dnf install https://jfut.integ.jp/linux/ganeti/9/x86_64/integ-ganeti-release-9-1.el9.noarch.rpm
+dnf config-manager --disable integ-ganeti
+
+# RHEL/AlmaLinux/Rocky Linux/others **10.x**
+dnf install https://jfut.integ.jp/linux/ganeti/10/x86_64/integ-ganeti-release-10-1.el10.noarch.rpm
 dnf config-manager --disable integ-ganeti
 ```
 
@@ -313,7 +317,8 @@ systemctl enable ganeti-metad.service
 Create ~/.ssh directory.
 
 ```bash
-if [[ ! -d ~/.ssh ]]; then mkdir ~/.ssh; chmod 600 ~/.ssh; fi
+mkdir -p ~/.ssh
+chmod 600 ~/.ssh
 ```
 
 Initialize a cluster.
