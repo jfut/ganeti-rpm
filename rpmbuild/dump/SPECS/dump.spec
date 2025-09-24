@@ -103,7 +103,7 @@ popd
 %{_mandir}/man8/rdump.8*
 
 %changelog
-* Wed Aug 27 2025 Jun Futagawa <jfut@integ.jp> - 1:0.4-0.59.b47
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 1:0.4-0.59.b47
 - Fork from https://git.almalinux.org/rpms/restore/src/branch/c10s
 - Remove restore command and build only the dump command (#58)
 

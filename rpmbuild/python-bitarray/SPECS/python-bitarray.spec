@@ -1,32 +1,20 @@
 %global srcname bitarray
 %global sum Efficient Array of Booleans --C Extensions
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
-# Python3 not available in el6
-%if 0%{?rhel} > 1 && 0%{?rhel} < 7
-    %bcond_with py3
-%else
-    %bcond_without py3
-%endif
-
-
+# Ubuntu 24.04.2 LTS: 2.9.2
 Name:           python-%{srcname}
-Version:        0.8.3
-Release:        3%{?dist}
+Version:        2.9.3
+Release:        1%{?dist}
 Summary:        %{sum}
 
-Group:          Development/Languages
-License:        Python
-URL:            http://pypi.python.org/pypi/%{srcname}/
+License:        LicenseRef-Callaway-Python
+URL:            https://pypi.python.org/pypi/%{srcname}/
 Source0:        https://pypi.python.org/packages/source/b/%{srcname}/%{srcname}-%{version}.tar.gz
 
+BuildRequires:  gcc
 BuildRequires:  python%{python3_pkgversion}-devel
 BuildRequires:  python%{python3_pkgversion}-setuptools
 
-%if %{with py3}
-BuildRequires:  python%{python3_pkgversion}-devel
-BuildRequires:  python%{python3_pkgversion}-setuptools
-%endif
 
 %description
 Bitarrays are sequence types and behave very much like usual lists.
@@ -39,7 +27,6 @@ dealing with compressed data which uses variable bit length encoding
 you may find this module useful.
 
 
-%if %{with py3}
 %package -n python%{python3_pkgversion}-%{srcname}
 Summary:  %{sum}
 %{?python_provide:%python_provide python%{python3_pkgversion}-%{srcname}}
@@ -54,31 +41,27 @@ files is required, such as portable bitmap image files (.pbm). Also, when
 dealing with compressed data which uses variable bit length encoding
 you may find this module useful.
 This is Python 3 version.
-%endif
 
 
 %prep
 %setup -q -n %{srcname}-%{version}
 
 %build
-%if %{with py3}
 %py3_build
-%endif
 
 
 %install
-%if %{with py3}
 %py3_install
-%endif
 
 
-%if %{with py3}
 %files -n python%{python3_pkgversion}-%{srcname}
-%{python3_sitearch}/*
-%endif
+%{python3_sitearch}/%{srcname}*
 
 
 %changelog
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 2.9.3-1
+- Update to 2.9.3
+
 * Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 0.8.3-3
 - Fork from https://src.fedoraproject.org/rpms/python-bitarray/tree/epel7
 - Add %{python3_pkgversion} for python36

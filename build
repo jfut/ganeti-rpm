@@ -31,6 +31,9 @@ Usage:
     Environment variables:
         BUILD_HOSTNAME: container host name
 
+    Build for AlmaLinux 10:
+        ${PACKAGER} almalinux:10
+
     Build for AlmaLinux 9:
         ${PACKAGER} almalinux:9
 
