@@ -332,13 +332,13 @@ usermod -aG gnt-daemons gnt-rapi
 * Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
 - Update to 3.1.0 (#53)
 - Drop support for RHEL/CentOS 7
-- Add Requires: python%{python3_pkgversion}-pyasyncore
 - Add BuildRequires: graphviz
 - Add BuildRequires: man-db
 - Add BuildRequires: pandoc
 - Remove Requires: python%{python3_pkgversion}-simplejson
 - Remove BuildRequires: python%{python3_pkgversion}-simplejson
 - Remove BuildRequires: python%{python3_pkgversion}-mock
+- Add Requires: python%{python3_pkgversion}-pyasyncore
 - Add BuildRequires: python%{python3_pkgversion}-pyasyncore
 
 * Sun Sep 25 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2

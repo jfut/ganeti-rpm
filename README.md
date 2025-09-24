@@ -6,8 +6,9 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.0.2-2
-- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.0.2-2
+- RHEL/AlmaLinux/Rocky Linux/others 10.x: 3.1.0-1
+- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.1.0-1
+- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.1.0-1
 
 ## Documentation
 
@@ -231,6 +232,6 @@ Sign the specified package(s) only:
 e.g.:
 
 ```bash
-git tag -a v3.0.2-2 -m "v3.0.2-2"
-git push origin refs/tags/v3.0.2-2
+git tag -a v3.1.0-1 -m "v3.1.0-1"
+git push origin refs/tags/v3.1.0-1
 ```
