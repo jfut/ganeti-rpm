@@ -3,14 +3,17 @@
 
 Name:           python-%{srcname}
 Version:        1.0.4
-Release:        %{autorelease}
+Release:        1%{?dist}
 Summary:        Make %{modname} available for Python 3.12 onwards
 
 License:        Python-2.0.1
 URL:            https://github.com/simonrob/%{srcname}
 Source:         https://files.pythonhosted.org/packages/source/p/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildArch:      noarch
+BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-devel
+BuildRequires:  python3dist(setuptools)
+BuildRequires:  python3dist(wheel)
 
 %global _description %{expand:
 This package contains the asyncore module as found in Python versions
@@ -55,4 +58,5 @@ chmod ugo-x README.md LICENSE
 
 
 %changelog
-%autochangelog
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 1.0.4-1
+- Fork from https://src.fedoraproject.org/rpms/python-pyasyncore/tree/epel10.1
