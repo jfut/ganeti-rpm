@@ -6,7 +6,7 @@ Ganeti RPM Packaging for RHEL/CentOS/others.
 
 If you are updating from a version earlier than 2.15, see the document for 2.16.
 
-- [Update Ganeti RPM package from 2.15 to 2.16](https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.15-to-2.16.rst)
+- [Update Ganeti RPM package from 2.15 to 2.16](https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.15-to-2.16.md)
 
 Official documentation:
 
