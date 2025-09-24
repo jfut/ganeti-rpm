@@ -105,25 +105,6 @@ gnt-cluster verify
 
 **Troubleshooting**
 
-- 'Can't find node' messages
-
-You can ignore the 'Can't find node' messages and continue.
-
-```bash
-$ /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
-Please make sure you have read the upgrade notes for Ganeti 3.0.0
-(available in the UPGRADE file and included in other documentation
-formats). Continue with upgrading configuration?
-y/[n]/?: y
-2021-01-26 10:11:01,250: Found configuration version 2160000 (2.16.0)
-2021-01-26 10:11:01,254: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
-2021-01-26 10:11:01,254: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
-2021-01-26 10:11:01,254: Can't find node '69e8385f-cb86-4ca0-845d-1358f51c92a6' in configuration, assuming that it's already up-to-date
-2021-01-26 10:11:01,254: Can't find node 'ac3197a9-4770-4efe-9087-4d41d8e31695' in configuration, assuming that it's already up-to-date
-2021-01-26 10:11:01,256: Writing configuration file to /var/lib/ganeti/config.data
-Configuration successfully upgraded to version 3.0.0.
-```
-
 - Restore an old configuration and downgrade Ganeti
 
 You can restore an old configuration from a backup file and downgrade Ganeti.
