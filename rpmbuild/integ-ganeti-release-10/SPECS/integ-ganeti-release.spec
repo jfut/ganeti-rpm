@@ -1,7 +1,7 @@
 Summary: Ganeti RPM Package Repository release file
 Name: integ-ganeti-release
-Version: 7
-Release: 3%{?dist}
+Version: 10
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Base
 URL: http://jfut.integ.jp/linux/ganeti/
@@ -38,11 +38,5 @@ Repository, as well as the public GPG keys used to sign packages.
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
 
 %changelog
-* Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 7-3
-- Add OSU Open Source Lab mirror (#38, thanks @ramereth)
-
-* Wed Apr 17 2019 Jun Futagawa <jfut@integ.jp> - 7-2
-- Fixed Release version
-
-* Sun Aug 10 2014 Jun Futagawa <jfut@integ.jp> - 7-1
-- Initial integ-ganeti-release package for el7.
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 10-1
+- Initial integ-ganeti-release package for el10.

@@ -15,26 +15,22 @@ fi
 RPM_DIST=.$(grep -o -E "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
 echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
-# python3_pkgversion for define option
-PYTHON3_PKGVERSION_OPTION_EL9=3
-PYTHON3_PKGVERSION_OPTION_EL8=3
-
 # integ-ganeti repo
 INTEG_GANETI_REPO_PACKAGES=()
+INTEG_GANETI_REPO_PACKAGES_EL10=("integ-ganeti-release-10")
 INTEG_GANETI_REPO_PACKAGES_EL9=("integ-ganeti-release-9")
 INTEG_GANETI_REPO_PACKAGES_EL8=("integ-ganeti-release-8")
 
 # single packages
-GANETI_DEPENDS_PACKAGES=()
-GANETI_DEPENDS_PACKAGES_EL9=("python-bitarray")
-GANETI_DEPENDS_PACKAGES_EL8=("python-bitarray")
+GANETI_DEPENDS_PACKAGES=("python-bitarray")
 
-if [[ "${RPM_DIST}" = ".el9" ]]; then
+if [[ "${RPM_DIST}" = ".el10" ]]; then
+    INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL10[@]}")
+    GANETI_DEPENDS_PACKAGES=("dump" "python-bitarray" "python-pyasyncore")
+elif [[ "${RPM_DIST}" = ".el9" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL9[@]}")
-    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL9[@]}")
 elif [[ "${RPM_DIST}" = ".el8" ]]; then
     INTEG_GANETI_REPO_PACKAGES+=("${INTEG_GANETI_REPO_PACKAGES_EL8[@]}")
-    GANETI_DEPENDS_PACKAGES+=("${GANETI_DEPENDS_PACKAGES_EL8[@]}")
 fi
 GANETI_PACKAGES=("ganeti" "ganeti-instance-debootstrap")
 
@@ -57,14 +53,12 @@ Usage:
         -a all packages (ganeti and its dependencies and integ-ganeti repo)
         -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
-            ganeti dependencies (el9 only):
-                ${GANETI_DEPENDS_PACKAGES_EL9[@]}
-            ganeti dependencies (el9 only):
-                ${GANETI_DEPENDS_PACKAGES_EL8[@]}
+            ganeti dependencies:
+                ${GANETI_DEPENDS_PACKAGES[@]}
             ganeti:
                 ${GANETI_PACKAGES[@]}
             integ-ganeti-repo:
-                ${INTEG_GANETI_REPO_PACKAGES_EL9} ${INTEG_GANETI_REPO_PACKAGES_EL8}
+                ${INTEG_GANETI_REPO_PACKAGES_EL10} ${INTEG_GANETI_REPO_PACKAGES_EL9} ${INTEG_GANETI_REPO_PACKAGES_EL8}
 
     Task Options:
         -c Clean clean the rpmbuild directory, but preserve downloaded archives
@@ -84,7 +78,6 @@ Usage:
         If the build (-b) and install (-i) options are specified at the same time,
         the installation will be done immediately after the individual packages are built.
         This is to resolve dependencies needed to build the next package.
-
 _EOF_
 }
 
@@ -100,27 +93,16 @@ setup_package_option() {
 
     # spec_file
     PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE}.spec"
-    # package_prefix
-    PACKAGE_OPTION[package_prefix]="${PACKAGE}"
+    # package_prefix: python -> python3
+    PACKAGE_OPTION[package_prefix]="${PACKAGE/python/python3}"
     # python3_pkgversion_option
-    PACKAGE_OPTION[python3_pkgversion_option]=""
+    PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion 3\""
 
     # integ-ganeti-release package
     if [[ "${PACKAGE}" =~ ^integ-ganeti-release ]]; then
         local PACKAGE_PREFIX="integ-ganeti-release"
         PACKAGE_OPTION[spec_file]="${PACKAGER_RPM_DIR}/${PACKAGE}/SPECS/${PACKAGE_PREFIX}.spec"
         PACKAGE_OPTION[package_prefix]="${PACKAGE_PREFIX}"
-    fi
-
-    # python packages
-    if [[ " ${GANETI_DEPENDS_PACKAGES_EL9[@]} " =~ " ${PACKAGE} " ]]; then
-        # el9 only
-        PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL9}}"
-        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL9}\""
-    elif [[ " ${GANETI_DEPENDS_PACKAGES_EL8[@]} " =~ " ${PACKAGE} " ]]; then
-        # el8 only
-        PACKAGE_OPTION[package_prefix]="${PACKAGE_OPTION[package_prefix]/python/python${PYTHON3_PKGVERSION_OPTION_EL8}}"
-        PACKAGE_OPTION[python3_pkgversion_option]="--define \"python3_pkgversion ${PYTHON3_PKGVERSION_OPTION_EL8}\""
     fi
 
     RET=$(declare -p PACKAGE_OPTION)
@@ -242,14 +224,14 @@ build_package() {
             if [[ ! -d "${PACKAGE_SOURCES}" ]]; then
                 mkdir "${PACKAGE_SOURCES}"
             fi
-            if [[ "${RPM_DIST}" = ".el9" ]]; then
-                # el9 or later
-                echo "- eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
-                eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
-            else
+            if [[ "${RPM_DIST}" = ".el8" ]]; then
                 # el8
                 echo "- eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
                 eval spectool -g -A ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
+            else
+                # el9 or later
+                echo "- eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} \"${PACKAGE_OPTION[spec_file]}\" -C \"${PACKAGE_SOURCES}/\""
+                eval spectool -g -a ${PACKAGE_OPTION[python3_pkgversion_option]} "\"${PACKAGE_OPTION[spec_file]}\"" -C "${PACKAGE_SOURCES}/"
             fi
 
             # Build package
@@ -336,7 +318,7 @@ install_package() {
         fi
 
         set +e
-        sudo yum list installed "${PACKAGE_OPTION[package_prefix]}" > /dev/null 2>&1
+        sudo dnf list installed "${PACKAGE_OPTION[package_prefix]}" > /dev/null 2>&1
         RET=$?
         set -e
         if [[ "${RET}" -eq 0 ]]; then
@@ -358,8 +340,8 @@ install_package() {
     done
 
     if [[ ! -z "${INSTALL_PACKAGES}" ]]; then
-        echo "- sudo yum -y install ${INSTALL_PACKAGES}"
-        sudo yum -y install ${INSTALL_PACKAGES}
+        echo "- sudo dnf -y install ${INSTALL_PACKAGES}"
+        sudo dnf -y install ${INSTALL_PACKAGES}
     fi
 }
 
@@ -395,8 +377,8 @@ uninstall_package() {
     done
 
     if [[ ! -z "${REMOVE_PACKAGES}" ]]; then
-        echo "- sudo yum -y remove ${REMOVE_PACKAGES}"
-        sudo yum -y remove ${REMOVE_PACKAGES}
+        echo "- sudo dnf -y remove ${REMOVE_PACKAGES}"
+        sudo dnf -y remove ${REMOVE_PACKAGES}
         echo
     fi
 }

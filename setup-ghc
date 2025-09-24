@@ -30,24 +30,28 @@ fi
 echo "# Install dependencies for GHC"
 if [[ "${RPM_DIST}" = ".el8" ]]; then
     # el8
-    sudo dnf -y install libcurl-devel pcre-devel zlib-devel gmp-devel ncurses-compat-libs
+    sudo dnf -y install libcurl-devel pcre2-devel zlib-devel gmp-devel ncurses-compat-libs
 else
     # el9 or later
-    sudo dnf -y install libcurl-devel pcre-devel zlib-devel gmp-devel
+    sudo dnf -y install libcurl-devel pcre2-devel zlib-devel gmp-devel
     # for GHC
     ln -sf /usr/lib64/libtinfo.so.6 /usr/lib64/libtinfo.so.5
 fi
 
 TMP_DIR=$(mktemp -d "${HOME}/tmp.XXXXXXXXXX")
+trap 'rm -rf "${TMP_DIR}"' EXIT
 pushd "${TMP_DIR}"
 
 # Install ghc
-# Ubuntu 24.04.02 LTS: 9.4.7
-GHC_VERSION=9.4.8
+# Ubuntu 24.04.2 LTS: 9.4.7
+#
+# - el10 + 9.4.8
+# error: /usr/bin/ld.gold: error: dist/build/Ganeti/Curl/Internal_hsc_make.o: requires dynamic R_X86_64_32 reloc which may overflow at runtime; recompile with -fPIC
+GHC_VERSION=9.6.7
 echo "# Install GHC version ${GHC_VERSION}"
 if ! type ghc > /dev/null 2>&1; then
-    # https://downloads.haskell.org/~ghc/9.4.8/ghc-9.4.8-x86_64-centos7-linux.tar.xz
-    GHC_BINARY_PACKAGE="ghc-${GHC_VERSION}-x86_64-centos7-linux.tar.xz"
+    # https://downloads.haskell.org/~ghc/9.6.7/ghc-9.6.7-x86_64-rocky8-linux.tar.xz
+    GHC_BINARY_PACKAGE="ghc-${GHC_VERSION}-x86_64-rocky8-linux.tar.xz"
     GHC_URL="https://downloads.haskell.org/~ghc/${GHC_VERSION}/${GHC_BINARY_PACKAGE}"
     CACHE_FILE="${CACHE_DIR}/${GHC_BINARY_PACKAGE}"
     echo "- Check cache file: ${CACHE_FILE}"
@@ -60,7 +64,7 @@ if ! type ghc > /dev/null 2>&1; then
         cp -a "${CACHE_FILE}" .
     fi
     tar xf "${GHC_BINARY_PACKAGE}"
-    # cd ghc-9.10.1-x86_64-unknown-linux
+    # cd ghc-9.6.7-x86_64-unknown-linux
     cd "ghc-${GHC_VERSION}-x86_64-unknown-linux"
     ./configure --prefix="${GHC_PREFIX}"
     make install

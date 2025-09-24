@@ -21,21 +21,19 @@ echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 echo
 echo "# Setup build tools"
 PACKAGE_MANAGER=""
-if [[ "${RPM_DIST}" = ".el9" ]]; then
-    echo "# - Install build tools for el9"
-    dnf -y groupinstall "Development Tools"
-    dnf -y install sudo wget git-core rpm-build rpmdevtools yum-utils createrepo epel-release
-    dnf -y install pinentry
-    dnf config-manager --enable crb
-elif [[ "${RPM_DIST}" = ".el8" ]]; then
+if [[ "${RPM_DIST}" = ".el8" ]]; then
     echo "# - Install build tools for el8"
     dnf -y groupinstall "Development Tools"
     dnf -y install sudo wget git-core rpm-build rpmdevtools spectool yum-utils createrepo epel-release
     dnf -y install pinentry
     dnf config-manager --enable powertools
 else
-    echo "Error: ${RPM_DIST} is not supported yet."
-    exit 1
+    # el9 or later
+    echo "# - Install build tools for el9 or later"
+    dnf -y groupinstall "Development Tools"
+    dnf -y install sudo wget git-core rpm-build rpmdevtools yum-utils createrepo epel-release
+    dnf -y install pinentry
+    dnf config-manager --enable crb
 fi
 
 # Setup GHC environment

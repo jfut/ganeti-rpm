@@ -1,3 +1,8 @@
+%undefine _hardened_build
+%define _hardened_ldflags ""
+%define _build_id_links none
+%global debug_package %{nil}
+
 # without debuginfo
 %global debug_package %{nil}
 
@@ -54,6 +59,9 @@ BuildRequires: libcurl-devel
 BuildRequires: m4
 BuildRequires: procps-ng
 BuildRequires: python%{python3_pkgversion}
+%if 0%{?rhel} == 10
+BuildRequires: python%{python3_pkgversion}-pyasyncore
+%endif
 BuildRequires: python%{python3_pkgversion}-bitarray
 BuildRequires: python%{python3_pkgversion}-docutils
 BuildRequires: python%{python3_pkgversion}-inotify
@@ -80,6 +88,9 @@ Requires: lvm2
 Requires: openssh
 Requires: procps-ng
 Requires: python%{python3_pkgversion}
+%if 0%{?rhel} == 10
+Requires: python%{python3_pkgversion}-pyasyncore
+%endif
 Requires: python%{python3_pkgversion}-bitarray
 Requires: python%{python3_pkgversion}-inotify
 Requires: python%{python3_pkgversion}-paramiko
@@ -132,13 +143,18 @@ It is not required when the init system used is systemd.
 %prep
 %setup -q
 
-%patch2 -p1
-%patch4 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
+%patch -P2 -p1
+%patch -P4 -p1
+%patch -P11 -p1
+%patch -P12 -p1
+%patch -P13 -p1
 
 %build
+%if 0%{?rhel} == 10
+# Fixes version detection failure for `pkg-config --modversion zlib` due to the replacement of the `zlib` package with the `zlib-ng-compat` package in el10
+cabal install zlib --flags="-pkg-config"
+%endif
+# cabal install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd" --ghc-options="-fPIC -optl-fuse-ld=bfd" --disable-executable-dynamic
 cabal install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd"
 
 # fix for el8: error: version mismatch.
@@ -313,15 +329,17 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Tue Aug 26 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
 - Update to 3.1.0 (#53)
 - Drop support for RHEL/CentOS 7
+- Add Requires: python%{python3_pkgversion}-pyasyncore
 - Add BuildRequires: graphviz
 - Add BuildRequires: man-db
 - Add BuildRequires: pandoc
 - Remove Requires: python%{python3_pkgversion}-simplejson
 - Remove BuildRequires: python%{python3_pkgversion}-simplejson
 - Remove BuildRequires: python%{python3_pkgversion}-mock
+- Add BuildRequires: python%{python3_pkgversion}-pyasyncore
 
 * Sun Sep 25 2022 Jun Futagawa <jfut@integ.jp> - 3.0.2-2
 - Add support for RHEL/AlmaLinux/Rocky Linux 9 (#50)

@@ -26,6 +26,10 @@ Support for CentOS 5, 6, 7 has ended, but older version packages can still be do
 You can build RPM packages in Docker.
 
 ```bash
+# AlmaLinux 10
+./build almalinux:10
+# or ./build rockylinux:10
+
 # AlmaLinux 9
 ./build almalinux:9
 # or ./build rockylinux:9
@@ -38,12 +42,16 @@ You can build RPM packages in Docker.
 Debug and manual mode:
 
 ```bash
+# AlmaLinux 10
+BUILD_HOSTNAME=el10.example.org ./build -d almalinux:10
+# or ./build -d rockylinux:10
+
 # AlmaLinux 9
-./build -d almalinux:9
+BUILD_HOSTNAME=el9.example.org ./build -d almalinux:9
 # or ./build -d rockylinux:9
 
 # AlmaLinux 8
-./build -d almalinux:8
+BUILD_HOSTNAME=el8.example.org ./build -d almalinux:8
 # or ./build -d rockylinux:8
 
 # Setup
@@ -71,6 +79,9 @@ Usage:
     Environment variables:
         BUILD_HOSTNAME: container host name
 
+    Build for AlmaLinux 10:
+        build almalinux:10
+
     Build for AlmaLinux 9:
         build almalinux:9
 
@@ -83,21 +94,21 @@ Usage:
 Run in a container.
 
 ```bash
+RPM_DIST: .el10 (/usr/lib/rpm/macros.d/macros.dist)
+
 Usage:
     build-rpm [-a|-d|-p] [-c|-C] [-b] [-s] [-i] [-u] [-o yes|no] [package...]
 
     Target Options:
-        -a all packages (ganeti and its dependencies and integ-ganeti repo, snf-image)
+        -a all packages (ganeti and its dependencies and integ-ganeti repo)
         -d ganeti dependencies packages only
         -p the specified package(s) only. Available packages are:
-            ganeti dependencies (el8 only):
-                python-bitarray
+            ganeti dependencies:
+                dump python-bitarray python-pyasyncore
             ganeti:
                 ganeti ganeti-instance-debootstrap
-            snf-image:
-                python-prctl snf-image
             integ-ganeti-repo:
-                integ-ganeti-release
+                integ-ganeti-release-10 integ-ganeti-release-9 integ-ganeti-release-8
 
     Task Options:
         -c Clean clean the rpmbuild directory, but preserve downloaded archives
@@ -148,6 +159,11 @@ Build all packages with no overwrite and install:
 Build the new ganeti RPM package version using the already released dependency libraries and install:
 
 ```bash
+# AlmaLinux 10 or Rocky Linux 10
+dnf install https://jfut.integ.jp/linux/ganeti/10/x86_64/integ-ganeti-release-10-1.el10.noarch.rpm
+dnf config-manager --enable integ-ganeti
+./build-rpm -p -bi ganeti
+
 # AlmaLinux 9 or Rocky Linux 9
 dnf install https://jfut.integ.jp/linux/ganeti/9/x86_64/integ-ganeti-release-9-1.el9.noarch.rpm
 dnf config-manager --enable integ-ganeti
@@ -164,6 +180,10 @@ dnf config-manager --enable integ-ganeti
 Run the container with bash:
 
 ```bash
+# AlmaLinux 10
+BUILD_HOSTNAME=almalinux-10.github.integ.jp
+docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el10:/root/.gnupg almalinux:10 bash
+
 # AlmaLinux 9
 BUILD_HOSTNAME=almalinux-9.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el9:/root/.gnupg almalinux:9 bash

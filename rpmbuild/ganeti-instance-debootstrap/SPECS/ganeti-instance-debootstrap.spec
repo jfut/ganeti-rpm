@@ -21,7 +21,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 BuildRequires: debootstrap
 BuildRequires: dump
 BuildRequires: kpartx
-%if 0%{?rhel} == 9
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
 BuildRequires: restore
 %endif
 BuildRequires: util-linux
@@ -30,7 +30,7 @@ Requires: ganeti
 Requires: debootstrap
 Requires: dump
 Requires: kpartx
-%if 0%{?rhel} == 9
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
 Requires: restore
 %endif
 Requires: util-linux
@@ -44,7 +44,7 @@ It will install a minimal version of Debian or Ubuntu via debootstrap
 %setup -q -n instance-debootstrap-%{version}
 ./autogen.sh
 
-%patch1 -p1
+%patch -P1 -p1
 
 %build
 %configure \

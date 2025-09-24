@@ -1,5 +1,4 @@
-%define PREVER b47
-%define DUMP_VERSION 0.4%{PREVER}
+%define DUMP_VERSION 0.4b47
 
 %define _legacy_common_support 1
 
@@ -7,7 +6,7 @@ Summary:       Programs for backing up and restoring ext2/ext3/ext4 filesystems
 Name:          dump
 Epoch:         1
 Version:       0.4
-Release:       0.59.%{PREVER}%{?dist}
+Release:       0.59.b47%{?dist}
 License:       BSD-3-Clause
 URL:           https://sourceforge.net/projects/dump/
 Source:        http://downloads.sourceforge.net/dump/dump-%{DUMP_VERSION}.tar.gz
@@ -104,7 +103,7 @@ popd
 %{_mandir}/man8/rdump.8*
 
 %changelog
-* Wed Aug 27 2025 Jun Futagawa <jfut@integ.jp> - 1:0.4-0.59.b47
+* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 1:0.4-0.59.b47
 - Fork from https://git.almalinux.org/rpms/restore/src/branch/c10s
 - Remove restore command and build only the dump command (#58)
 
