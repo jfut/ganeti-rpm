@@ -142,7 +142,7 @@ iptables-restore < /etc/sysconfig/iptables
 ip6tables-restore < /etc/sysconfig/ip6tables
 ```
 
-## Setting up yum/dnf repositories
+## Setting up dnf repositories
 
 **Mandatory** on all nodes.
 

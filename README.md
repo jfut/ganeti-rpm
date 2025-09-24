@@ -15,7 +15,7 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 - [Installation tutorial](https://github.com/jfut/ganeti-rpm/blob/master/doc/install-rhel.md)
 - [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc)
 
-## YUM/DNF repository and binary RPM files
+## DNF repository and binary RPM files
 
 - https://jfut.integ.jp/linux/ganeti/
 - https://ftp.osuosl.org/pub/ganeti-rpm/ (mirror, thanks to the OSU Open Source Lab)
@@ -194,7 +194,7 @@ BUILD_HOSTNAME=almalinux-8.github.integ.jp
 docker run -h "${BUILD_HOSTNAME}" --rm -it -v $PWD:/pkg -v ~/.gnupg.el8:/root/.gnupg almalinux:8 bash
 
 # Setup
-yum -y install findutils rpm-sign pinentry
+dnf -y install findutils rpm-sign pinentry
 
 # Set your gpg name
 echo "%_gpg_name jfut-rpm@integ.jp" >> ~/.rpmmacros

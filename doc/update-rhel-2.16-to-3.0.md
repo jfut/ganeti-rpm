@@ -120,7 +120,7 @@ tar zxf /root/ganeti-BACKUP_DATE.tar.gz -C /var/lib
 # el7
 yum --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el7
 # el8
-yum --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el8
+dnf --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el8
 
 systemctl start ganeti.target
 systemctl start ganeti-kvmd.service

@@ -31,8 +31,8 @@ chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 **Mandatory** on all nodes.
 
 ```bash
-yum --enablerepo=integ-ganeti update integ-ganeti-release
-yum --enablerepo=epel,integ-ganeti update ganeti
+dnf --enablerepo=integ-ganeti update integ-ganeti-release
+dnf --enablerepo=epel,integ-ganeti update ganeti
 ```
 
 ## Upgrade configuration files on master node
@@ -107,11 +107,11 @@ mv /var/lib/ganeti /var/lib/ganeti.failed
 tar zxf /root/ganeti-BACKUP_DATE.tar.gz -C /var/lib
 
 # el8
-yum --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el8
+dnf --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el8
 # el9
-yum --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el9
+dnf --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el9
 # el10
-yum --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el10
+dnf --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el10
 
 systemctl start ganeti.target
 systemctl start ganeti-kvmd.service
