@@ -3,12 +3,12 @@ Update Ganeti RPM package from 2.14 to 2.15
 
 Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
-Update from a version earlier than 2.12
+Update from a version earlier than 2.13
 +++++++++++++++++++++++++++++++++++++++
 
-If you are updating from a version earlier than 2.12, see the document for 2.14.
+If you are updating from a version earlier than 2.13, see the document for 2.14.
 
-* `Update Ganeti RPM package from 2.12 to 2.14 <https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.12-to-2.14.rst>`_
+* `Update Ganeti RPM package from 2.13 to 2.14 <https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.13-to-2.14.rst>`_
 
 Official full version:
 
