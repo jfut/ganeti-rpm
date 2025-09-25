@@ -8,7 +8,7 @@ Update from a version earlier than 2.6
 
 If you are updating from a version earlier than 2.6, see the document for 2.7.
 
-* `Update Ganeti RPM package from 2.6 to 2.7 <https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.6-to-2.7.rst>`_
+* `Update Ganeti RPM package from 2.6 to 2.7 <https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.6-to-2.7.rst>`_
 
 Backup
 ++++++

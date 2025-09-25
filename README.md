@@ -1,6 +1,6 @@
 # Ganeti RPM Packaging
 
-[![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=master)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
+[![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=main)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
 
 Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
@@ -12,8 +12,8 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
 ## Documentation
 
-- [Installation tutorial](https://github.com/jfut/ganeti-rpm/blob/master/doc/install-rhel.md)
-- [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc)
+- [Installation tutorial](https://github.com/jfut/ganeti-rpm/blob/main/doc/install-rhel.md)
+- [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/main/doc)
 
 ## DNF repository and binary RPM files
 

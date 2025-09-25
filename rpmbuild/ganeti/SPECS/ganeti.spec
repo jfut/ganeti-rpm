@@ -241,7 +241,7 @@ do
 done < doc/users/groupmemberships
 
 # check
-# https://github.com/ganeti/ganeti/blob/master/.github/workflows/ci.yml
+# https://github.com/ganeti/ganeti/blob/main/.github/workflows/ci.yml
 # LC_ALL=C %make check-local: Invalid locale ('en_US', 'UTF-8')
 LC_ALL=C make check-local
 
