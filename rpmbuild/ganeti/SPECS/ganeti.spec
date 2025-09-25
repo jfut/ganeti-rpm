@@ -329,7 +329,7 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
-* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
+* Thu Sep 25 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
 - Update to 3.1.0 (#53)
 - Drop support for RHEL/CentOS 7
 - Add BuildRequires: graphviz
