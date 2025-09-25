@@ -4,7 +4,7 @@
 %define with_os_dir /usr/share/ganeti/os
 
 Name: ganeti-instance-debootstrap
-Version: 0.16
+Version: 0.17
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: debootstrap-based instance OS definition for ganeti
@@ -88,6 +88,9 @@ exit 0
 %{with_os_dir}/debootstrap/*
 
 %changelog
+* Thu Sep 25 2025 Jun Futagawa <jfut@integ.jp> - 0.17-1
+- Updated to 0.17
+
 * Tue Apr 16 2019 Jun Futagawa <jfut@integ.jp> - 0.16-1
 - Updated to 0.16
 
