@@ -58,5 +58,5 @@ chmod ugo-x README.md LICENSE
 
 
 %changelog
-* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 1.0.4-1
+* Thu Sep 25 2025 Jun Futagawa <jfut@integ.jp> - 1.0.4-1
 - Fork from https://src.fedoraproject.org/rpms/python-pyasyncore/tree/epel10.1

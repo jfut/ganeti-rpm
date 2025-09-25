@@ -59,7 +59,7 @@ This is Python 3 version.
 
 
 %changelog
-* Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 2.9.3-1
+* Thu Sep 25 2025 Jun Futagawa <jfut@integ.jp> - 2.9.3-1
 - Update to 2.9.3
 
 * Wed Feb  3 2021 Jun Futagawa <jfut@integ.jp> - 0.8.3-3
