@@ -7,7 +7,7 @@ Group: System Environment/Base
 URL: http://jfut.integ.jp/linux/ganeti/
 
 Source0: integ-ganeti.repo
-Source1: RPM-GPG-KEY-integ-ganeti
+Source1: RPM-GPG-KEY-integ-ganeti-%{version}
 
 BuildArch: noarch
 
@@ -24,18 +24,18 @@ Repository, as well as the public GPG keys used to sign packages.
 %install
 %{__rm} -rf %{buildroot}
 %{__install} -Dpm 0644 %{SOURCE0} %{buildroot}%{_sysconfdir}/yum.repos.d/integ-ganeti.repo
-%{__install} -Dpm 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
+%{__install} -Dpm 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti-%{version}
 
 %clean
 %{__rm} -rf %{buildroot}
 
 %files
 %defattr(-, root, root, 0755)
-%pubkey RPM-GPG-KEY-integ-ganeti
+%pubkey RPM-GPG-KEY-integ-ganeti-%{version}
 %dir %{_sysconfdir}/yum.repos.d/
 %config(noreplace) %{_sysconfdir}/yum.repos.d/integ-ganeti.repo
 %dir %{_sysconfdir}/pki/rpm-gpg/
-%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
+%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti-%{version}
 
 %changelog
 * Wed Sep 24 2025 Jun Futagawa <jfut@integ.jp> - 10-1
