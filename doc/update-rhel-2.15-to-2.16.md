@@ -6,7 +6,7 @@ Ganeti RPM Packaging for RHEL/CentOS/Scientific Linux and Fedora.
 
 If you are updating from a version earlier than 2.14, see the document for 2.15.
 
-- [Update Ganeti RPM package from 2.14 to 2.15](https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.14-to-2.15.rst)
+- [Update Ganeti RPM package from 2.14 to 2.15](https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.14-to-2.15.rst)
 
 Official documentation:
 

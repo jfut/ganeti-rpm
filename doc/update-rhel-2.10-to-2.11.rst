@@ -8,7 +8,7 @@ Update from a version earlier than 2.9
 
 If you are updating from a version earlier than 2.9, see the document for 2.10.
 
-* `Update Ganeti RPM package from 2.9 to 2.10 <https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.9-to-2.10.rst>`_
+* `Update Ganeti RPM package from 2.9 to 2.10 <https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.9-to-2.10.rst>`_
 
 Official full version:
 

@@ -1,12 +1,12 @@
-# Update Ganeti RPM package from 3.0 to 3.1
+# Update the Ganeti RPM package from 3.0 to 3.1
 
-Ganeti RPM Packaging for RHEL/CentOS/others.
+Ganeti RPM packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
 ## Update from a version earlier than 2.16
 
-If you are updating from a version earlier than 2.16, see the document for 3.0.
+If you are updating from a version earlier than 2.16, see the 3.0 document instead.
 
-- [Update Ganeti RPM package from 2.16 to 3.0](https://github.com/jfut/ganeti-rpm/blob/master/doc/update-rhel-2.16-to-3.0.md)
+- [Update Ganeti RPM package from 2.16 to 3.0](https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.16-to-3.0.md)
 
 Official documentation:
 
@@ -14,9 +14,9 @@ Official documentation:
 
 ## Backup
 
-**Mandatory** on all nodes.
+**Required** on all nodes.
 
-Stop ganeti service and backup the configuration file.
+Stop the Ganeti services and backup the configuration directory.
 
 ```bash
 systemctl stop ganeti-metad.service
@@ -26,20 +26,20 @@ tar czf /root/ganeti-$(date +%FT%H-%M-%S).tar.gz -C /var/lib ganeti
 chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 ```
 
-## Update ganeti package
+## Update the Ganeti package
 
-**Mandatory** on all nodes.
+**Required** on all nodes.
 
 ```bash
 dnf --enablerepo=integ-ganeti update integ-ganeti-release
 dnf --enablerepo=epel,integ-ganeti update ganeti
 ```
 
-## Upgrade configuration files on master node
+## Upgrade configuration files on the master node
 
-**Mandatory** on **master** node only.
+**Required** on the **master** node only.
 
-Upgrade the configuration files(/var/lib/ganeti).
+Upgrade the configuration files in `/var/lib/ganeti`.
 
 ```bash
 # dry run
@@ -49,19 +49,19 @@ Upgrade the configuration files(/var/lib/ganeti).
 /usr/lib64/ganeti/tools/cfgupgrade --verbose
 ```
 
-## Start ganeti services
+## Start Ganeti services
 
-**Mandatory** on **member** nodes.
+**Required** on **member** nodes.
 
 ```bash
 systemctl start ganeti.target
 systemctl start ganeti-kvmd.service
 
-# Optional: ganeti-metad is the daemon providing the metadata service.
+# Optional: ganeti-metad provides the metadata service.
 systemctl start ganeti-metad.service
 ```
 
-**Mandatory** on **master** node only.
+**Required** on the **master** node only.
 
 ```bash
 systemctl start ganeti.target
@@ -70,7 +70,7 @@ gnt-cluster redist-conf
 systemctl restart ganeti.target
 systemctl start ganeti-kvmd.service
 
-# Optional: ganeti-metad is the daemon providing the metadata service.
+# Optional: ganeti-metad provides the metadata service.
 systemctl start ganeti-metad.service
 
 gnt-cluster verify
@@ -78,25 +78,9 @@ gnt-cluster verify
 
 **Troubleshooting**
 
-- 'Can't find node' messages
-
-You can ignore the 'Can't find node' messages and continue.
-
-```bash
-$ /usr/lib64/ganeti/tools/cfgupgrade --verbose --dry-run
-Please make sure you have read the upgrade notes for Ganeti 3.1.0
-(available in the UPGRADE file and included in other documentation
-formats). Continue with upgrading configuration?
-y/[n]/?: y
-2025-09-24 20:48:42,530: Found configuration version 3010000 (3.1.0)
-2025-09-24 20:48:42,531: No changes necessary
-2025-09-24 20:48:42,531: Writing configuration file to /var/lib/ganeti/config.data
-Configuration successfully upgraded to version 3.1.0.
-```
-
 - Restore an old configuration and downgrade Ganeti
 
-You can restore an old configuration from a backup file and downgrade Ganeti.
+You can restore an old configuration from a backup file and then downgrade Ganeti.
 
 ```bash
 # on all nodes
@@ -115,6 +99,6 @@ dnf --enablerepo=epel,integ-ganeti downgrade ganeti-x.y.z-n.el10
 
 systemctl start ganeti.target
 systemctl start ganeti-kvmd.service
-# Optional: ganeti-metad is the daemon providing the metadata service.
+# Optional: ganeti-metad provides the metadata service.
 systemctl start ganeti-metad.service
 ```

@@ -1,25 +1,25 @@
 # Ganeti installation tutorial for RHEL/AlmaLinux/Rocky Linux/others
 
-This documentation is the short version for RHEL/AlmaLinux/Rocky Linux/others 8.x and 9.x.
+This is a short guide for RHEL/AlmaLinux/Rocky Linux/others 8.x, 9.x, and 10.x.
 
-Official full version:
+Official documentation:
 
 - [Ganeti's documentation](http://docs.ganeti.org/ganeti/current/html/) > [Ganeti installation tutorial](http://docs.ganeti.org/ganeti/current/html/install.html)
 
-Upgrade / update to the latest version:
+Upgrade/update to the latest version:
 
-* [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/master/doc)
+* [Upgrade / update guides (update-rhel-*)](https://github.com/jfut/ganeti-rpm/tree/main/doc)
 
 ## Installing the base system
 
-Ganeti works on a single node, but we recommend a configuration with 3 or more nodes.
-With two nodes, there is a problem with voting to determine the master during a master failover.
+Ganeti can run on a single node, but we recommend a configuration with three or more nodes.
+With only two nodes, quorum issues can prevent electing a new master during failover.
 
 **Mandatory** on all nodes.
 
-Note that Ganeti requires the hostnames of the systems.
+Ensure that every node has a resolvable hostname.
 
-e.g. DNS or `/etc/hosts`:
+For example, configure DNS or `/etc/hosts`:
 
 ```
 127.0.0.1       localhost
@@ -34,9 +34,9 @@ e.g. DNS or `/etc/hosts`:
 192.168.1.102   instance2.example.com instance2
 ```
 
-## Installing The Hypervisor
+## Installing the hypervisor
 
-Ganeti supports Xen, KVM, and LXC. The KVM hypervisor is the most commonly used on RHEL/AlmaLinux/CentOS/Rocky Linux/others.
+Ganeti supports Xen, KVM, and LXC. KVM is the most commonly used hypervisor on RHEL/AlmaLinux/CentOS/Rocky Linux/others.
 
 **Mandatory** on all nodes.
 
@@ -50,11 +50,11 @@ dnf install qemu-kvm libvirt virt-install ksmtuned
 
 ### KVM settings
 
-- KVM on RHEL/AlmaLinux/CentOS/Rock Linux/others
+- KVM on RHEL/AlmaLinux/CentOS/Rocky Linux/others
 
 **Mandatory** on all nodes.
 
-(Optional) Service configuration for libvirt.
+Optional: configure libvirt services.
 
 Enable services:
 
@@ -64,7 +64,7 @@ systemctl enable ksm.service
 systemctl enable ksmtuned.service
 ```
 
-Disable unused virbrX:
+Disable the unused `virbrX` network:
 
 ```bash
 systemctl start libvirtd.service
@@ -73,16 +73,16 @@ virsh net-autostart default --disable
 virsh net-destroy default
 ```
 
-Create bridge interface:
+Create a bridge interface:
 
-`br0` is an example of bridge interface.
+The interface `br0` is used as an example.
 
-- Using NetworkManager
+- Using NetworkManager:
   - physical interface: eno1
   - bridge interface: br0
   - ipv4.addresses: 192.168.1.11/24
-  - ipv4.gateway 192.168.1.254
-  - ipv4.dns "192.168.1.1,192.168.1.2"
+  - ipv4.gateway: 192.168.1.254
+  - ipv4.dns: "192.168.1.1,192.168.1.2"
 
 ```bash
 nmcli connection add type bridge autoconnect yes ipv4.method disabled ipv6.method ignore bridge.stp no bridge.forward-delay 0 con-name br0 ifname br0
@@ -98,7 +98,7 @@ nmcli connection modify br0 bridge.vlan-filtering yes
 nmcli connection down br0; nmcli connection up br0 &
 ```
 
-You can setup it easily by using [nmcli-cli](https://github.com/jfut/nmcli-cli).
+You can set it up easily by using [nmcli-cli](https://github.com/jfut/nmcli-cli).
 
 ```bash
 nmcli-cli-bridge-add -x br1 eno1
@@ -110,7 +110,7 @@ nmcli connection down eno1
 nmcli connection up eno1
 ```
 
-Allow to bridge interface access.
+Allow traffic on the bridge interface.
 
 - Using iptables
 
@@ -180,7 +180,7 @@ dnf config-manager --disable integ-ganeti
 
 **Mandatory** on all nodes.
 
-Install DRBD package:
+Install the DRBD package:
 
 ```bash
 dnf --enablerepo=elrepo install kmod-drbd84 drbd84-utils
@@ -215,12 +215,11 @@ systemctl start drbd.service
 
 **Mandatory** on all nodes.
 
-The volume group is required to be at least 20GiB.
+Create a volume group of at least 20 GiB.
 
-If you haven't configured your LVM volume group at install time you
-need to do it before trying to initialize the Ganeti cluster. This is
-done by formatting the devices/partitions you want to use for it and
-then adding them to the relevant volume group.
+If you did not configure an LVM volume group during installation,
+prepare the devices or partitions before initializing the Ganeti cluster.
+Format the devices you plan to use and add them to the target volume group.
 
 ```bash
 pvcreate /dev/sda3
@@ -235,7 +234,7 @@ pvcreate /dev/sdc1
 vgcreate vmvg /dev/sdb1 /dev/sdc1
 ```
 
-If you want to add a device later you can do so with the *vgextend*
+If you want to add a device later, you can do so with the *vgextend*
 command:
 
 ```bash
@@ -243,9 +242,9 @@ pvcreate /dev/sdd1
 vgextend vmvg /dev/sdd1
 ```
 
-(Optional) it is recommended to configure LVM not to scan the DRBD
-devices for physical volumes. This can be accomplished by editing
-`/etc/lvm/lvm.conf` and adding the
+Optional: configure LVM to skip scanning DRBD
+devices for physical volumes. Edit
+`/etc/lvm/lvm.conf` and add the
 `/dev/drbd[0-9]+` regular expression to the
 `filter` variable, like this:
 
@@ -257,7 +256,7 @@ filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 
 **Mandatory** on all nodes.
 
-Configure SE Linux parameters for Ganeti cluster operations to work properly.
+Configure SELinux parameters so Ganeti cluster operations work properly.
 
 ```bash
 setsebool -P nis_enabled on
@@ -275,15 +274,15 @@ setsebool -P use_virtualbox on
 dnf --enablerepo=epel,integ-ganeti install ganeti
 ```
 
-- (Optional) Install Ganeti Instance Debootstrap:
+- Optional: Install ganeti-instance-debootstrap:
 
 ```bash
 dnf --enablerepo=epel,integ-ganeti install ganeti-instance-debootstrap
 ```
 
-Required ports(default):
+Required ports (default):
 
-Several network ports must be available and opened so the different nodes can communicate properly between them.
+Make sure the following network ports are open so nodes can communicate properly.
 
 - ganeti-noded: 1811/tcp
 - ganeti-confd: 1814/udp
@@ -292,7 +291,7 @@ Several network ports must be available and opened so the different nodes can co
 - ganeti-metad: 80/tcp
 - DRBD/VNC port for instances: 11000/tcp - 14999/tcp
 
-Service configuration:
+Enable services:
 
 ```bash
 systemctl enable ganeti.target
@@ -314,14 +313,14 @@ systemctl enable ganeti-metad.service
 
 **Mandatory** on one node per cluster.
 
-Create ~/.ssh directory.
+Create the `~/.ssh` directory.
 
 ```bash
 mkdir -p ~/.ssh
 chmod 600 ~/.ssh
 ```
 
-Initialize a cluster.
+Initialize the cluster.
 
 ```bash
 gnt-cluster init --vg-name <VOLUMEGROUP> --master-netdev <MASTERINTERFACE> --nic-parameters link=<BRIDGEINTERFACE> <CLUSTERNAME>
@@ -334,13 +333,13 @@ Example for KVM:
 gnt-cluster init --vg-name vmvg --master-netdev eno1 --enabled-hypervisors kvm --nic-parameters link=br0 gcluster
 ```
 
-Set default metavg parameter for DRBD disk
+Set the default `metavg` parameter for DRBD disks:
 
 ```bash
 gnt-cluster modify -D drbd:metavg=vmvg
 ```
 
-Enable use_bootloader for using VM's boot loader.
+Enable `use_bootloader` to use the VM's boot loader:
 
 ```bash
 gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
@@ -348,7 +347,7 @@ gnt-cluster modify --hypervisor-parameters kvm:kernel_path=
 
 ## Optional cluster configurations
 
-The settings using the `gnt-cluster` command are global settings that are reflected in all instances. You can override the setting values for individual instance using the `gnt-instance` command.
+Settings configured with the `gnt-cluster` command are global and apply to every instance. Override specific values per instance with the `gnt-instance` command.
 
 ### Enable user shutdown: --user-shutdown
 
@@ -360,10 +359,10 @@ gnt-cluster modify --user-shutdown yes
 
 ### Optimizing DRBD performance: -D drbd
 
-This optimizes the DRBD performance.
+Use the following examples to tune DRBD performance.
 
 - [Optimizing DRBD performance section in The DRBD User's Guide](https://linbit.com/drbd-user-guide/users-guide-drbd-8-4/#p-performance)
-- [DRBD 8.4 sync does got over 100 MB/s on 10 Gbit/s network](https://github.com/ganeti/ganeti/issues/1229)
+- [DRBD 8.4 sync reaches over 100 MB/s on a 10 Gbit/s network](https://github.com/ganeti/ganeti/issues/1229)
 
 ```bash
 # For example with 1 Gbps NIC: min: 64 MB/sec, max 96 MB/sec
@@ -377,7 +376,7 @@ gnt-cluster modify -D drbd:disk-custom='--al-extents 3833',net-custom='--max-buf
 
 ### Change the CPU type: cpu_type
 
-This parameter determines the emulated cpu for the instance.
+This parameter determines the emulated CPU for the instance.
 
 ```bash
 # For clusters with the same CPU, it is possible to use the 'host' cpu type:
@@ -392,7 +391,7 @@ gnt-cluster modify -H kvm:cpu_type='IvyBridge-IBRS\,+pcid\,+ssbd\,+md-clear'
 
 ### Change the CPU topology: cpu_sockets
 
-Number of emulated CPU sockets.
+Set the number of emulated CPU sockets.
 
 ```bash
 gnt-cluster modify -H kvm:cpu_sockets=1
@@ -412,7 +411,7 @@ gnt-cluster modify -H kvm:nic_type=e1000
 
 ### Change the VGA type: vga
 
-Emulated vga mode, passed the the kvm -vga option.
+Sets the emulated VGA mode, passed to the `kvm -vga` option.
 
 ```bash
 gnt-cluster modify -H kvm:vga="std"
@@ -420,7 +419,7 @@ gnt-cluster modify -H kvm:vga="std"
 
 ### Change the keymap: keymap
 
-This option specifies the keyboard mapping to be used. It is only needed when using the VNC console.
+Specifies the keyboard mapping to use. It is only needed when using the VNC console.
 
 ```
 gnt-cluster modify -H kvm:keymap=ja
@@ -428,7 +427,7 @@ gnt-cluster modify -H kvm:keymap=ja
 
 ### Extra option for KVM: kvm_extra
 
-Any other option to the KVM hypervisor.
+Specifies additional options for the KVM hypervisor.
 
 ```bash
 # For example:
@@ -450,8 +449,8 @@ gnt-cluster verify
 
 **Mandatory** on master node.
 
-After you have initialized your cluster you need to join the other nodes
-to it. You can do so by executing the following command on the master
+After you initialize your cluster, join the other nodes
+to it by running the following command on the master
 node.
 
 ```bash
@@ -474,7 +473,7 @@ gnt-node add node3
 Node daemon on node2.example.com didn't answer queries within 10.0 seconds
 ```
 
-Make sure that you have port 1811 open (`ss -anpt | grep 1811`)
+Ensure that port 1811 is open (`ss -anpt | grep 1811`).
 
 - `gnt-cluster verify` on master returns an error after `Verifying node status`:
 
@@ -482,9 +481,9 @@ Make sure that you have port 1811 open (`ss -anpt | grep 1811`)
 ERROR: node node2.example.com: ssh communication with node 'node1.example.com': ssh problem: ssh_exchange_identification: read: Connection reset by peer\'r\n
 ```
 
-Initiate a manual ssh connection from node2 to node1 and vice versa.
+Test manual SSH connections from node2 to node1 and vice versa.
 
-## Manage ganeti services
+## Manage Ganeti services
 
 **Mandatory** on all nodes.
 
@@ -514,11 +513,11 @@ systemctl stop ganeti.target
 
 - Setting up RHEL/AlmaLinux/CentOS/Rocky Linux/others
 
-We recommend to use [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image) ([yum repository](http://ftp.osuosl.org/pub/osl/ganeti-instance-image/yum/)).
+We recommend using [Ganeti Instance Image](https://github.com/osuosl/ganeti-instance-image) ([yum repository](http://ftp.osuosl.org/pub/osl/ganeti-instance-image/yum/)).
 
-- Setting up Debian (require ganeti-instance-debootstrap)
+- Setting up Debian (requires ganeti-instance-debootstrap)
 
-Installation will be successful, but gnt-instance console doesn't work.
+Installation succeeds, but the `gnt-instance console` command does not work.
 
 ```bash
 gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 instance1
@@ -527,22 +526,22 @@ gnt-instance add -t drbd -n node1:node2 -o debootstrap+default --disk 0:size=8G 
 gnt-instance add -t drbd -n node2:node1 -o debootstrap+default --disk 0:size=8G -B vcpus=2,maxmem=1024,minmem=512 --no-ip-check --no-name-check --no-start --no-install instance3.example.com
 ```
 
-### Install custom OS using ISO file
+### Install a custom OS from an ISO file
 
 Enable VNC and check the VNC port of the created instance:
 
 ```bash
 # gnt-cluster modify -H kvm:vnc_bind_address=0.0.0.0
 
-# gnt-instance info instance3.exmaple.com | grep "console connection"
-  console connection: vnc to node2.exmaple.com:11001 (display 5101)
+# gnt-instance info instance3.example.com | grep "console connection"
+  console connection: vnc to node2.example.com:11001 (display 5101)
 ```
 
-Start the instance with ISO image:
+Start the instance from an ISO image:
 
 ```bash
 gnt-instance start -H boot_order=cdrom,cdrom_image_path=/path/to/install.iso instance3.example.com
 ```
 
-Connect to `node2.exmaple.com:11001` using a VNC client and follow the on-screen instructions to complete the installation.
+Connect to `node2.example.com:11001` using a VNC client and follow the on-screen instructions to complete the installation.
 
