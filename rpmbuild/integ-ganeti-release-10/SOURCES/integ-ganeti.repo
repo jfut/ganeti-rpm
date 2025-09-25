@@ -4,7 +4,7 @@ baseurl=http://jfut.integ.jp/linux/ganeti/$releasever/$basearch
     https://ftp.osuosl.org/pub/ganeti-rpm/$releasever/$basearch
 enabled=0
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti-10
 protect=0
 #priority=9
 
@@ -14,7 +14,7 @@ baseurl=http://jfut.integ.jp/linux/ganeti/$releasever/testing
     https://ftp.osuosl.org/pub/ganeti-rpm/$releasever/testing
 enabled=0
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti-10
 protect=0
 #priority=9
 
@@ -24,6 +24,6 @@ baseurl=http://jfut.integ.jp/linux/ganeti/$releasever/SRPMS
     https://ftp.osuosl.org/pub/ganeti-rpm/$releasever/SRPMS
 enabled=0
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-integ-ganeti-10
 protect=0
 #priority=9
