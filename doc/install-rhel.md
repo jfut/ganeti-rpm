@@ -4,7 +4,9 @@ This is a short guide for RHEL/AlmaLinux/Rocky Linux/others 8.x, 9.x, and 10.x.
 
 Official documentation:
 
-- [Ganeti's documentation](http://docs.ganeti.org/ganeti/current/html/) > [Ganeti installation tutorial](http://docs.ganeti.org/ganeti/current/html/install.html)
+- [Ganeti's documentation](https://docs.ganeti.org/docs/ganeti/3.1/html/)
+  - [Ganeti installation tutorial](https://docs.ganeti.org/docs/ganeti/3.1/html/install.html)
+  - [Ganeti upgrade notes](https://docs.ganeti.org/docs/ganeti/3.1/html/upgrade.html)
 
 Upgrade/update to the latest version:
 
