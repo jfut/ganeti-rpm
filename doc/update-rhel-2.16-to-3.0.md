@@ -1,12 +1,12 @@
-# Update the Ganeti RPM package from 2.16 to 3.0
+# Update the Ganeti RPM packages from 2.16 to 3.0
 
-Ganeti RPM packaging for RHEL/AlmaLinux/Rocky Linux/others.
+Ganeti RPM packages for RHEL, AlmaLinux, Rocky Linux, and other compatible distributions.
 
 ## Update from a version earlier than 2.15
 
 If you are updating from a version earlier than 2.15, see the 2.16 document instead.
 
-- [Update Ganeti RPM package from 2.15 to 2.16](https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.15-to-2.16.md)
+- [Update Ganeti RPM packages from 2.15 to 2.16](https://github.com/jfut/ganeti-rpm/blob/main/doc/update-rhel-2.15-to-2.16.md)
 
 Official documentation:
 
@@ -26,7 +26,7 @@ tar czf /root/ganeti-$(date +%FT%H-%M-%S).tar.gz -C /var/lib ganeti
 chmod 600 /root/ganeti-$(date +%FT%H)*.tar.gz
 ```
 
-## Update ganeti package
+## Update ganeti packages
 
 **Required** on all nodes.
 

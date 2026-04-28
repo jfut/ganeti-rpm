@@ -1,6 +1,6 @@
-# Ganeti installation tutorial for RHEL/AlmaLinux/Rocky Linux/others
+# Ganeti installation tutorial for RHEL, AlmaLinux, Rocky Linux, and other compatible distributions
 
-This is a short guide for RHEL/AlmaLinux/Rocky Linux/others 8.x, 9.x, and 10.x.
+This is a short guide for RHEL, AlmaLinux, Rocky Linux, and other compatible distributions (versions 8.x, 9.x, and 10.x).
 
 Official documentation:
 
@@ -43,10 +43,10 @@ Ganeti supports Xen, KVM, and LXC. KVM is the most commonly used hypervisor on R
 **Mandatory** on all nodes.
 
 ```bash
-# KVM on RHEL/AlmaLinux/Rocky Linux/others **8.x**
+# KVM on EL **8.x**
 dnf install qemu-kvm libvirt virt-install
 
-# KVM on RHEL/AlmaLinux/Rocky Linux/others **9.x or later**
+# KVM on EL **9.x or later**
 dnf install qemu-kvm libvirt virt-install ksmtuned
 ```
 
@@ -165,15 +165,15 @@ dnf config-manager --disable epel
 Install Integ Ganeti repository:
 
 ```bash
-# RHEL/AlmaLinux/Rocky Linux/others **8.x**
+# EL **8.x**
 dnf install https://jfut.integ.jp/linux/ganeti/8/x86_64/integ-ganeti-release-8-1.el8.noarch.rpm
 dnf config-manager --disable integ-ganeti
 
-# RHEL/AlmaLinux/Rocky Linux/others **9.x**
+# EL **9.x**
 dnf install https://jfut.integ.jp/linux/ganeti/9/x86_64/integ-ganeti-release-9-1.el9.noarch.rpm
 dnf config-manager --disable integ-ganeti
 
-# RHEL/AlmaLinux/Rocky Linux/others **10.x**
+# EL **10.x**
 dnf install https://jfut.integ.jp/linux/ganeti/10/x86_64/integ-ganeti-release-10-1.el10.noarch.rpm
 dnf config-manager --disable integ-ganeti
 ```

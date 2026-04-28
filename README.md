@@ -2,13 +2,13 @@
 
 [![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=main)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
 
-Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
+Ganeti RPM Packaging for RHEL, AlmaLinux, Rocky Linux, and other compatible distributions.
 
 ## Packaging status
 
-- RHEL/AlmaLinux/Rocky Linux/others 10.x: 3.1.1-1
-- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.1.1-1
-- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.1.1-1
+- EL 10.x: 3.1.1-1
+- EL 9.x: 3.1.1-1
+- EL 8.x: 3.1.1-1
 
 ## Documentation
 
@@ -234,4 +234,4 @@ Sign the specified package(s) only:
 3. Check `Set as a pre-release` and press the `Publish release` button.
 4. Wait for the build by GitHub Actions to finish.
     - If the build fails due to errors such as download errors of source files, execute `Re-run failed jobs`.
-5. Once all release files are automatically uploaded, check `Set as the latest release` and press the `Publish release` button.
+5. Once all release files are automatically uploaded, check `Set as the latest release` and press the `Update release` button.
