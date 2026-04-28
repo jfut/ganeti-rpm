@@ -1,6 +1,8 @@
 # Ganeti RPM Packaging
 
-[![Build Test](https://github.com/jfut/ganeti-rpm/workflows/Build%20Test/badge.svg?branch=main)](https://github.com/jfut/ganeti-rpm/actions?query=workflow%3A%22Build+Test%22)
+[![Build Test](https://github.com/jfut/ganeti-rpm/actions/workflows/test.yaml/badge.svg)](https://github.com/jfut/ganeti-rpm/actions/workflows/test.yaml)
+[![Release](https://github.com/jfut/ganeti-rpm/actions/workflows/release.yaml/badge.svg)](https://github.com/jfut/ganeti-rpm/actions/workflows/release.yaml)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Ganeti RPM Packaging for RHEL, AlmaLinux, Rocky Linux, and other compatible distributions.
 
