@@ -27,7 +27,7 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 3.1.0
+Version: 3.1.1
 Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
@@ -53,6 +53,7 @@ Patch11: ganeti-3.1.0-kvm-qmp-timeout.patch
 Patch12: ganeti-3.1.0-ignore-test-start-daemon.patch
 # ignore tests with AssertionError: ResolverError not raised by <lambda>
 Patch13: ganeti-3.1.0-ignore-test-hostname-resolution-error.patch
+Patch14: ganeti-3.1.1-fix-legacy-unittest.patch
 
 BuildRequires: iproute
 BuildRequires: libcurl-devel
@@ -148,6 +149,7 @@ It is not required when the init system used is systemd.
 %patch -P11 -p1
 %patch -P12 -p1
 %patch -P13 -p1
+%patch -P14 -p1
 
 %build
 %if 0%{?rhel} == 10
@@ -329,6 +331,10 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Tue Apr 28 2026 Jun Futagawa <jfut@integ.jp> - 3.1.1-1
+- Update to 3.1.1 (#74)
+- Add ganeti-3.1.1-fix-legacy-unittest.patch (#74)
+
 * Thu Sep 25 2025 Jun Futagawa <jfut@integ.jp> - 3.1.0-1
 - Update to 3.1.0 (#53)
 - Drop support for RHEL/CentOS 7
