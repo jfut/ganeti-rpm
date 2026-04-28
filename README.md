@@ -6,9 +6,9 @@ Ganeti RPM Packaging for RHEL/AlmaLinux/Rocky Linux/others.
 
 ## Packaging status
 
-- RHEL/AlmaLinux/Rocky Linux/others 10.x: 3.1.0-1
-- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.1.0-1
-- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.1.0-1
+- RHEL/AlmaLinux/Rocky Linux/others 10.x: 3.1.1-1
+- RHEL/AlmaLinux/Rocky Linux/others 9.x: 3.1.1-1
+- RHEL/AlmaLinux/Rocky Linux/others 8.x: 3.1.1-1
 
 ## Documentation
 
