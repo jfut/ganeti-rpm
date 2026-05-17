@@ -1,4 +1,4 @@
-name: release-drafter
+name: Release Drafter
 
 on:
   push:
@@ -6,16 +6,12 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: read
 
 jobs:
   update_release_draft:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      pull-requests: write
 
     steps:
-      - uses: release-drafter/release-drafter@5de93583980a40bd78603b6dfdcda5b4df377b32 # v7.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: release-drafter/release-drafter@c2e2804cc59f45f57076a99af580d0fedb697927 # v7.3.0
