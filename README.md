@@ -7,9 +7,9 @@ Ganeti RPM Packaging for RHEL, AlmaLinux, Rocky Linux, and other compatible dist
 
 ## Packaging status
 
-- EL 10.x: 3.1.1-1
-- EL 9.x: 3.1.1-1
-- EL 8.x: 3.1.1-1
+- EL 10.x: 3.1.1-2
+- EL 9.x: 3.1.1-2
+- EL 8.x: 3.1.1-2
 
 ## Documentation
 
@@ -230,9 +230,8 @@ Sign the specified package(s) only:
 
 ## Release
 
-1. Edit the `Draft` on the release page.
-2. Update the new version `name` and `tag` on the edit page.
-3. Check `Set as a pre-release` and press the `Publish release` button.
-4. Wait for the build by GitHub Actions to finish.
-    - If the build fails due to errors such as download errors of source files, execute `Re-run failed jobs`.
-5. Once all release files are automatically uploaded, check `Set as the latest release` and press the `Update release` button.
+1. Run `git tag -s vX.Y.Z -m vX.Y.Z`.
+2. Run `git push origin vX.Y.Z` and wait for the Release to be created.
+3. Edit the created Release.
+4. Press the `Generate release notes` button and edit the release notes.
+5. Press the `Update release` button.
