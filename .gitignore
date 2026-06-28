@@ -1,4 +1,5 @@
 cache/
+tmp/
 BUILD
 BUILDROOT
 RPMS
@@ -6,3 +7,7 @@ SRPMS
 *.gz
 *.bz2
 *.cabal
+
+# SELinux
+*.pp
+*.if

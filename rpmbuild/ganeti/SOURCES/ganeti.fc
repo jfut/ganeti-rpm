@@ -1,0 +1,6 @@
+# Ganeti executes the real binaries under the versioned libdir.
+# Use /usr/lib here so the rule matches correctly on systems with
+# the SELinux /usr/lib64 -> /usr/lib equivalency mapping.
+/usr/lib/ganeti/[^/]+/usr/sbin/ganeti-luxid    --  gen_context(system_u:object_r:ganeti_luxid_exec_t,s0)
+/usr/lib/ganeti/[^/]+/usr/sbin/ganeti-wconfd   --  gen_context(system_u:object_r:ganeti_wconfd_exec_t,s0)
+/usr/lib/ganeti/[^/]+/usr/sbin/ganeti-kvmd     --  gen_context(system_u:object_r:ganeti_kvmd_exec_t,s0)

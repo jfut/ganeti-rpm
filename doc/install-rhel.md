@@ -254,18 +254,6 @@ devices for physical volumes. Edit
 filter = ["r|/dev/cdrom|", "r|/dev/drbd[0-9]+|" ]
 ```
 
-## Configuring SELinux
-
-**Mandatory** on all nodes.
-
-Configure SELinux parameters so Ganeti cluster operations work properly.
-
-```bash
-setsebool -P nis_enabled on
-setsebool -P domain_can_mmap_files on
-setsebool -P use_virtualbox on
-```
-
 ## Installing Ganeti
 
 **Mandatory** on all nodes.
@@ -546,4 +534,3 @@ gnt-instance start -H boot_order=cdrom,cdrom_image_path=/path/to/install.iso ins
 ```
 
 Connect to `node2.example.com:11001` using a VNC client and follow the on-screen instructions to complete the installation.
-
