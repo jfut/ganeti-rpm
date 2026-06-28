@@ -1,17 +1,17 @@
-name: Release
+name: release
 
 on:
   push:
     tags:
-      - v[0-9]+.[0-9]+.[0-9]+-*
+      - 'v*'
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   release:
     name: Release on ${{ matrix.image }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: write
 
@@ -28,8 +28,10 @@ jobs:
       BUILD_HOSTNAME: ${{ matrix.image }}.github.integ.jp
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Build RPM
         id: build_rpm
@@ -37,7 +39,7 @@ jobs:
           ./build $(echo ${BUILD_IMAGE} | sed 's/-/:/g') -a -bi
 
       - name: Upload Assets
-        uses: AButler/upload-release-assets@3d6774fae0ed91407dc5ae29d576b166536d1777 # v3.0
+        uses: AButler/upload-release-assets@34491005a5d7ec239a784e460807ce844fde7962 # v4.0.0
         with:
           files: "rpmbuild/*/SRPMS/*.rpm;rpmbuild/*/RPMS/*/*.rpm"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
