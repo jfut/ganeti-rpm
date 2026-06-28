@@ -1,0 +1,31 @@
+policy_module(ganeti, 1.0.0)
+
+# Split Ganeti daemons out of init_t and
+# confine Ganeti-specific permissions to their dedicated domains.
+gen_require(`
+    type init_t;
+')
+
+type ganeti_luxid_t;
+type ganeti_luxid_exec_t;
+init_daemon_domain(ganeti_luxid_t, ganeti_luxid_exec_t)
+domtrans_pattern(init_t, ganeti_luxid_exec_t, ganeti_luxid_t)
+allow init_t ganeti_luxid_t:unix_stream_socket create_stream_socket_perms;
+allow ganeti_luxid_t init_t:unix_dgram_socket sendto;
+unconfined_domain(ganeti_luxid_t)
+
+type ganeti_wconfd_t;
+type ganeti_wconfd_exec_t;
+init_daemon_domain(ganeti_wconfd_t, ganeti_wconfd_exec_t)
+domtrans_pattern(init_t, ganeti_wconfd_exec_t, ganeti_wconfd_t)
+allow init_t ganeti_wconfd_t:unix_stream_socket create_stream_socket_perms;
+allow ganeti_wconfd_t init_t:unix_dgram_socket sendto;
+unconfined_domain(ganeti_wconfd_t)
+
+type ganeti_kvmd_t;
+type ganeti_kvmd_exec_t;
+init_daemon_domain(ganeti_kvmd_t, ganeti_kvmd_exec_t)
+domtrans_pattern(init_t, ganeti_kvmd_exec_t, ganeti_kvmd_t)
+allow init_t ganeti_kvmd_t:unix_stream_socket create_stream_socket_perms;
+allow ganeti_kvmd_t init_t:unix_dgram_socket sendto;
+unconfined_domain(ganeti_kvmd_t)

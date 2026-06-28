@@ -28,7 +28,7 @@
 
 Name: ganeti
 Version: 3.1.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
@@ -42,6 +42,8 @@ Source0: https://github.com/ganeti/ganeti/releases/download/v%{version}/ganeti-%
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
+Source4: ganeti.te
+Source5: ganeti.fc
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -55,6 +57,7 @@ Patch12: ganeti-3.1.0-ignore-test-start-daemon.patch
 Patch13: ganeti-3.1.0-ignore-test-hostname-resolution-error.patch
 Patch14: ganeti-3.1.1-fix-legacy-unittest.patch
 
+BuildRequires: checkpolicy
 BuildRequires: iproute
 BuildRequires: libcurl-devel
 BuildRequires: m4
@@ -74,6 +77,7 @@ BuildRequires: python%{python3_pkgversion}-pyparsing
 BuildRequires: python%{python3_pkgversion}-pytest
 BuildRequires: python%{python3_pkgversion}-sphinx
 BuildRequires: qemu-img
+BuildRequires: selinux-policy-devel
 BuildRequires: socat
 
 # unittests
@@ -108,8 +112,12 @@ BuildRequires: graphviz
 BuildRequires: man-db
 BuildRequires: pandoc
 
+Requires(post):   libselinux-utils
+Requires(post):   policycoreutils
 Requires(post):   systemd-units
 Requires(preun):  systemd-units
+Requires(postun): libselinux-utils
+Requires(postun): policycoreutils
 Requires(postun): systemd-units
 
 %package sysvinit
@@ -186,6 +194,12 @@ autoreconf -i
   $@
 %make_build
 
+# Build the SELinux module for Ganeti.
+install -d selinux
+install -m 644 %{SOURCE4} selinux/ganeti.te
+install -m 644 %{SOURCE5} selinux/ganeti.fc
+make -f /usr/share/selinux/devel/Makefile -C selinux ganeti.pp
+
 %install
 rm -rf ${RPM_BUILD_ROOT}
 %make_install DESTDIR=${RPM_BUILD_ROOT}
@@ -219,6 +233,11 @@ install -m 644 doc/examples/systemd/ganeti-master.target ${RPM_BUILD_ROOT}/%{_un
 install -m 644 doc/examples/systemd/ganeti-node.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti-node.target
 install -m 644 doc/examples/systemd/ganeti.service ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.service
 install -m 644 doc/examples/systemd/ganeti.target ${RPM_BUILD_ROOT}/%{_unitdir}/ganeti.target
+install -d -m 755 ${RPM_BUILD_ROOT}/%{_datadir}/selinux/packages
+install -m 644 selinux/ganeti.pp ${RPM_BUILD_ROOT}/%{_datadir}/selinux/packages/ganeti.pp
+
+# Remove the temporary SELinux build directory before upstream checks run.
+rm -rf selinux
 
 # compressed man files
 TMP_RPM_BUILD_ROOT=${RPM_BUILD_ROOT}
@@ -291,6 +310,11 @@ usermod -aG gnt-daemons gnt-rapi
 %systemd_post ganeti-kvmd.service
 %systemd_post ganeti-metad.service ganeti-mond.service
 
+# Install Ganeti-specific SELinux customizations on package installation.
+semodule -i %{_datadir}/selinux/packages/ganeti.pp
+restorecon -RF %{_libdir}/ganeti || :
+systemctl try-restart ganeti-kvmd.service ganeti-luxid.service ganeti-wconfd.service > /dev/null 2>&1 || :
+
 %preun
 %systemd_preun ganeti.target ganeti-master.target ganeti-node.target
 %systemd_preun ganeti-confd.service ganeti-noded.service
@@ -304,6 +328,11 @@ usermod -aG gnt-daemons gnt-rapi
 %systemd_postun_with_restart ganeti-wconfd.service ganeti-luxid.service ganeti-rapi.service
 %systemd_postun_with_restart ganeti-kvmd.service
 %systemd_postun_with_restart ganeti-metad.service ganeti-mond.service
+
+# Remove the Ganeti SELinux module only on final erase, not during upgrades.
+if [ "$1" -eq 0 ]; then
+    semodule -r ganeti > /dev/null 2>&1 || :
+fi
 
 %files
 %defattr(-,root,root)
@@ -319,6 +348,7 @@ usermod -aG gnt-daemons gnt-rapi
 %{_sbindir}/g*
 %{_libdir}/%{name}
 %{_datadir}/%{name}
+%{_datadir}/selinux/packages/ganeti.pp
 %{_mandir}/man*/g*
 %{_mandir}/man*/h*
 %{_mandir}/man*/mon-collector*
@@ -331,6 +361,9 @@ usermod -aG gnt-daemons gnt-rapi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Sun Jun 28 2026 Jun Futagawa <jfut@integ.jp> - 3.1.1-2
+- Add SELinux policy for ganeti-luxid, ganeti-wconfd, and ganeti-kvmd
+
 * Tue Apr 28 2026 Jun Futagawa <jfut@integ.jp> - 3.1.1-1
 - Update to 3.1.1 (#74)
 - Add ganeti-3.1.1-fix-legacy-unittest.patch (#74)
