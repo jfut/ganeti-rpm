@@ -8,12 +8,10 @@ on:
 permissions: {}
 
 jobs:
-  release:
-    name: Release on ${{ matrix.image }}
+  build:
+    name: Build on ${{ matrix.image }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    permissions:
-      contents: write
 
     strategy:
       max-parallel: 20
@@ -28,19 +26,57 @@ jobs:
       BUILD_HOSTNAME: ${{ matrix.image }}.github.integ.jp
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Build RPM
-        id: build_rpm
         run: |
           ./build $(echo ${BUILD_IMAGE} | sed 's/-/:/g') -a -bi
 
-      - name: Upload Assets
-        uses: AButler/upload-release-assets@34491005a5d7ec239a784e460807ce844fde7962 # v4.0.0
+      - name: Upload RPM artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          files: "rpmbuild/*/SRPMS/*.rpm;rpmbuild/*/RPMS/*/*.rpm"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: ${{ github.ref_name }}
+          name: ${{ matrix.image }}
+          path: rpmbuild/**/*.rpm
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download RPM artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: almalinux-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          mapfile -t RPM_FILES < <(find artifacts -type f -name '*.rpm' -print | sort)
+          if [[ ${#RPM_FILES[@]} -eq 0 ]]; then
+            echo "No RPM artifacts found" >&2
+            exit 1
+          fi
+
+          if gh release view "${TAG_NAME}" --repo "${REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "${TAG_NAME}" "${RPM_FILES[@]}" \
+              --clobber --repo "${REPOSITORY}"
+          else
+            gh release create "${TAG_NAME}" "${RPM_FILES[@]}" \
+              --verify-tag \
+              --title "${TAG_NAME}" \
+              --generate-notes \
+              --repo "${REPOSITORY}"
+          fi
