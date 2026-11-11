@@ -6,9 +6,6 @@
 # without debuginfo
 %global debug_package %{nil}
 
-# rc version
-%global rc_version %(echo '%{version}' | sed -e 's|.*rc.*|rc|g')
-
 # python version
 %define python3_pkgversion 3
 
@@ -27,18 +24,14 @@
 %define extstorage_search_path %{_search_sharedir}/%{name}/extstorage,%{_search_libdir}/%{name}/extstorage,%{_search_lib64dir}/%{name}/extstorage,%{_search_local_libdir}/%{name}/extstorage,%{_search_local_lib64dir}/%{name}/extstorage,/srv/%{name}/extstorage
 
 Name: ganeti
-Version: 3.1.1
-Release: 2%{?dist}
+Version: 3.1.2
+Release: 1%{?dist}
 Group: System Environment/Daemons
 Summary: Cluster virtual server management software
 License: BSD-2-Clause
 URL: http://code.google.com/p/ganeti/
 
-%if "%{rc_version}" == "rc"
-Source0: https://jfut.integ.jp/linux/ganeti-test/ganeti-%{version}.tar.gz
-%else
 Source0: https://github.com/ganeti/ganeti/releases/download/v%{version}/ganeti-%{version}.tar.gz
-%endif
 Source1: ganeti.init
 Source2: ganeti.logrotate
 Source3: ganeti.sysconfig
@@ -55,7 +48,8 @@ Patch11: ganeti-3.1.0-kvm-qmp-timeout.patch
 Patch12: ganeti-3.1.0-ignore-test-start-daemon.patch
 # ignore tests with AssertionError: ResolverError not raised by <lambda>
 Patch13: ganeti-3.1.0-ignore-test-hostname-resolution-error.patch
-Patch14: ganeti-3.1.1-fix-legacy-unittest.patch
+# Network.Socket also exports getHostName in newer network releases.
+Patch15: ganeti-3.1.2-fix-ambiguous-gethostname.patch
 
 BuildRequires: checkpolicy
 BuildRequires: iproute
@@ -157,15 +151,17 @@ It is not required when the init system used is systemd.
 %patch -P11 -p1
 %patch -P12 -p1
 %patch -P13 -p1
-%patch -P14 -p1
+%patch -P15 -p1
 
 %build
 %if 0%{?rhel} == 10
 # Fixes version detection failure for `pkg-config --modversion zlib` due to the replacement of the `zlib` package with the `zlib-ng-compat` package in el10
-cabal install zlib --flags="-pkg-config"
+cabal v1-install zlib --flags="-pkg-config"
 %endif
-# cabal install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd" --ghc-options="-fPIC -optl-fuse-ld=bfd" --disable-executable-dynamic
-cabal install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd"
+# Use v1-install so dependency resolution does not source-distribute Ganeti before configure generates AutoConf.
+# cabal v1-install --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd" --ghc-options="-fPIC -optl-fuse-ld=bfd" --disable-executable-dynamic
+# Serialize package setup builds because Cabal shares the generated setup executable cache.
+cabal v1-install --jobs=1 --only-dependencies ganeti.cabal --flags="mond metad htest network_bsd"
 
 # fix for el8: error: version mismatch.
 # configure.ac:15: error: version mismatch.  This is Automake 1.16.1,
@@ -361,6 +357,14 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 
 %changelog
+* Wed Nov 11 2026 Jun Futagawa <jfut@integ.jp> - 3.1.2-1
+- Update to the 3.1.2
+- Refresh the KVM QMP timeout patch for the updated monitor code
+- Remove ganeti-3.1.1-fix-legacy-unittest.patch
+- Use explicit legacy Cabal dependency installation commands
+- Serialize Cabal dependency builds to avoid setup executable cache contention
+- Hide Network.Socket.getHostName to resolve the network-bsd import ambiguity
+
 * Sun Jun 28 2026 Jun Futagawa <jfut@integ.jp> - 3.1.1-2
 - Add SELinux policy for ganeti-luxid, ganeti-wconfd, and ganeti-kvmd
 

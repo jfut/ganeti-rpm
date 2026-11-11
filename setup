@@ -17,6 +17,16 @@ fi
 RPM_DIST=.$(grep -o -E "^%el[0-9]*" "${RPM_MACROS}" | tr -d '%')
 echo "RPM_DIST: ${RPM_DIST} (${RPM_MACROS})"
 
+# Select repositories matching the installed EL10 minor release.
+# EPEL's 10z alias can be ahead of AlmaLinux, so use the exact minor version.
+if [[ "${RPM_DIST}" = ".el10" ]] && [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    if [[ "${VERSION_ID:-}" =~ ^10\.([0-9]+)$ ]]; then
+        mkdir -p /etc/dnf/vars
+        printf '%s\n' "${VERSION_ID}" > /etc/dnf/vars/releasever
+    fi
+fi
+
 # Setup build tools
 echo
 echo "# Setup build tools"
