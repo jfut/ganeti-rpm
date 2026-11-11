@@ -7,9 +7,9 @@ Ganeti RPM Packaging for RHEL, AlmaLinux, Rocky Linux, and other compatible dist
 
 ## Packaging status
 
-- EL 10.x: 3.1.1-2
-- EL 9.x: 3.1.1-2
-- EL 8.x: 3.1.1-2
+- EL 10.x: 3.1.2-1
+- EL 9.x: 3.1.2-1
+- EL 8.x: 3.1.2-1
 
 ## Documentation
 
