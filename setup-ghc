@@ -74,18 +74,23 @@ fi
 
 # Install cabal-install
 echo "# Install cabal-install"
-if ! type cabal > /dev/null 2>&1; then
-    # ghc-pkg list Cabal | grep Cabal-
-    #     Cabal-3.8.1.0
-    CABAL_VERSION=2.4.1.0
+# Hackage's current root metadata requires signing keys absent from old Cabal releases.
+CABAL_VERSION=3.18.2.0
+CABAL_BINARY_PACKAGE="cabal-install-${CABAL_VERSION}-x86_64-linux-unknown.tar.xz"
+CABAL_URL="https://downloads.haskell.org/~cabal/cabal-install-${CABAL_VERSION}/${CABAL_BINARY_PACKAGE}"
+CABAL_BIN=""
+INSTALLED_CABAL_VERSION=""
+if command -v cabal > /dev/null 2>&1; then
+    CABAL_BIN="$(command -v cabal)"
+    INSTALLED_CABAL_VERSION="$("${CABAL_BIN}" --numeric-version 2>/dev/null || true)"
+fi
+
+if [[ "${INSTALLED_CABAL_VERSION}" != "${CABAL_VERSION}" ]]; then
     echo "- Install Cabal version ${CABAL_VERSION}"
-    # https://downloads.haskell.org/~cabal/cabal-install-2.4.1.0/cabal-install-2.4.1.0-x86_64-unknown-linux.tar.xz
-    CABAL_BINARY_PACKAGE="cabal-install-${CABAL_VERSION}-x86_64-unknown-linux.tar.xz"
-    CABAL_URL="https://downloads.haskell.org/~cabal/cabal-install-${CABAL_VERSION}/${CABAL_BINARY_PACKAGE}"
     CACHE_FILE="${CACHE_DIR}/${CABAL_BINARY_PACKAGE}"
     echo "- Check cache file: ${CACHE_FILE}"
     if [[ ! -f "${CACHE_FILE}" ]]; then
-        echo "- Downlod URL: ${CABAL_URL}"
+        echo "- Download URL: ${CABAL_URL}"
         curl -fsSL "${CABAL_URL}" -O
         cp -a "${CABAL_BINARY_PACKAGE}" "${CACHE_FILE}"
     else
@@ -96,10 +101,12 @@ if ! type cabal > /dev/null 2>&1; then
     rm -f cabal.sig
     mkdir -p "${GHC_PREFIX}/bin"
     mv cabal "${GHC_PREFIX}/bin/"
-    echo "- Cabal update"
-    cabal update
+    CABAL_BIN="${GHC_PREFIX}/bin/cabal"
 else
-    echo "- Skip: cabal found. $(cabal --version)"
+    echo "- Skip: cabal found. $("${CABAL_BIN}" --version)"
 fi
+
+echo "- Cabal update"
+"${CABAL_BIN}" update
 
 popd
