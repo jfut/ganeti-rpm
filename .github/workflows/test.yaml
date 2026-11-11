@@ -18,7 +18,7 @@ jobs:
   test:
     name: Build on ${{ matrix.image }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     strategy:
       max-parallel: 20
